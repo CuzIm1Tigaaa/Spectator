@@ -16,9 +16,10 @@ public class spectate implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(args.length == 1 && args[0].equalsIgnoreCase("help") && sender.hasPermission(Permissions.USE)) {
             sender.sendMessage("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
-            sender.sendMessage("/spectate [player]");
-            sender.sendMessage("/spectatecycle <start|stop|pause|resume> [interval]");
-            sender.sendMessage("/spectatereload");
+            sender.sendMessage("§7/spectate [player]");
+            sender.sendMessage("§7/spectatehere");
+            sender.sendMessage("§7/spectatecycle <start|stop|pause|resume> [interval]");
+            sender.sendMessage("§7/spectatereload");
             sender.sendMessage("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-");
         }else {
 
@@ -40,7 +41,7 @@ public class spectate implements CommandExecutor {
                             player.sendMessage(Config.getMessage("Config.Error.same", "player", target.getDisplayName()));
                             return true;
                         }
-                        if(target.hasPermission(Permissions.CANNOT) || Main.getInstance().getRelation().get(target) == player) {
+                        if(Main.getInstance().getRelation().get(target) == player || target.hasPermission(Permissions.CANNOT)) {
                             player.sendMessage(Config.getMessage("Config.Error.cannot", "player", target.getDisplayName()));
                             return true;
                         }

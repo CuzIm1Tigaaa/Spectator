@@ -20,25 +20,16 @@ public class Methods {
     private final HashMap<Player, PlayerAttributes> playerAttributes = new HashMap<>();
 
     public Methods() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), new Runnable() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+            for(Map.Entry<Player, Player> entry : Main.getInstance().getRelation().entrySet()) {
+                final Player player = entry.getKey();
+                final Player target = entry.getValue();
 
-            @Override
-            public void run() {
-                for(Map.Entry<Player, Player> entry : Main.getInstance().getRelation().entrySet()) {
-                    final Player player = entry.getKey();
-                    final Player target = entry.getValue();
+                Inventory.updateInventory(player, target);
 
-                    Inventory.updateInventory(player, target);
-
-                    if(!player.getWorld().equals(target.getWorld()) || player.getLocation().distanceSquared(target.getLocation()) > 1) {
-                        player.setSpectatorTarget(null);
-                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), new Runnable() {
-                            @Override
-                            public void run() {
-                                player.setSpectatorTarget(target);
-                            }
-                        }, 5);
-                    }
+                if(!player.getWorld().equals(target.getWorld()) || player.getLocation().distanceSquared(target.getLocation()) > 1) {
+                    player.setSpectatorTarget(null);
+                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> player.setSpectatorTarget(target), 5);
                 }
             }
         }, 0, 10);
@@ -49,9 +40,7 @@ public class Methods {
             playerAttributes.put(player, new PlayerAttributes(player));
         }
         player.setGameMode(GameMode.SPECTATOR);
-        if(!Main.getInstance().getSpectators().contains(player)) {
-            Main.getInstance().getSpectators().add(player);
-        }
+        Main.getInstance().getSpectators().add(player);
         player.getInventory().clear();
         player.updateInventory();
         if(player.hasPermission(Permissions.TAB) && Config.hideTab) {
@@ -73,8 +62,8 @@ public class Methods {
         GameMode gameMode;
         Boolean isFlying;
         
-        float yaw = 0;
-        float pitch = 0;
+        float yaw;
+        float pitch;
 
         if(playerAttributes.containsKey(player)) {
             gameMode = playerAttributes.get(player).getGameMode();
@@ -86,7 +75,7 @@ public class Methods {
         if(Config.saveLocation) {
             location = playerAttributes.get(player).getLocation();
         }
-        if((player.hasPermission(Permissions.HERE) && locate) || location == null) {
+        if(location == null || (player.hasPermission(Permissions.HERE) && locate)) {
             location = player.getLocation();
         }
         yaw = location.getYaw();

@@ -50,3 +50,13 @@ spectate.bypass.* contains following subpermissions:
 spectate.tablist: This Permission let you show hidden Players --- spectate.cannot: With this Permission you cannot be spectated
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Config:
+
+hideTab: If true & Player has Permission [spectate.tab], Player is hidden in Tablist.
+
+mirrorInventory: If true & Player has Permission [spectate.inventory], Player can see the Inventory of spectating Player.
+
+saveLocation: If true, Player gets teleported back to his old Location when leaving Spectator-Mode.
+
+kickOnCycle: If true, Player can get kickend while cycling.

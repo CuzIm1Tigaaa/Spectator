@@ -1,0 +1,42 @@
+name: ${project.name}
+version: ${project.version}
+author: CuzIm1Tigaaa
+main: de.cuzim1tigaaa.spectate.Main
+commands:
+  spectate:
+    aliases: [spec]
+    usage: /spectate [target]
+  spectatecycle:
+    aliases: [speccycle]
+    usage: /spectatecycle <start|stop|pause|resume> ...
+  spectatehere:
+    aliases: [spechere,spech]
+    usage: /spectatehere
+  spectatereload:
+    aliases: [specreload,specrl]
+    usage: /spectatereload
+permissions:
+  spectate.*:
+    default: op
+    children:
+      spectate.use.*: true
+      spectate.utils.*: true
+      spectate.bypass.*: true
+      spectate.reload: true
+  spectate.use.*:
+    default: false
+    children:
+      spectate.use: true
+      spectate.use.here: true
+      spectate.use.others: true
+      spectate.use.cycle: true
+  spectate.utils.*:
+    default: false
+    children:
+      spectate.inventory: true
+      spectate.tab: true
+  spectate.bypass.*:
+    default: false
+    children:
+      spectate.tablist: true
+      spectate.cannot: true

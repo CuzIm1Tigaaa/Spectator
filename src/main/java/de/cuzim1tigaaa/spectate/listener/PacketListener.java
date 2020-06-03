@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 public class PacketListener {
 
-    private PacketListener() {
+    public PacketListener() {
     }
 
     public static void register() {
@@ -36,8 +36,8 @@ public class PacketListener {
                             Entity entity = event.getPacket().getEntityModifier(player.getWorld()).read(0);
                             if(entity.getType().equals(EntityType.PLAYER)) {
                                 Player target = (Player) entity;
-                                if(target.hasPermission(Permissions.CANNOT)) {
-                                    player.sendMessage(Config.getMessage("Config.Player.cannot", "player", target.getName()));
+                                if(target.hasPermission(Permissions.CANNOT) || !player.hasPermission(Permissions.OTHER)) {
+                                    player.sendMessage(Config.getMessage("Config.Error.cannot", "player", target.getName()));
                                     event.setCancelled(true);
                                 }else {
                                     if(player.hasPermission(Permissions.INVENTORY) && Config.mirrorInventory) {
@@ -52,5 +52,4 @@ public class PacketListener {
             }
         });
     }
-
 }

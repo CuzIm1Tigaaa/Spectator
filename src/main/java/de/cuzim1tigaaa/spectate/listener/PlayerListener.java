@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -49,8 +50,8 @@ public class PlayerListener implements Listener {
         if(Main.getInstance().getCycleHandler().isPlayerCycling(player) || Main.getInstance().getCycleHandler().isPlayerPaused(player)) {
             if (event.isSneaking()) {
                 player.sendMessage(Config.getMessage("Config.Error.dismount"));
+                event.setCancelled(true);
             }
-            event.setCancelled(true);
         }
         if(event.isSneaking()) {
             dismountTarget(player);
@@ -74,7 +75,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
         if(Main.getInstance().getCycleHandler().isPlayerCycling(player) && !Config.kickOnCycle) {

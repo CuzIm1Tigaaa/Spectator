@@ -15,6 +15,7 @@ public class Config {
     public static boolean hideTab;
     public static boolean mirrorInventory;
     public static boolean saveLocation;
+    public static boolean saveFlying;
     public static boolean kickOnCycle;
 
     public static String getMessage(String path, Object... replace) {
@@ -23,6 +24,10 @@ public class Config {
             String target = (String) replace[i];
             String replacement = replace[i += 1].toString();
             msg = msg.replace("[" + target + "]", replacement);
+            if(target == null) {
+                msg = null;
+            }
+            assert msg != null;
         }
         if(msg == null) {
             return "§cError: Message §7" + path + " §cdoes not exist!";
@@ -41,13 +46,14 @@ public class Config {
             message.set("Config.hideTab", hideTab = message.getBoolean("Config.hideTab", true));
             message.set("Config.mirrorInventory", mirrorInventory = message.getBoolean("Config.mirrorInventory", true));
             message.set("Config.saveLocation", saveLocation = message.getBoolean("Config.saveLocation", true));
-            message.set("Config.kickOnCycle", saveLocation = message.getBoolean("Config.kickOnCycle", false));
+            message.set("Config.saveFlying", saveFlying = message.getBoolean("Config.saveFlying", false));
+            message.set("Config.kickOnCycle", kickOnCycle = message.getBoolean("Config.kickOnCycle", false));
             message.set("Config.Error.cannot", message.getString("Config.Error.cannot", "&7[player] &ccannot be spectated at the moment!"));
-            message.set("Config.Error.gm", message.getString("Config.Error.gm", "&cYou cannot change your GameMode while spectating! Use &7/spec &cto leave Spectator-Mode."));
             message.set("Config.Error.dismount", message.getString("Config.Error.dismount", "&cYou cannot dismount while in Speccycle-Mode! Use &7/spectatecycle stop &cto leave Speccycle-Mode."));
+            message.set("Config.Error.gm", message.getString("Config.Error.gm", "&cYou cannot change your GameMode while spectating! Use &7/spec &cto leave Spectator-Mode."));
             message.set("Config.Error.isNot", message.getString("Config.Error.isNot", "&cYou have to be a Player!"));
-            message.set("Config.Error.offline", message.getString("Config.Error.offline", "&7[player] &cis not Online!"));
             message.set("Config.Error.noPlayers", message.getString("Config.Error.noPlayers", "&cThere are not enough Players online."));
+            message.set("Config.Error.offline", message.getString("Config.Error.offline", "&7[player] &cis not Online!"));
             message.set("Config.Error.same", message.getString("Config.Error.same", "&cYou are already spectating &7[player]&c!"));
             message.set("Config.Error.self", message.getString("Config.Error.self", "&cYou cannot spectate yourself!"));
             message.set("Config.Permission", message.getString("Config.Permission", "&cYou do not have permission to perform this Command!"));

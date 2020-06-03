@@ -5,16 +5,21 @@ Spectate other Players. Note: This is a modified version of kosakriszi's Spectat
 
 Commands:
 
-/spectate [Player] - Toggle Spectator Mode or Spectate a specific Player.
+/spec
 
-/spectatehere - Unspectate at your current Position.
+/spec [player]
 
-/spectatecycle <Start|Stop|Pause|Resume> [Interval] - SpectateCycle Mode. Interval is for the Start subcommand and must be specified in seconds
+/spechere
 
-/spectatereload - Reload the Config..
+/speccycle start <seconds>
+	
+/speccycle stop
 
-Aliases:
-/spec, /spechere, /spech, /speccycle, /specreload, /specrl
+/speccycle pause
+
+/speccycle resume
+
+/specreload
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

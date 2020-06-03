@@ -3,65 +3,42 @@ Spectate other Players. Note: This is a modified version of kosakriszi's Spectat
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-Commands:
+# Commands
+- /spectate - Enter or leave Spectator-Mode
+- /spectatehere - Enter Spectator-Mode or leave at current position (Info: Teleports you to the highest block at Position.
+- /spectate [Player] - Spectate a specific Player
+- /spectatecycle start <Seconds> - Start a speccycle with given Interval
+- /spectatecycle stop - Stop a running speccycle
+- /spectatecycle pause - Pause a running speccycle
+- /spectatecycle resume - Resume a paused speccycle
+- /spectatereload - Reload the Config
 
-/spec
+# Permissions
+- spectate.*: Grants a Player all Spectate Permissions
+	- spectate.use.*: Grants a Player following Permissions
+		- spectate.use: Use the /spectate Command
+		- spectate.use.here: Use the /spectatehere Command
+		- spectate.use.others: Spectate other Players
+		- spectate.use.cycle: Us the /spectatecycle Command
+	- spectate.utils.*: Grants a Player following Permissions
+		- spectate.inventory: Let a Spectator see the target Inventory
+		- spectate.tab: Let a Spectator be hidden in Tablist
+	- spectate.bypass.*: Grannts a Player following Permission
+		- spectate.tablist: Player with this Permission can see hidden Players in Tab
+		- spectate.cannot: Player with this Permission cannot be spectated
+	- spectate.reload: Reload the Config
 
-/spec [player]
+# Config
+In the Config you can edit the Messages of the Plugin and 5 other settings:
 
-/spechere
-
-/speccycle start <seconds>
-	
-/speccycle stop
-
-/speccycle pause
-
-/speccycle resume
-
-/specreload
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-Permissions:
-
-spectate.*: Gives access to all Commands and Features
-
-spectate.use.*: Gives access to all Use-Commands
-
-spectate.utils.*: Gives access to all utils
-
-spectate.bypass.*: Gives access to all Bypass-Features
-
-spectate.reload: Gives access to use the reload Command
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-spectate.use.* contains following subpermissions:
-
-spectate.use: Gives access to use the /spec Command --- spectate.use.here: Gives access to use the /spechere Command
-spectate.use.others: Gives access to spectate other Players --- spectate.use.cycle: Gives access to use the /speccycle Command.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-spectate.utils.* contains following subpermissions:
-
-spectate.inventory: Gives access to mirror the Inventory of a Player you are spectating --- spectate.tab: Gives access to Hide in Tablist
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-spectate.bypass.* contains following subpermissions:
-
-spectate.tablist: This Permission let you show hidden Players --- spectate.cannot: With this Permission you cannot be spectated
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-Config:
-
-hideTab: If true & Player has Permission [spectate.tab], Player is hidden in Tablist.
-
-mirrorInventory: If true & Player has Permission [spectate.inventory], Player can see the Inventory of spectating Player.
-
-saveLocation: If true, Player gets teleported back to his old Location when leaving Spectator-Mode.
-
-kickOnCycle: If true, Player can get kickend while cycling.
+- hideTab, default: true
+	- Controll the visibility of a Player in the Tablist
+- mirrrorInventory, default: true
+	- Controll if a Player can see Target Inventory
+- saveLocation, default: true
+	- Controll if Player will be teleported to his old Location or his current
+	- Note: If saveLocation = false, /spec & /spechere are same
+- saveFlying, default: false
+	- Controll if Flymode of Player will be saved
+- kickOnCycle, default: false
+	- Controll if Player can get kicked when Cycling

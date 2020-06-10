@@ -1,12 +1,12 @@
 package de.cuzim1tigaaa.spectate.commands;
 
-        import de.cuzim1tigaaa.spectate.Main;
-        import de.cuzim1tigaaa.spectate.files.Config;
-        import de.cuzim1tigaaa.spectate.files.Permissions;
-        import org.bukkit.command.Command;
-        import org.bukkit.command.CommandExecutor;
-        import org.bukkit.command.CommandSender;
-        import org.bukkit.entity.Player;
+import de.cuzim1tigaaa.spectate.Main;
+import de.cuzim1tigaaa.spectate.files.Config;
+import de.cuzim1tigaaa.spectate.files.Permissions;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class spectatecycle implements CommandExecutor {
 
@@ -20,7 +20,7 @@ public class spectatecycle implements CommandExecutor {
                         if(args.length == 2) {
                             if(!Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
                                 try {
-                                    Integer interval = Integer.parseInt(args[1]);
+                                    int interval = Integer.parseInt(args[1]);
                                     Main.getInstance().getCycleHandler().startCycle(player, interval * 20);
                                     return true;
                                 }catch(NumberFormatException exception) {
@@ -42,6 +42,7 @@ public class spectatecycle implements CommandExecutor {
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.notRunning"));
                         }
                         return true;
+                        /*
                     }else if(args[0].equalsIgnoreCase("pause")) {
                         if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
                             Main.getInstance().getCycleHandler().pauseCycle(player);
@@ -57,6 +58,7 @@ public class spectatecycle implements CommandExecutor {
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.notPaused"));
                         }
                         return true;
+                        */
                     }else {
                         return false;
                     }

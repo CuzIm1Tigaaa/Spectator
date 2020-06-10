@@ -47,14 +47,17 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onDismount(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if(Main.getInstance().getCycleHandler().isPlayerCycling(player) || Main.getInstance().getCycleHandler().isPlayerPaused(player)) {
-            if (event.isSneaking()) {
-                player.sendMessage(Config.getMessage("Config.Error.dismount"));
-                event.setCancelled(true);
+        if(Main.getInstance().getSpectators().contains(player)) {
+            if(!Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
+                if(event.isSneaking()) {
+                    dismountTarget(player);
+                }
+            }else {
+                if(event.isSneaking()) {
+                    player.sendMessage(Config.getMessage("Config.Error.dismount"));
+                    event.setCancelled(true);
+                }
             }
-        }
-        if(event.isSneaking()) {
-            dismountTarget(player);
         }
     }
     public void dismountTarget(Player player) {

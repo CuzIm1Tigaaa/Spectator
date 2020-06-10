@@ -1,15 +1,12 @@
 package de.cuzim1tigaaa.spectate;
 
-import de.cuzim1tigaaa.spectate.commands.spectate;
-import de.cuzim1tigaaa.spectate.commands.spectatecycle;
-import de.cuzim1tigaaa.spectate.commands.spectatehere;
-import de.cuzim1tigaaa.spectate.commands.spectatereload;
+import de.cuzim1tigaaa.spectate.commands.*;
 import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectate.files.Config;
 import de.cuzim1tigaaa.spectate.listener.PacketListener;
+import de.cuzim1tigaaa.spectate.listener.PlayerListener;
 import de.cuzim1tigaaa.spectate.player.Inventory;
 import de.cuzim1tigaaa.spectate.player.Methods;
-import de.cuzim1tigaaa.spectate.listener.PlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,6 +62,8 @@ public class Main extends JavaPlugin {
         getCommand("spectatecycle").setExecutor(new spectatecycle());
         getCommand("spectatehere").setExecutor(new spectatehere());
         getCommand("spectatereload").setExecutor(new spectatereload());
+        getCommand("spectatelist").setExecutor(new spectatelist());
+        getCommand("unspectate").setExecutor(new unspectate());
 
         PluginManager pm = instance.getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(), instance);

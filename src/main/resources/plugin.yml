@@ -6,23 +6,27 @@ commands:
   spectate:
     aliases: [spec]
     usage: /spectate [target]
+  spectatelist:
+    aliases: [speclist]
+    usage: /spectatelist
   spectatecycle:
     aliases: [speccycle]
-    usage: /spectatecycle <start|stop|pause|resume> ...
+    usage: /spectatecycle <start|stop> ...
   spectatehere:
     aliases: [spechere,spech]
     usage: /spectatehere
   spectatereload:
     aliases: [specreload,specrl]
     usage: /spectatereload
+  unspectate:
+    aliases: [unspec]
+    usage: /unspectate <Player|all> [true|false]
 permissions:
   spectate.*:
     default: op
     children:
       spectate.use.*: true
       spectate.utils.*: true
-      spectate.bypass.*: true
-      spectate.reload: true
   spectate.use.*:
     default: false
     children:
@@ -30,6 +34,7 @@ permissions:
       spectate.use.here: true
       spectate.use.others: true
       spectate.use.cycle: true
+      spectate.list: true
   spectate.utils.*:
     default: false
     children:
@@ -40,3 +45,8 @@ permissions:
     children:
       spectate.tablist: true
       spectate.cannot: true
+  spectate.admin:
+    default: false
+    children:
+      spectate.reload: true
+      spectate.unspectate: true

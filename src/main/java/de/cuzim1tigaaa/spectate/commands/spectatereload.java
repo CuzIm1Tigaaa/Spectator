@@ -13,9 +13,10 @@ public class spectatereload implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission(Permissions.RELOAD)) {
             sender.sendMessage(Config.getMessage("Config.Permission"));
+        }else {
+            Main.getInstance().reload();
+            sender.sendMessage(Config.getMessage("Config.Plugin.reload"));
         }
-        Main.getInstance().reload();
-        sender.sendMessage(Config.getMessage("Config.Plugin.reload"));
         return true;
     }
 }

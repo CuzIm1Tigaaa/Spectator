@@ -35,10 +35,12 @@ public class Inventory {
         player.updateInventory();
     }
     public static void restoreAll() {
-        if(!Main.getInstance().getMethods().getPlayerAttributes().isEmpty()) {
-            for(Player all : Main.getInstance().getMethods().getPlayerAttributes().keySet()) {
-                if(all.isOnline()) {
-                    restoreInventory(all);
+        if(Main.getInstance() != null) {
+            if(!Main.getInstance().getMethods().getPlayerAttributes().isEmpty()) {
+                for(Player all : Main.getInstance().getMethods().getPlayerAttributes().keySet()) {
+                    if(all.isOnline()) {
+                        restoreInventory(all);
+                    }
                 }
             }
         }

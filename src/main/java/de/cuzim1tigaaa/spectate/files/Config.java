@@ -52,6 +52,7 @@ public class Config {
             message.set("Config.Error.dismount", message.getString("Config.Error.dismount", "&cYou cannot dismount while in Speccycle-Mode! Use &7/spectatecycle stop &cto leave Speccycle-Mode."));
             message.set("Config.Error.gm", message.getString("Config.Error.gm", "&cYou cannot change your GameMode while spectating! Use &7/spec &cto leave Spectator-Mode."));
             message.set("Config.Error.isNot", message.getString("Config.Error.isNot", "&cYou have to be a Player!"));
+            message.set("Config.Error.nobody", message.getString("Config.Error.nobody", "&cThere are no spectators at the moment!"));
             message.set("Config.Error.noPlayers", message.getString("Config.Error.noPlayers", "&cThere are not enough Players online."));
             message.set("Config.Error.offline", message.getString("Config.Error.offline", "&7[player] &cis not Online!"));
             message.set("Config.Error.same", message.getString("Config.Error.same", "&cYou are already spectating &7[player]&c!"));
@@ -71,6 +72,7 @@ public class Config {
             message.set("Config.Spectate.give.leave", message.getString("Config.Spectate.give.leave", "[player] is no longer in Spectator-Mode."));
             message.set("Config.Spectate.give.use", message.getString("Config.Spectate.give.use", "[player] &7is now in Spectator-Mode."));
             message.set("Config.Spectate.give.others", message.getString("Config.Spectate.give.others", "[player] &7is now spectating [target]."));
+            message.set("Config.Spectate.unSpectate.others", message.getString("Config.Spectate.unSpectate.others", "&7[player] is no longer spectating."));
             message.save(messagesfile);
         }catch (IOException exception) {
             exception.printStackTrace();

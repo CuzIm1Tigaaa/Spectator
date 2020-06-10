@@ -60,7 +60,9 @@ public class Methods {
     public void unSpectate(final Player player, final boolean loc) {
         Location location = null;
         if (Config.saveLocation && !loc) {
-            location = playerAttributes.get(player).getLocation();
+            if(playerAttributes.containsKey(player)) {
+                location = playerAttributes.get(player).getLocation();
+            }
         }
         if (location == null) {
             location = player.getLocation();
@@ -82,8 +84,13 @@ public class Methods {
         if(hidden.contains(player) && player.hasPermission(Permissions.TAB) && Config.hideTab) {
             HideFromTab(player, false);
         }
-        GameMode gameMode = playerAttributes.get(player).getGameMode();
-        Boolean isFlying = playerAttributes.get(player).getFlying();
+        GameMode gameMode = null;
+        Boolean isFlying = false;
+        if(playerAttributes.containsKey(player)) {
+            gameMode = playerAttributes.get(player).getGameMode();
+            isFlying = playerAttributes.get(player).getFlying();
+            playerAttributes.remove(player);
+        }
         if(!Config.saveFlying) {
             isFlying = false;
         }
@@ -91,10 +98,6 @@ public class Methods {
             gameMode = GameMode.SURVIVAL;
             isFlying = false;
         }
-        playerAttributes.remove(player);
-        player.setGameMode(gameMode);
-        player.setFlying(isFlying);
-        playerAttributes.remove(player);
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
     }

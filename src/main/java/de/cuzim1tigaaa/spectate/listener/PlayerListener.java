@@ -81,7 +81,7 @@ public class PlayerListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        if(Main.getInstance().getCycleHandler().isPlayerCycling(player) && !Config.kickOnCycle) {
+        if(!Config.kickOnCycle && Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
             event.setCancelled(true);
         }
     }

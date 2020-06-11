@@ -12,6 +12,8 @@ Spectate other Players. Note: This is a modified version of kosakriszi's Spectat
 - /spectatecycle pause - Pause a running speccycle
 - /spectatecycle resume - Resume a paused speccycle
 - /spectatereload - Reload the Config
+- /spectatelist - List all active spectators
+- /unspectate [Player]
 
 # Permissions
 - spectate.*: Grants a Player all Spectate Permissions
@@ -26,7 +28,10 @@ Spectate other Players. Note: This is a modified version of kosakriszi's Spectat
 	- spectate.bypass.*: Grannts a Player following Permission
 		- spectate.tablist: Player with this Permission can see hidden Players in Tab
 		- spectate.cannot: Player with this Permission cannot be spectated
-	- spectate.reload: Reload the Config
+	- spectate.admin:
+		- spectate.reload: Reload the Configuration
+		- spectate.unspectate: Unspectate All spectators or specific
+- spectate.useonly.cycle: Grants a Player permissions for speccycle, Player cannot leave the view
 
 # Config
 In the Config you can edit the Messages of the Plugin and 5 other settings:

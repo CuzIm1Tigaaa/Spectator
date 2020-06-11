@@ -13,7 +13,7 @@ Spectate other Players. Note: This is a modified version of kosakriszi's Spectat
 - /spectatecycle resume - Resume a paused speccycle
 - /spectatereload - Reload the Config
 - /spectatelist - List all active spectators
-- /unspectate [Player]
+- /unspectate [Player] - Unspectate all spectators or specific player
 
 # Permissions
 - spectate.*: Grants a Player all Spectate Permissions
@@ -22,6 +22,7 @@ Spectate other Players. Note: This is a modified version of kosakriszi's Spectat
 		- spectate.use.here: Use the /spectatehere Command
 		- spectate.use.others: Spectate other Players
 		- spectate.use.cycle: Us the /spectatecycle Command
+		- spectate.list: List all active spectators
 	- spectate.utils.*: Grants a Player following Permissions
 		- spectate.inventory: Let a Spectator see the target Inventory
 		- spectate.tab: Let a Spectator be hidden in Tablist

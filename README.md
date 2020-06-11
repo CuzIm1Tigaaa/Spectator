@@ -1,5 +1,7 @@
 # Spectate
-Spectate other Players. Note: This is a modified version of kosakriszi's Spectator Plugin.
+Spectate other Players. 
+
+Note: This is a modified version of kosakriszi's Spectator Plugin. https://www.spigotmc.org/resources/spectator.16745/
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

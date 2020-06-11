@@ -16,15 +16,17 @@ public class spectatelist implements CommandExecutor {
         if(sender.hasPermission(Permissions.LIST)) {
             for(Player all : instance.getSpectators()) {
                 if(all != null) {
+                    if(instance.getRelation().containsKey(all) && !instance.getCycleHandler().isPlayerCycling(all)) {
+                        sender.sendMessage("§7- §e" + all.getDisplayName() + " §8[§c" + instance.getRelation().get(all) + "§8]");
+                    }
                     if(instance.getCycleHandler().isPlayerCycling(all)) {
-                        sender.sendMessage("§7- §e" + all.getDisplayName() + " §7[§cCycle§7]");
-                    }else if(instance.getRelation().containsKey(all)) {
-                        sender.sendMessage("§7- §e" + all.getDisplayName() + " §7[§c" + Main.getInstance().getRelation().get(all).getDisplayName() + "§7]");
-                    }else sender.sendMessage("§7- §e" + all.getDisplayName());
+                        sender.sendMessage("§7- §e" + all.getDisplayName() + " §8[§cCycle§8]");
+                    }
+                    sender.sendMessage("§7- §e" + all.getDisplayName());
                 }else {
                     sender.sendMessage(Config.getMessage("Config.Error.nobody"));
+                    return true;
                 }
-                return true;
             }
         }else sender.sendMessage(Config.getMessage("Config.Permission"));
         return true;

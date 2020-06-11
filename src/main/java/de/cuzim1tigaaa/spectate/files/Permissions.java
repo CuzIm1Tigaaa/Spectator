@@ -6,6 +6,7 @@ public class Permissions {
     public static String HERE = "spectate.use.here";
     public static String OTHER = "spectate.use.others";
     public static String CYCLE = "spectate.use.cycle";
+    public static String CYCLEONLY = "spectate.useonly.cycle";
     public static String RELOAD = "spectate.reload";
     public static String TAB = "spectate.tab";
     public static String LIST = "spectate.list";

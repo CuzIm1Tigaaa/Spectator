@@ -14,7 +14,7 @@ public class spectatecycle implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player) {
             Player player = (Player) sender;
-            if(player.hasPermission(Permissions.CYCLE)) {
+            if(player.hasPermission(Permissions.CYCLE) || player.hasPermission(Permissions.CYCLEONLY)) {
                 if(args.length > 0) {
                     if(args[0].equalsIgnoreCase("start")) {
                         if(args.length == 2) {
@@ -34,7 +34,7 @@ public class spectatecycle implements CommandExecutor {
                             player.sendMessage("§cUsage: /spectatecycle start <interval>");
                             return true;
                         }
-                    }else if(args[0].equalsIgnoreCase("stop")) {
+                    }else if(args[0].equalsIgnoreCase("stop") && !player.hasPermission(Permissions.CYCLEONLY)) {
                         if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
                             Main.getInstance().getCycleHandler().stopCycle(player);
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.stop"));
@@ -59,6 +59,8 @@ public class spectatecycle implements CommandExecutor {
                         }
                         return true;
                         */
+                    }else if(player.hasPermission(Permissions.CYCLEONLY)) {
+                        player.sendMessage(Config.getMessage("Config.Error.cycleStop"));
                     }else {
                         return false;
                     }

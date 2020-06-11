@@ -25,8 +25,10 @@ permissions:
   spectate.*:
     default: op
     children:
+      spectate.admin: true
       spectate.use.*: true
       spectate.utils.*: true
+      spectate.bypass: false
   spectate.use.*:
     default: false
     children:
@@ -35,6 +37,7 @@ permissions:
       spectate.use.others: true
       spectate.use.cycle: true
       spectate.list: true
+      spectate.useonly.cycle: false
   spectate.utils.*:
     default: false
     children:

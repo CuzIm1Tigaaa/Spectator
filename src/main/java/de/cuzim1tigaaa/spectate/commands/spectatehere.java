@@ -16,15 +16,19 @@ public class spectatehere implements CommandExecutor {
         if(sender instanceof Player) {
             Player player = (Player) sender;
             if(player.hasPermission(Permissions.HERE)) {
-                if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    Main.getInstance().getMethods().unSpectate(player, true);
-                    if (Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
-                        Main.getInstance().getCycleHandler().stopCycle(player);
+                if(!player.hasPermission(Permissions.CYCLEONLY)) {
+                    if(player.getGameMode().equals(GameMode.SPECTATOR)) {
+                        Main.getInstance().getMethods().unSpectate(player, true);
+                        if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
+                            Main.getInstance().getCycleHandler().stopCycle(player);
+                        }
+                        player.sendMessage(Config.getMessage("Config.Spectate.leave"));
+                    }else {
+                        Main.getInstance().getMethods().spectate(player, null);
+                        player.sendMessage(Config.getMessage("Config.Spectate.use"));
                     }
-                    player.sendMessage(Config.getMessage("Config.Spectate.leave"));
                 }else {
-                    Main.getInstance().getMethods().spectate(player, null);
-                    player.sendMessage(Config.getMessage("Config.Spectate.use"));
+                    player.sendMessage(Config.getMessage("Config.Error.cycleOnly"));
                 }
             }else player.sendMessage(Config.getMessage("Config.Permission"));
         }

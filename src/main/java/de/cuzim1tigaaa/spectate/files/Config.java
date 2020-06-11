@@ -55,6 +55,8 @@ public class Config {
             message.set("Config.Error.nobody", message.getString("Config.Error.nobody", "&cThere are no spectators at the moment!"));
             message.set("Config.Error.noPlayers", message.getString("Config.Error.noPlayers", "&cThere are not enough Players online."));
             message.set("Config.Error.offline", message.getString("Config.Error.offline", "&7[player] &cis not Online!"));
+            message.set("Config.Error.cycleOnly", message.getString("Config.Error.cycleOnly", "&cYou can only use &7/spectatecycle start <Interval>"));
+            message.set("Config.Error.cycleStop", message.getString("Config.Error.cycleStop", "§cYou cannot leave Speccycle via &7/spectatecycle stop&c. Please use &7/spectate &cto unspectate."));
             message.set("Config.Error.same", message.getString("Config.Error.same", "&cYou are already spectating &7[player]&c!"));
             message.set("Config.Error.self", message.getString("Config.Error.self", "&cYou cannot spectate yourself!"));
             message.set("Config.Permission", message.getString("Config.Permission", "&cYou do not have permission to perform this Command!"));

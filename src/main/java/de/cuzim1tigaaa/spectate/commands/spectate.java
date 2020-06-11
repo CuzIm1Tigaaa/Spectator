@@ -18,39 +18,45 @@ public class spectate implements CommandExecutor {
             Player player = (Player) sender;
             if(args.length == 1) {
                 if(player.hasPermission(Permissions.OTHER)) {
-                    Player target = Bukkit.getPlayer(args[0]);
+                    if(!player.hasPermission(Permissions.CYCLEONLY)) {
+                        Player target = Bukkit.getPlayer(args[0]);
 
-                    if(target == null || !target.isOnline()) {
-                        player.sendMessage(Config.getMessage("Config.Error.offline", "player", args[0]));
-                        return true;
+                        if(target == null || !target.isOnline()) {
+                            player.sendMessage(Config.getMessage("Config.Error.offline", "player", args[0]));
+                            return true;
+                        }
+                        if(target.getUniqueId().equals(player.getUniqueId())) {
+                            player.sendMessage(Config.getMessage("Config.Error.self"));
+                            return true;
+                        }
+                        if(Main.getInstance().getRelation().get(player) == target) {
+                            player.sendMessage(Config.getMessage("Config.Error.same", "player", target.getDisplayName()));
+                            return true;
+                        }
+                        if(Main.getInstance().getRelation().get(target) == player || target.hasPermission(Permissions.CANNOT)) {
+                            player.sendMessage(Config.getMessage("Config.Error.cannot", "player", target.getDisplayName()));
+                            return true;
+                        }
+                        player.sendMessage(Config.getMessage("Config.Spectate.others", "player", target.getDisplayName()));
+                        Main.getInstance().getMethods().spectate(player, target);
+                    }else {
+                        player.sendMessage("You can only use /spectatecycle start <Interval>");
                     }
-                    if(target.getUniqueId().equals(player.getUniqueId())) {
-                        player.sendMessage(Config.getMessage("Config.Error.self"));
-                        return true;
-                    }
-                    if(Main.getInstance().getRelation().get(player) == target) {
-                        player.sendMessage(Config.getMessage("Config.Error.same", "player", target.getDisplayName()));
-                        return true;
-                    }
-                    if(Main.getInstance().getRelation().get(target) == player || target.hasPermission(Permissions.CANNOT)) {
-                        player.sendMessage(Config.getMessage("Config.Error.cannot", "player", target.getDisplayName()));
-                        return true;
-                    }
-                    player.sendMessage(Config.getMessage("Config.Spectate.others", "player", target.getDisplayName()));
-                    Main.getInstance().getMethods().spectate(player, target);
                 }else player.sendMessage(Config.getMessage("Config.Permission"));
             }else {
-                if(player.hasPermission(Permissions.USE)) {
+                if(player.hasPermission(Permissions.USE) || player.hasPermission(Permissions.CYCLEONLY)) {
                     if(player.getGameMode().equals(GameMode.SPECTATOR)) {
                         Main.getInstance().getMethods().unSpectate(player, false);
                         if(Main.getInstance().getCycleHandler().isPlayerCycling(player) || Main.getInstance().getCycleHandler().isPlayerPaused(player)) {
                             Main.getInstance().getCycleHandler().stopCycle(player);
                         }
                         player.sendMessage(Config.getMessage("Config.Spectate.leave"));
-                    }else {
+                    }else if(!player.hasPermission(Permissions.CYCLEONLY)) {
                         Main.getInstance().getMethods().spectate(player, null);
                         player.sendMessage(Config.getMessage("Config.Spectate.use"));
-                    }
+                    }else {
+                    player.sendMessage(Config.getMessage("Config.Error.cycleOnly"));
+                }
                 }else player.sendMessage(Config.getMessage("Config.Permission"));
             }
         }else {

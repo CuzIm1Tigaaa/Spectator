@@ -47,6 +47,6 @@ In the Config you can edit the Messages of the Plugin and 5 other settings:
 	- Controll if Player will be teleported to his old Location or his current
 	- Note: If saveLocation = false, /spec & /spechere are same
 - saveFlying, default: false
-	- Controll if Flymode of Player will be saved
+	- If true, this will save if a Player was flying or not
 - kickOnCycle, default: false
 	- Controll if Player can get kicked when Cycling

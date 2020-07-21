@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 
 public class spectate implements CommandExecutor {
 
+    private final Main instance = Main.getInstance();
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player) {
@@ -29,16 +31,16 @@ public class spectate implements CommandExecutor {
                             player.sendMessage(Config.getMessage("Config.Error.self"));
                             return true;
                         }
-                        if(Main.getInstance().getRelation().get(player) == target) {
+                        if(instance.getRelation().get(player) == target) {
                             player.sendMessage(Config.getMessage("Config.Error.same", "player", target.getDisplayName()));
                             return true;
                         }
-                        if(Main.getInstance().getRelation().get(target) == player || target.hasPermission(Permissions.CANNOT)) {
+                        if(instance.getRelation().get(target) == player || target.hasPermission(Permissions.CANNOT)) {
                             player.sendMessage(Config.getMessage("Config.Error.cannot", "player", target.getDisplayName()));
                             return true;
                         }
                         player.sendMessage(Config.getMessage("Config.Spectate.others", "player", target.getDisplayName()));
-                        Main.getInstance().getMethods().spectate(player, target);
+                        instance.getMethods().spectate(player, target);
                     }else {
                         player.sendMessage("You can only use /spectatecycle start <Interval>");
                     }
@@ -46,13 +48,13 @@ public class spectate implements CommandExecutor {
             }else {
                 if(player.hasPermission(Permissions.USE) || player.hasPermission(Permissions.CYCLEONLY)) {
                     if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-                        Main.getInstance().getMethods().unSpectate(player, false);
-                        if(Main.getInstance().getCycleHandler().isPlayerCycling(player) || Main.getInstance().getCycleHandler().isPlayerPaused(player)) {
-                            Main.getInstance().getCycleHandler().stopCycle(player);
+                        instance.getMethods().unSpectate(player, false);
+                        if(instance.getCycleHandler().isPlayerCycling(player) || instance.getCycleHandler().isPlayerPaused(player)) {
+                            instance.getCycleHandler().stopCycle(player);
                         }
                         player.sendMessage(Config.getMessage("Config.Spectate.leave"));
                     }else if(!player.hasPermission(Permissions.CYCLEONLY)) {
-                        Main.getInstance().getMethods().spectate(player, null);
+                        instance.getMethods().spectate(player, null);
                         player.sendMessage(Config.getMessage("Config.Spectate.use"));
                     }else {
                     player.sendMessage(Config.getMessage("Config.Error.cycleOnly"));
@@ -67,14 +69,14 @@ public class spectate implements CommandExecutor {
                     return true;
                 }
                 if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    Main.getInstance().getMethods().unSpectate(player, false);
-                    if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
-                        Main.getInstance().getCycleHandler().stopCycle(player);
+                    instance.getMethods().unSpectate(player, false);
+                    if(instance.getCycleHandler().isPlayerCycling(player)) {
+                        instance.getCycleHandler().stopCycle(player);
                     }
                     player.sendMessage(Config.getMessage("Config.Spectate.leave"));
                     sender.sendMessage(Config.getMessage("Config.Spectator.give.leave", "player", player.getDisplayName()));
                 }else {
-                    Main.getInstance().getMethods().spectate(player, null);
+                    instance.getMethods().spectate(player, null);
                     player.sendMessage(Config.getMessage("Config.Spectate.use"));
                     sender.sendMessage(Config.getMessage("Config.Spectator.give.use", "player", player.getDisplayName()));
                 }

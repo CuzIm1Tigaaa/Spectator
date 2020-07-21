@@ -1,6 +1,8 @@
 name: ${project.name}
 version: ${project.version}
 author: CuzIm1Tigaaa
+depend:
+  - ProtocolLib
 main: de.cuzim1tigaaa.spectate.Main
 commands:
   spectate:

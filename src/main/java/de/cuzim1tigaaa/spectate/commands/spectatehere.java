@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 
 public class spectatehere implements CommandExecutor {
 
+    private final Main instance = Main.getInstance();
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player) {
@@ -18,13 +20,13 @@ public class spectatehere implements CommandExecutor {
             if(player.hasPermission(Permissions.HERE)) {
                 if(!player.hasPermission(Permissions.CYCLEONLY)) {
                     if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-                        Main.getInstance().getMethods().unSpectate(player, true);
-                        if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
-                            Main.getInstance().getCycleHandler().stopCycle(player);
+                        instance.getMethods().unSpectate(player, true);
+                        if(instance.getCycleHandler().isPlayerCycling(player)) {
+                            instance.getCycleHandler().stopCycle(player);
                         }
                         player.sendMessage(Config.getMessage("Config.Spectate.leave"));
                     }else {
-                        Main.getInstance().getMethods().spectate(player, null);
+                        instance.getMethods().spectate(player, null);
                         player.sendMessage(Config.getMessage("Config.Spectate.use"));
                     }
                 }else {

@@ -17,20 +17,22 @@ import org.bukkit.entity.Player;
 
 public class PacketListener {
 
+    private static final Main instance = Main.getInstance();
+
     public PacketListener() {
     }
 
     public static void register() {
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();
         manager.addPacketListener(new PacketAdapter(PacketAdapter.params()
-                .plugin(Main.getInstance())
+                .plugin(instance)
                 .types(PacketType.Play.Client.USE_ENTITY)
                 .optionAsync()) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
                 if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    if(Main.getInstance().getSpectators().contains(player)) {
+                    if(instance.getSpectators().contains(player)) {
                         EnumWrappers.EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
                         if(action.equals(EnumWrappers.EntityUseAction.ATTACK)) {
                             Entity entity = event.getPacket().getEntityModifier(player.getWorld()).read(0);
@@ -43,7 +45,7 @@ public class PacketListener {
                                     if(player.hasPermission(Permissions.INVENTORY) && Config.mirrorInventory) {
                                         Inventory.getInventory(player, target);
                                     }
-                                    Main.getInstance().getRelation().put(player, target);
+                                    instance.getRelation().put(player, target);
                                 }
                             }
                         }

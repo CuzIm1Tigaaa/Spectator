@@ -6,7 +6,6 @@ import de.cuzim1tigaaa.spectate.files.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -19,10 +18,11 @@ public class Methods {
 
     private final Set<Player> hidden = new HashSet<>();
     private final HashMap<Player, PlayerAttributes> playerAttributes = new HashMap<>();
+    private final Main instance = Main.getInstance();
 
     public Methods() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-            for(Map.Entry<Player, Player> entry : Main.getInstance().getRelation().entrySet()) {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, () -> {
+            for(Map.Entry<Player, Player> entry : instance.getRelation().entrySet()) {
                 final Player player = entry.getKey();
                 final Player target = entry.getValue();
 
@@ -30,7 +30,7 @@ public class Methods {
 
                 if(!player.getWorld().equals(target.getWorld()) || player.getLocation().distanceSquared(target.getLocation()) > 1) {
                     player.setSpectatorTarget(null);
-                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> player.setSpectatorTarget(target), 5);
+                    Bukkit.getScheduler().runTaskLater(instance, () -> player.setSpectatorTarget(target), 5);
                 }
             }
         }, 0, 10);
@@ -41,7 +41,7 @@ public class Methods {
             playerAttributes.put(player, new PlayerAttributes(player));
         }
         player.setGameMode(GameMode.SPECTATOR);
-        Main.getInstance().getSpectators().add(player);
+        instance.getSpectators().add(player);
         player.getInventory().clear();
         player.updateInventory();
         if(player.hasPermission(Permissions.TAB) && Config.hideTab) {
@@ -52,8 +52,8 @@ public class Methods {
                 Inventory.getInventory(player, target);
             }
             player.setSpectatorTarget(null);
-            Main.getInstance().getRelation().remove(player);
-            Main.getInstance().getRelation().put(player, target);
+            instance.getRelation().remove(player);
+            instance.getRelation().put(player, target);
             player.setSpectatorTarget(target);
         }
     }
@@ -68,18 +68,13 @@ public class Methods {
             location = player.getLocation();
             float pitch = location.getPitch();
             float yaw = location.getYaw();
-            if (!location.getBlock().getType().equals(Material.AIR) || !player.isOnGround()) {
-                double x, z;
-                x = location.getX();
-                z = location.getZ();
-                location = new Location(location.getWorld(), x, location.getWorld().getHighestBlockAt(location).getY(), z);
-                location.setPitch(pitch);
-                location.setYaw(yaw);
-            }
+            player.teleport(location);
+            location.setPitch(pitch);
+            location.setYaw(yaw);
         }
         player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        Main.getInstance().getSpectators().remove(player);
-        Main.getInstance().getRelation().remove(player);
+        instance.getSpectators().remove(player);
+        instance.getRelation().remove(player);
         Inventory.restoreInventory(player);
         if(hidden.contains(player) && player.hasPermission(Permissions.TAB) && Config.hideTab) {
             HideFromTab(player, false);
@@ -102,9 +97,9 @@ public class Methods {
         player.setFlying(isFlying);
     }
     public void restoreAll() {
-        for(Player all : Main.getInstance().getSpectators()) {
+        for(Player all : instance.getSpectators()) {
             unSpectate(all, false);
-            Main.getInstance().getLogger().info(all.getDisplayName() + " has got his inventory back.");
+            instance.getLogger().info(all.getDisplayName() + " has got his inventory back.");
         }
     }
 
@@ -114,11 +109,11 @@ public class Methods {
                 if(!target.hasPermission(Permissions.TABLIST)) {
                     if(hide) {
                         hidden.add(player);
-                        target.hidePlayer(Main.getInstance(), player);
+                        target.hidePlayer(instance, player);
 
                     }else {
                         hidden.remove(player);
-                        target.showPlayer(Main.getInstance(), player);
+                        target.showPlayer(instance, player);
                     }
                 }
             }

@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Main extends JavaPlugin {
@@ -41,8 +42,7 @@ public class Main extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        Inventory.restoreAll();
-        methods.restoreAll();
+        this.disable();
     }
 
     private void info() {
@@ -58,12 +58,12 @@ public class Main extends JavaPlugin {
     }
     private void register() {
         this.getLogger().info("Register Events & Commands...");
-        getCommand("spectate").setExecutor(new spectate());
-        getCommand("spectatecycle").setExecutor(new spectatecycle());
-        getCommand("spectatehere").setExecutor(new spectatehere());
-        getCommand("spectatereload").setExecutor(new spectatereload());
-        getCommand("spectatelist").setExecutor(new spectatelist());
-        getCommand("unspectate").setExecutor(new unspectate());
+        Objects.requireNonNull(getCommand("spectate")).setExecutor(new spectate());
+        Objects.requireNonNull(getCommand("spectatecycle")).setExecutor(new spectatecycle());
+        Objects.requireNonNull(getCommand("spectatehere")).setExecutor(new spectatehere());
+        Objects.requireNonNull(getCommand("spectatereload")).setExecutor(new spectatereload());
+        Objects.requireNonNull(getCommand("spectatelist")).setExecutor(new spectatelist());
+        Objects.requireNonNull(getCommand("unspectate")).setExecutor(new unspectate());
 
         PluginManager pm = instance.getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(), instance);
@@ -71,6 +71,10 @@ public class Main extends JavaPlugin {
     public void reload() {
         this.getLogger().info("Reloading Config...");
         Config.loadConfig();
+    }
+    public void disable() {
+        Inventory.restoreAll();
+        methods.restoreAll();
     }
 
     public static Main getInstance() {

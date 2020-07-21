@@ -12,43 +12,52 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.server.PluginDisableEvent;
 
 import java.util.Map;
 
 public class PlayerListener implements Listener {
 
+    private final Main instance = Main.getInstance();
+
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if(!player.hasPermission(Permissions.TABLIST) && Config.hideTab) {
-            for(Player hidden : Main.getInstance().getMethods().getHidden()) {
-                player.hidePlayer(Main.getInstance(), hidden);
+            for(Player hidden : instance.getMethods().getHidden()) {
+                player.hidePlayer(instance, hidden);
             }
         }
     }
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if(Main.getInstance().getSpectators().contains(player)) {
-            Main.getInstance().getMethods().unSpectate(player, false);
+        if(instance.getSpectators().contains(player)) {
+            instance.getMethods().unSpectate(player, false);
         }
-        for (Map.Entry<Player, Player> entry : Main.getInstance().getRelation().entrySet()) {
+        for (Map.Entry<Player, Player> entry : instance.getRelation().entrySet()) {
             if (entry.getValue().equals(player)) {
                 Player spectator = entry.getKey();
-                if (!Main.getInstance().getCycleHandler().isPlayerCycling(spectator)) {
+                if (!instance.getCycleHandler().isPlayerCycling(spectator)) {
                     dismountTarget(spectator);
                 }
                 else {
-                    Main.getInstance().getCycleHandler().restartCycle(spectator);
+                    instance.getCycleHandler().restartCycle(spectator);
                 }
             }
         }
     }
     @EventHandler
+    public void onPluginDisable(PluginDisableEvent event) {
+        if(event != null) {
+            instance.disable();
+        }
+    }
+    @EventHandler
     public void onDismount(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if(Main.getInstance().getSpectators().contains(player)) {
-            if(!Main.getInstance().getCycleHandler().isPlayerCycling(player) || !player.hasPermission(Permissions.CYCLEONLY)) {
+        if(instance.getSpectators().contains(player)) {
+            if(!instance.getCycleHandler().isPlayerCycling(player) || !player.hasPermission(Permissions.CYCLEONLY)) {
                 if(event.isSneaking()) {
                     dismountTarget(player);
                 }
@@ -63,7 +72,7 @@ public class PlayerListener implements Listener {
     public void dismountTarget(Player player) {
         if(player.getGameMode().equals(GameMode.SPECTATOR)) {
             if(player.getSpectatorTarget() != null && player.getSpectatorTarget().getType().equals(EntityType.PLAYER)) {
-                Main.getInstance().getRelation().remove(player);
+                instance.getRelation().remove(player);
                 player.getInventory().clear();
                 player.setSpectatorTarget(null);
             }
@@ -72,7 +81,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
-        if(Main.getInstance().getSpectators().contains(player)) {
+        if(instance.getSpectators().contains(player)) {
             player.sendMessage(Config.getMessage("Config.Error.gm"));
             event.setCancelled(true);
         }
@@ -81,7 +90,7 @@ public class PlayerListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        if(!Config.kickOnCycle && Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
+        if(!Config.kickOnCycle && instance.getCycleHandler().isPlayerCycling(player)) {
             event.setCancelled(true);
         }
     }

@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 public class spectatecycle implements CommandExecutor {
 
+    private final Main instance = Main.getInstance();
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player) {
@@ -18,10 +20,10 @@ public class spectatecycle implements CommandExecutor {
                 if(args.length > 0) {
                     if(args[0].equalsIgnoreCase("start")) {
                         if(args.length == 2) {
-                            if(!Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
+                            if(!instance.getCycleHandler().isPlayerCycling(player)) {
                                 try {
                                     int interval = Integer.parseInt(args[1]);
-                                    Main.getInstance().getCycleHandler().startCycle(player, interval * 20);
+                                    instance.getCycleHandler().startCycle(player, interval * 20);
                                     return true;
                                 }catch(NumberFormatException exception) {
                                     return false;
@@ -35,8 +37,8 @@ public class spectatecycle implements CommandExecutor {
                             return true;
                         }
                     }else if(args[0].equalsIgnoreCase("stop") && !player.hasPermission(Permissions.CYCLEONLY)) {
-                        if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
-                            Main.getInstance().getCycleHandler().stopCycle(player);
+                        if(instance.getCycleHandler().isPlayerCycling(player)) {
+                            instance.getCycleHandler().stopCycle(player);
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.stop"));
                         }else {
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.notRunning"));
@@ -44,16 +46,16 @@ public class spectatecycle implements CommandExecutor {
                         return true;
                         /*
                     }else if(args[0].equalsIgnoreCase("pause")) {
-                        if(Main.getInstance().getCycleHandler().isPlayerCycling(player)) {
-                            Main.getInstance().getCycleHandler().pauseCycle(player);
+                        if(instance.getCycleHandler().isPlayerCycling(player)) {
+                            instance.getCycleHandler().pauseCycle(player);
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.pause"));
                         }else {
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.notRunning"));
                         }
                         return true;
                     }else if(args[0].equalsIgnoreCase("resume")) {
-                        if(Main.getInstance().getCycleHandler().isPlayerPaused(player)) {
-                            Main.getInstance().getCycleHandler().resumeCycle(player);
+                        if(instance.getCycleHandler().isPlayerPaused(player)) {
+                            instance.getCycleHandler().resumeCycle(player);
                         }else {
                             player.sendMessage(Config.getMessage("Config.Spectate.Cycle.notPaused"));
                         }

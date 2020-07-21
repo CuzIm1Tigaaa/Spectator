@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class Inventory {
 
+    private static final Main instance = Main.getInstance();
+
     public static void getInventory(Player player, Player target) {
         player.getInventory().clear();
         if(target != null) {
@@ -21,10 +23,10 @@ public class Inventory {
         player.updateInventory();
     }
     public static void restoreInventory(Player player) {
-        if(Main.getInstance().getMethods().getPlayerAttributes().containsKey(player)) {
+        if(instance.getMethods().getPlayerAttributes().containsKey(player)) {
             player.getInventory().clear();
-            ItemStack[] inventory = Main.getInstance().getMethods().getPlayerAttributes().get(player).getInventory();
-            ItemStack[] armor = Main.getInstance().getMethods().getPlayerAttributes().get(player).getArmor();
+            ItemStack[] inventory = instance.getMethods().getPlayerAttributes().get(player).getInventory();
+            ItemStack[] armor = instance.getMethods().getPlayerAttributes().get(player).getArmor();
             if(inventory != null) {
                 player.getInventory().setContents(inventory);
             }
@@ -35,8 +37,8 @@ public class Inventory {
         player.updateInventory();
     }
     public static void restoreAll() {
-        if(!Main.getInstance().getMethods().getPlayerAttributes().isEmpty()) {
-            for(Player all : Main.getInstance().getMethods().getPlayerAttributes().keySet()) {
+        if(!instance.getMethods().getPlayerAttributes().isEmpty()) {
+            for(Player all : instance.getMethods().getPlayerAttributes().keySet()) {
                 if(all.isOnline()) {
                     restoreInventory(all);
                 }

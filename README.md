@@ -6,16 +6,18 @@ Note: This is a modified version of kosakriszi's Spectator Plugin. https://www.s
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 # Commands
-- /spectate - Enter or leave Spectator-Mode
-- /spectatehere - Enter Spectator-Mode or leave at current position (Info: Teleports you to the highest block at Position.
-- /spectate [Player] - Spectate a specific Player
-- /spectatecycle start <Seconds> - Start a speccycle with given Interval
-- /spectatecycle stop - Stop a running speccycle
+- /spectate - spectate.use - Enter or leave Spectator-Mode
+- /spectatehere - spectate.use.here - Enter Spectator-Mode or leave at current position (Info: Teleports you to the highest block at Position.
+- /spectate [Player] - spectate.use.others - Spectate a specific Player
+- /spectatecycle start <Seconds> - spectate.use.cycle - Start a speccycle with given Interval
+- /spectatecycle stop - spectate.use.cycle - Stop a running speccycle
+Info: These Commands are both deactivated atm!
 - /spectatecycle pause - Pause a running speccycle
 - /spectatecycle resume - Resume a paused speccycle
-- /spectatereload - Reload the Config
-- /spectatelist - List all active spectators
-- /unspectate [Player] - Unspectate all spectators or specific player
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+- /spectatereload - spectate.reload - Reload the Config
+- /spectatelist - spectate.list - List all active spectators
+- /unspectate [Player] - spectate.unspectate - Unspectate all spectators or specific player
 
 # Permissions
 - spectate.*: Grants a Player all Spectate Permissions

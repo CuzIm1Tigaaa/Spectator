@@ -1,14 +1,14 @@
 package de.cuzim1tigaaa.spectate;
 
 import de.cuzim1tigaaa.spectate.commands.*;
-import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectate.files.Config;
 import de.cuzim1tigaaa.spectate.listener.PacketListener;
 import de.cuzim1tigaaa.spectate.listener.PlayerListener;
 import de.cuzim1tigaaa.spectate.player.Inventory;
 import de.cuzim1tigaaa.spectate.player.Methods;
+import org.bukkit.GameMode;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -24,17 +24,11 @@ public class Main extends JavaPlugin {
     private final HashMap<Player, Player> relation = new HashMap<>();
 
     private Methods methods;
-    private PlayerListener playerListener;
-    private CycleHandler cycleHandler;
 
     @Override
     public void onEnable() {
         instance = this;
-
         methods = new Methods();
-        playerListener = new PlayerListener();
-        cycleHandler = new CycleHandler();
-        PacketListener.register();
 
         info();
         register();
@@ -56,18 +50,7 @@ public class Main extends JavaPlugin {
         this.getLogger().info("https://www.spigotmc.org/resources/spectator.16745/");
         this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
     }
-    private void register() {
-        this.getLogger().info("Register Events & Commands...");
-        Objects.requireNonNull(getCommand("spectate")).setExecutor(new spectate());
-        Objects.requireNonNull(getCommand("spectatecycle")).setExecutor(new spectatecycle());
-        Objects.requireNonNull(getCommand("spectatehere")).setExecutor(new spectatehere());
-        Objects.requireNonNull(getCommand("spectatereload")).setExecutor(new spectatereload());
-        Objects.requireNonNull(getCommand("spectatelist")).setExecutor(new spectatelist());
-        Objects.requireNonNull(getCommand("unspectate")).setExecutor(new unspectate());
-
-        PluginManager pm = instance.getServer().getPluginManager();
-        pm.registerEvents(new PlayerListener(), instance);
-    }
+    public static Main getInstance() { return instance; }
     public void reload() {
         this.getLogger().info("Reloading Config...");
         Config.loadConfig();
@@ -77,23 +60,35 @@ public class Main extends JavaPlugin {
         methods.restoreAll();
     }
 
-    public static Main getInstance() {
-        return instance;
-    }
-    public Set<Player> getSpectators() {
-        return spectators;
-    }
-    public HashMap<Player, Player> getRelation() {
-        return relation;
+    private void register() {
+        this.getLogger().info("Register Events & Commands...");
+        new PlayerListener(instance);
+        new PacketListener(instance);
+
+        Objects.requireNonNull(this.getCommand("spectate")).setExecutor(new Spectate(instance));
+        Objects.requireNonNull(this.getCommand("spectatecycle")).setExecutor(new SpectateCycle(instance));
+        Objects.requireNonNull(this.getCommand("spectatehere")).setExecutor(new SpectateHere(instance));
+        Objects.requireNonNull(this.getCommand("spectatelist")).setExecutor(new SpectateList(instance));
+        Objects.requireNonNull(this.getCommand("spectatereload")).setExecutor(new SpectateReload(instance));
+        Objects.requireNonNull(this.getCommand("unspectate")).setExecutor(new UnSpectate(instance));
+
+        new SpectateCycle(instance);
+        new SpectateHere(instance);
+        new SpectateReload(instance);
+        new SpectateList(instance);
+        new UnSpectate(instance);
     }
 
-    public Methods getMethods() {
-        return methods;
+    public void dismountTarget(Player player) {
+        if(!player.getGameMode().equals(GameMode.SPECTATOR)) return;
+        if(player.getSpectatorTarget() == null || !player.getSpectatorTarget().getType().equals(EntityType.PLAYER)) return;
+        instance.getRelation().remove(player);
+        player.getInventory().clear();
+        player.setSpectatorTarget(null);
     }
-    public PlayerListener getPlayerListener() {
-        return playerListener;
-    }
-    public CycleHandler getCycleHandler() {
-        return cycleHandler;
-    }
+
+    public Set<Player> getSpectators() { return spectators; }
+    public HashMap<Player, Player> getRelation() { return relation; }
+
+    public Methods getMethods() { return methods; }
 }

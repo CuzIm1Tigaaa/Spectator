@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Spectate:jar">
+    <output-path>$PROJECT_DIR$/../../../../../Debug_Server/plugins</output-path>
+    <root id="archive" name="Spectate.jar">
+      <element id="module-output" name="Spectate" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/cglib/cglib-nodep/3.2.5/cglib-nodep-3.2.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/comphenix/executors/BukkitExecutors/1.1-SNAPSHOT/BukkitExecutors-1.1-20170429.151522-2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/comphenix/protocol/ProtocolLib/4.5.0/ProtocolLib-4.5.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -27,22 +27,10 @@ public class Inventory {
             player.getInventory().clear();
             ItemStack[] inventory = instance.getMethods().getPlayerAttributes().get(player).getInventory();
             ItemStack[] armor = instance.getMethods().getPlayerAttributes().get(player).getArmor();
-            if(inventory != null) {
-                player.getInventory().setContents(inventory);
-            }
-            if(armor != null) {
-                player.getInventory().setArmorContents(armor);
-            }
+            if(inventory != null) player.getInventory().setContents(inventory);
+            if(armor != null) player.getInventory().setArmorContents(armor);
         }
         player.updateInventory();
     }
-    public static void restoreAll() {
-        if(!instance.getMethods().getPlayerAttributes().isEmpty()) {
-            for(Player all : instance.getMethods().getPlayerAttributes().keySet()) {
-                if(all.isOnline()) {
-                    restoreInventory(all);
-                }
-            }
-        }
-    }
+    public static void restoreAll() { if(!instance.getMethods().getPlayerAttributes().isEmpty()) for(Player all : instance.getMethods().getPlayerAttributes().keySet()) if(all.isOnline()) restoreInventory(all); }
 }

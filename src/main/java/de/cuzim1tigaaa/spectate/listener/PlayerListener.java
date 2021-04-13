@@ -1,10 +1,11 @@
 package de.cuzim1tigaaa.spectate.listener;
 
 import de.cuzim1tigaaa.spectate.Main;
+import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectate.files.Config;
+import de.cuzim1tigaaa.spectate.files.Paths;
 import de.cuzim1tigaaa.spectate.files.Permissions;
 import org.bukkit.GameMode;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,63 +19,44 @@ import java.util.Map;
 
 public class PlayerListener implements Listener {
 
-    private final Main instance = Main.getInstance();
+    private final Main instance;
+
+    public PlayerListener(Main plugin) {
+        this.instance = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, instance);
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if(!player.hasPermission(Permissions.TABLIST) && Config.hideTab) {
-            for(Player hidden : instance.getMethods().getHidden()) {
-                player.hidePlayer(instance, hidden);
-            }
-        }
+        if(!player.hasPermission(Permissions.BYPASS_TABLIST) && Config.hideTab) for(Player hidden : instance.getMethods().getHidden()) player.hidePlayer(instance, hidden);
+        else for(Player hidden : instance.getMethods().getHidden()) player.showPlayer(instance, hidden);
     }
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if(instance.getSpectators().contains(player)) {
-            instance.getMethods().unSpectate(player, false);
-        }
+        if(instance.getSpectators().contains(player)) instance.getMethods().unSpectate(player, false);
         for (Map.Entry<Player, Player> entry : instance.getRelation().entrySet()) {
             if (entry.getValue().equals(player)) {
                 Player spectator = entry.getKey();
-                if (!instance.getCycleHandler().isPlayerCycling(spectator)) {
-                    dismountTarget(spectator);
-                }
-                else {
-                    instance.getCycleHandler().restartCycle(spectator);
-                }
+                if (!CycleHandler.isPlayerCycling(spectator)) instance.dismountTarget(spectator);
+                else CycleHandler.restartCycle(spectator);
             }
         }
     }
     @EventHandler
-    public void onPluginDisable(PluginDisableEvent event) {
-        if(event != null) {
-            instance.disable();
-        }
-    }
+    public void onPluginDisable(PluginDisableEvent event) { if(event != null) instance.disable(); }
     @EventHandler
     public void onDismount(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         if(instance.getSpectators().contains(player)) {
-            if(!instance.getCycleHandler().isPlayerCycling(player) || !player.hasPermission(Permissions.CYCLEONLY)) {
-                if(event.isSneaking()) {
-                    dismountTarget(player);
-                }
+            if(!CycleHandler.isPlayerCycling(player) || !player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
+                if(event.isSneaking()) instance.dismountTarget(player);
             }else {
                 if(event.isSneaking()) {
-                    player.sendMessage(Config.getMessage("Config.Error.dismount"));
+                    player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_DISMOUNT));
                     event.setCancelled(true);
                 }
-            }
-        }
-    }
-    public void dismountTarget(Player player) {
-        if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-            if(player.getSpectatorTarget() != null && player.getSpectatorTarget().getType().equals(EntityType.PLAYER)) {
-                instance.getRelation().remove(player);
-                player.getInventory().clear();
-                player.setSpectatorTarget(null);
             }
         }
     }
@@ -82,7 +64,7 @@ public class PlayerListener implements Listener {
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
         if(instance.getSpectators().contains(player)) {
-            player.sendMessage(Config.getMessage("Config.Error.gm"));
+            player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
             event.setCancelled(true);
         }
     }
@@ -90,20 +72,10 @@ public class PlayerListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        if(!Config.kickOnCycle && instance.getCycleHandler().isPlayerCycling(player)) {
-            event.setCancelled(true);
-        }
+        if(!Config.kickOnCycle && CycleHandler.isPlayerCycling(player)) event.setCancelled(true);
     }
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) {
-            event.setCancelled(true);
-        }
-    }
+    public void onInventoryClick(InventoryClickEvent event) { if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true); }
     @EventHandler
-    public void onInventoryDrag(InventoryDragEvent event) {
-        if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) {
-            event.setCancelled(true);
-        }
-    }
+    public void onInventoryDrag(InventoryDragEvent event) { if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true); }
 }

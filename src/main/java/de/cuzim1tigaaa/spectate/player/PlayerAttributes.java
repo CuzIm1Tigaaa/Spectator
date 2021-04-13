@@ -7,11 +7,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlayerAttributes {
 
-    private GameMode gameMode;
-    private Location location;
-    private Boolean isFlying;
-    private ItemStack[] inventory;
-    private ItemStack[] armor;
+    private final GameMode gameMode;
+    private final Location location;
+    private final Boolean isFlying;
+    private final ItemStack[] inventory;
+    private final ItemStack[] armor;
 
     public PlayerAttributes(Player player) {
         gameMode = player.getGameMode();

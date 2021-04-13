@@ -4,6 +4,7 @@ author: CuzIm1Tigaaa
 depend:
   - ProtocolLib
 main: de.cuzim1tigaaa.spectate.Main
+api-version: 1.16
 commands:
   spectate:
     aliases: [spec]
@@ -22,36 +23,81 @@ commands:
     usage: /spectatereload
   unspectate:
     aliases: [unspec]
-    usage: /unspectate <Player|all> [true|false]
+    usage: /unspectate [player|all] [true|false]
 permissions:
-  spectate.*:
+  spectator.commands.spectate:
+    description: Permission for /spectate
+    default: op
+  spectator.commands.spectateothers:
+    description: Permission for /spectate [player]
+    default: op
+  spectator.commands.spectatehere:
+    description: Permission for /spectatehere
+    default: op
+  spectator.commands.unspectate:
+    description: Permission for /unspectate
+    default: op
+  spectator.commands.cycle:
+    description: Permission for /spectatecycle
+    default: op
+  spectator.commands.cycleonly:
+    description: Only Permission for /spectatecycle
+    default: false
+  spectator.commands.list:
+    description: Permission for /spectatelist
+    default: op
+  spectator.commands.reload:
+      description: Permission for /spectatereload
+      default: op
+  spectator.utils.mirrorinventory:
+    description: Permission to see other players Inventory during spectating
+    default: op
+  spectator.utils.hidetab:
+    description: Permission to be hidden in Spigot Tablist
+    default: op
+  spectator.bypass.tablist:
+    description: Permission to see hidden players in Spigot Tablist
+    default: op
+  spectator.bypass.spectated:
+    description: Permission to not get spectated by other players
+    default: op
+  spectator.bypass.spectateall:
+    description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
+    default: op
+  spectator.bypass.*:
+    description: Permission for all .bypass Permissions
     default: op
     children:
-      spectate.admin: true
-      spectate.use.*: true
-      spectate.utils.*: true
-      spectate.bypass: false
-  spectate.use.*:
-    default: false
+      spectator.bypass.tablist: true
+      spectator.bypass.spectated: true
+      spectator.bypass.spectateall: true
+  spectator.utils.*:
+    description: Permission for all .utils Permissions
+    default: op
     children:
-      spectate.use: true
-      spectate.use.here: true
-      spectate.use.others: true
-      spectate.use.cycle: true
-      spectate.list: true
-      spectate.useonly.cycle: false
-  spectate.utils.*:
-    default: false
+      spectator.utils.mirrorinventory: true
+      spectator.utils.hidetab: true
+  spectator.commands.admin:
+    description: Permission for all admin commands
+    default: op
     children:
-      spectate.inventory: true
-      spectate.tab: true
-  spectate.bypass.*:
-    default: false
+      spectator.commands.reload: true
+      spectator.commands.unspectate: true
+  spectator.commands.*:
+    description: Permission for all commands (CycleOnly excluded!)
+    default: op
     children:
-      spectate.tablist: true
-      spectate.cannot: true
-  spectate.admin:
-    default: false
+      spectator.commands.admin: true
+      spectator.commands.spectate: true
+      spectator.commands.spectateothers: true
+      spectator.commands.spectatehere: true
+      spectator.commands.cycle: true
+      spectator.commands.cycleonly: false
+      spectator.commands.list: true
+  spectator.*:
+    description: Permission for every Permission (CycleOnly excluded!)
+    default: op
     children:
-      spectate.reload: true
-      spectate.unspectate: true
+      spectator.commands.*: true
+      spectator.utils.*: true
+      spectator.bypass.*: true

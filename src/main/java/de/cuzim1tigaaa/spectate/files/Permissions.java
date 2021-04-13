@@ -2,19 +2,20 @@ package de.cuzim1tigaaa.spectate.files;
 
 public class Permissions {
 
-    public static String USE = "spectate.use";
-    public static String HERE = "spectate.use.here";
-    public static String OTHER = "spectate.use.others";
-    public static String CYCLE = "spectate.use.cycle";
-    public static String CYCLEONLY = "spectate.useonly.cycle";
-    public static String RELOAD = "spectate.reload";
-    public static String TAB = "spectate.tab";
-    public static String LIST = "spectate.list";
 
-    public static String UNSPECTATE = "spectate.unspectate";
+    public static String COMMAND_SPECTATE_GENERAL = "spectator.commands.spectate";
+    public static String COMMAND_SPECTATE_OTHERS = "spectator.commands.spectateothers";
+    public static String COMMAND_SPECTATE_HERE = "spectator.commands.spectatehere";
+    public static String COMMAND_UNSPECTATE = "spectator.commands.unspectate";
+    public static String COMMANDS_SPECTATE_CYCLE = "spectator.commands.cycle";
+    public static String COMMANDS_SPECTATE_CYCLEONLY = "spectator.commands.cycleonly";
+    public static String COMMANDS_SPECTATE_LIST = "spectator.commands.list";
+    public static String COMMANDS_SPECTATE_RELOAD = "spectator.commands.reload";
 
-    public static String TABLIST = "spectate.tablist";
-    public static String CANNOT = "spectate.cannot";
-    public static String INVENTORY = "spectate.inventory";
+    public static String BYPASS_TABLIST = "spectator.bypass.tablist";
+    public static String BYPASS_SPECTATED = "spectator.bypass.spectated";
+    public static String BYPASS_SPECTATEALL = "spectator.bypass.spectateall";
+    public static String UTILS_MIRROR_INVENTORY = "spectator.utils.mirrorinventory";
+    public static String UTILS_HIDE_IN_TAB = "spectator.utils.hidetab";
 
 }

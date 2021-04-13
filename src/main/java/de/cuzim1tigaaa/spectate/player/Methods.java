@@ -104,16 +104,4 @@ public class Methods {
 
     public HashMap<Player, PlayerAttributes> getPlayerAttributes() { return playerAttributes; }
     public Set<Player> getHidden() { return hidden; }
-
-
-
-
-
-    public void Methode() {
-
-    }
-
-
-
-
 }

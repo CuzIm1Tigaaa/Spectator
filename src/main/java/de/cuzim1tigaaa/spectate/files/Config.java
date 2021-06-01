@@ -23,9 +23,7 @@ public class Config {
             if(target == null) msg = null;
             assert msg != null;
         }
-        if(msg == null) {
-            return "§cError: Message §7" + path + " §cdoes not exist!";
-        }
+        if(msg == null) return "§cError: Message §7" + path + " §cdoes not exist!";
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
 

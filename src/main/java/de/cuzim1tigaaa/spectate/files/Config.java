@@ -59,7 +59,7 @@ public class Config {
 
             message.set(Paths.MESSAGES_COMMANDS_LIST_NONE, message.getString(Paths.MESSAGES_COMMANDS_LIST_NONE, "&cThere are no spectators at the moment!"));
             message.set(Paths.MESSAGES_COMMANDS_LIST_TITLE, message.getString(Paths.MESSAGES_COMMANDS_LIST_TITLE, "&7There are currently &e%AMOUNT% &7Spectators:"));
-            message.set(Paths.MESSAGES_COMMANDS_LIST_CYCLING, message.getString(Paths.MESSAGES_COMMANDS_LIST_CYCLING, "&7- %SPECTATOR &8[&bCYCLING&8]"));
+            message.set(Paths.MESSAGES_COMMANDS_LIST_CYCLING, message.getString(Paths.MESSAGES_COMMANDS_LIST_CYCLING, "&7- %SPECTATOR% &8[&bCYCLING&8]"));
             message.set(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, message.getString(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "&7- %SPECTATOR%"));
             message.set(Paths.MESSAGES_COMMANDS_LIST_SPECTATING, message.getString(Paths.MESSAGES_COMMANDS_LIST_SPECTATING, "&7- %SPECTATOR% &8[&e%TARGET%&8]"));
 

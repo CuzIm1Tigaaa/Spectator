@@ -82,7 +82,7 @@ public class Methods {
         if(CycleHandler.isPlayerCycling(player)) CycleHandler.stopCycle(player);
     }
     public void restoreAll() {
-        Set<Player> spectators = instance.getSpectators();
+        Set<Player> spectators = new HashSet<>(instance.getSpectators());
         for(Player player : spectators) this.unSpectate(player, false);
     }
 

@@ -1,20 +1,14 @@
-package de.cuzim1tigaaa.spectate.listener;
+package de.cuzim1tigaaa.spectator.listener;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.*;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.files.Paths;
-import de.cuzim1tigaaa.spectate.files.Permissions;
-import de.cuzim1tigaaa.spectate.player.Inventory;
+import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.player.Inventory;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 public class PacketListener {
 

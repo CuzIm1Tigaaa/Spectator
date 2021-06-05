@@ -1,20 +1,17 @@
-package de.cuzim1tigaaa.spectate;
+package de.cuzim1tigaaa.spectator;
 
-import de.cuzim1tigaaa.spectate.commands.*;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.listener.PacketListener;
-import de.cuzim1tigaaa.spectate.listener.PlayerListener;
-import de.cuzim1tigaaa.spectate.player.Inventory;
-import de.cuzim1tigaaa.spectate.player.Methods;
+import de.cuzim1tigaaa.spectator.commands.*;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.listener.PacketListener;
+import de.cuzim1tigaaa.spectator.listener.PlayerListener;
+import de.cuzim1tigaaa.spectator.player.Inventory;
+import de.cuzim1tigaaa.spectator.player.Methods;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class Main extends JavaPlugin {
 

@@ -1,15 +1,11 @@
-package de.cuzim1tigaaa.spectate.listener;
+package de.cuzim1tigaaa.spectator.listener;
 
-import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.files.Paths;
-import de.cuzim1tigaaa.spectate.files.Permissions;
+import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
+import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.*;

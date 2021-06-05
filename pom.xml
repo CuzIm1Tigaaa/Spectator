@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Spectator</name>
-    <groupId>de.cuzim1tigaaa</groupId>
-    <artifactId>Spectate</artifactId>
+    <groupId>de.cuzim1tigaaa.spectator</groupId>
+    <artifactId>Spectator</artifactId>
     <version>v1.5.2</version>
 
     <properties>

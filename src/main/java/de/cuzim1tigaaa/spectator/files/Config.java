@@ -1,6 +1,6 @@
-package de.cuzim1tigaaa.spectate.files;
+package de.cuzim1tigaaa.spectator.files;
 
-import de.cuzim1tigaaa.spectate.Main;
+import de.cuzim1tigaaa.spectator.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

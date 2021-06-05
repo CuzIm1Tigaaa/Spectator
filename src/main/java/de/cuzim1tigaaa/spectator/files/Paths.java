@@ -1,4 +1,4 @@
-package de.cuzim1tigaaa.spectate.files;
+package de.cuzim1tigaaa.spectator.files;
 
 public class Paths {
 

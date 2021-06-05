@@ -1,6 +1,6 @@
-package de.cuzim1tigaaa.spectate.player;
+package de.cuzim1tigaaa.spectator.player;
 
-import de.cuzim1tigaaa.spectate.Main;
+import de.cuzim1tigaaa.spectator.Main;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

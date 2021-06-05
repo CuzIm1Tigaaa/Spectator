@@ -1,8 +1,8 @@
-package de.cuzim1tigaaa.spectate.commands;
+package de.cuzim1tigaaa.spectator.commands;
 
-import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
-import de.cuzim1tigaaa.spectate.files.*;
+import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
+import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;

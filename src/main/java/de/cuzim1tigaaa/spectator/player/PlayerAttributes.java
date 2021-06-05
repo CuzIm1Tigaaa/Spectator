@@ -1,4 +1,4 @@
-package de.cuzim1tigaaa.spectate.player;
+package de.cuzim1tigaaa.spectator.player;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;

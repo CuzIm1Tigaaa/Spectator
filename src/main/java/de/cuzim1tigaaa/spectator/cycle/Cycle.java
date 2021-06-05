@@ -1,7 +1,7 @@
-package de.cuzim1tigaaa.spectate.cycle;
+package de.cuzim1tigaaa.spectator.cycle;
 
-import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.files.Permissions;
+import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.files.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

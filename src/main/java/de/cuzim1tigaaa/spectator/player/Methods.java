@@ -1,9 +1,9 @@
-package de.cuzim1tigaaa.spectate.player;
+package de.cuzim1tigaaa.spectator.player;
 
-import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.files.Permissions;
+import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Permissions;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;

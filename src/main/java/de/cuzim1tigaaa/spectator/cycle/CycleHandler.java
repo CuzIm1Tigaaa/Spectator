@@ -1,8 +1,8 @@
-package de.cuzim1tigaaa.spectate.cycle;
+package de.cuzim1tigaaa.spectator.cycle;
 
-import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.files.Paths;
+import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Paths;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;

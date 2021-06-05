@@ -5,9 +5,7 @@ import de.cuzim1tigaaa.spectate.files.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Cycle {
 
@@ -22,7 +20,7 @@ public class Cycle {
         this.last = last;
     }
 
-    public boolean hasNextPlayer() { return alreadyVisited.size() != toVisit.size(); }
+    public boolean hasNextPlayer() { return toVisit != null && alreadyVisited.size() != toVisit.size(); }
     public Player getLastPlayer() { return last; }
     public Player getNextPlayer(Player spectator) {
         updateLists(spectator);

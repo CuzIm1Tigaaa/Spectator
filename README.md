@@ -1,4 +1,4 @@
-# Spectate
+# Spectator
 Spectate other Players. 
 Versions: 1.12.2 & 1.16.2
 

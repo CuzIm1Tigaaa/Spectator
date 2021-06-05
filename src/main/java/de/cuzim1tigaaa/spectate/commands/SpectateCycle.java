@@ -2,12 +2,9 @@ package de.cuzim1tigaaa.spectate.commands;
 
 import de.cuzim1tigaaa.spectate.Main;
 import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.files.Paths;
-import de.cuzim1tigaaa.spectate.files.Permissions;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import de.cuzim1tigaaa.spectate.files.*;
+import org.bukkit.Bukkit;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 public class SpectateCycle implements CommandExecutor {
@@ -25,17 +22,21 @@ public class SpectateCycle implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-        if(!player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLE) || !player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
+        if(!player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLE) && !player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
             player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
         }
-        if(args.length == 0) {
+        if(args.length < 1) {
             player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));
             return true;
         }
         if(args[0].equalsIgnoreCase("start")) {
             if(args.length < 2) {
                 player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle start <Interval>"));
+                return true;
+            }
+            if(Bukkit.getOnlinePlayers().size() <= 1) {
+                player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_NOPLAYERS));
                 return true;
             }
             if(CycleHandler.isPlayerCycling(player)) {
@@ -50,7 +51,11 @@ public class SpectateCycle implements CommandExecutor {
                 return true;
             }
         }
-        if(args[0].equalsIgnoreCase("stop") && !player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
+        if(args[0].equalsIgnoreCase("stop")) {
+            if(!player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLE) && player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
+                instance.getMethods().unSpectate(player, false);
+                return true;
+            }
             if(!CycleHandler.isPlayerCycling(player)) {
                 player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOTCYCLING));
                 return true;
@@ -59,10 +64,7 @@ public class SpectateCycle implements CommandExecutor {
             player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
             return true;
         }
-        if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-            instance.getMethods().unSpectate(player, false);
-            return true;
-        }
+        player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));
         return true;
     }
 }

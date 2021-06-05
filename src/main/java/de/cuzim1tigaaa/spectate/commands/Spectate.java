@@ -1,14 +1,10 @@
 package de.cuzim1tigaaa.spectate.commands;
 
 import de.cuzim1tigaaa.spectate.Main;
-import de.cuzim1tigaaa.spectate.files.Config;
-import de.cuzim1tigaaa.spectate.files.Paths;
-import de.cuzim1tigaaa.spectate.files.Permissions;
+import de.cuzim1tigaaa.spectate.files.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 public class Spectate implements CommandExecutor {
@@ -25,6 +21,10 @@ public class Spectate implements CommandExecutor {
             Player player = (Player) sender;
             if(args.length == 0) {
                 if(!player.hasPermission(Permissions.COMMAND_SPECTATE_GENERAL)) {
+                    if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
+                        player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
+                        return true;
+                    }
                     player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
                     return true;
                 }
@@ -33,20 +33,16 @@ public class Spectate implements CommandExecutor {
                     player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
                     return true;
                 }
-                if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                    player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
-                    return true;
-                }
                 instance.getMethods().spectate(player, null);
                 player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
                 return true;
             }
             if(!player.hasPermission(Permissions.COMMAND_SPECTATE_OTHERS)) {
+                if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
+                    player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
+                    return true;
+                }
                 player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
-                return true;
-            }
-            if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
                 return true;
             }
             Player target = Bukkit.getPlayer(args[0]);

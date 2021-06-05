@@ -27,65 +27,65 @@ commands:
 permissions:
   spectator.commands.spectate:
     description: Permission for /spectate
-    default: op
+    default: false
   spectator.commands.spectateothers:
     description: Permission for /spectate [player]
-    default: op
+    default: false
   spectator.commands.spectatehere:
     description: Permission for /spectatehere
-    default: op
+    default: false
   spectator.commands.unspectate:
     description: Permission for /unspectate
-    default: op
+    default: false
   spectator.commands.cycle:
     description: Permission for /spectatecycle
-    default: op
+    default: false
   spectator.commands.cycleonly:
     description: Only Permission for /spectatecycle
     default: false
   spectator.commands.list:
     description: Permission for /spectatelist
-    default: op
+    default: false
   spectator.commands.reload:
       description: Permission for /spectatereload
-      default: op
+      default: false
   spectator.utils.mirrorinventory:
     description: Permission to see other players Inventory during spectating
-    default: op
+    default: false
   spectator.utils.hidetab:
     description: Permission to be hidden in Spigot Tablist
-    default: op
+    default: false
   spectator.bypass.tablist:
     description: Permission to see hidden players in Spigot Tablist
-    default: op
+    default: false
   spectator.bypass.spectated:
     description: Permission to not get spectated by other players
-    default: op
+    default: false
   spectator.bypass.spectateall:
     description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
-    default: op
+    default: false
   spectator.bypass.*:
     description: Permission for all .bypass Permissions
-    default: op
+    default: false
     children:
       spectator.bypass.tablist: true
       spectator.bypass.spectated: true
       spectator.bypass.spectateall: true
   spectator.utils.*:
     description: Permission for all .utils Permissions
-    default: op
+    default: false
     children:
       spectator.utils.mirrorinventory: true
       spectator.utils.hidetab: true
   spectator.commands.admin:
     description: Permission for all admin commands
-    default: op
+    default: false
     children:
       spectator.commands.reload: true
       spectator.commands.unspectate: true
   spectator.commands.*:
     description: Permission for all commands (CycleOnly excluded!)
-    default: op
+    default: false
     children:
       spectator.commands.admin: true
       spectator.commands.spectate: true
@@ -96,7 +96,7 @@ permissions:
       spectator.commands.list: true
   spectator.*:
     description: Permission for every Permission (CycleOnly excluded!)
-    default: op
+    default: false
     children:
       spectator.commands.*: true
       spectator.utils.*: true

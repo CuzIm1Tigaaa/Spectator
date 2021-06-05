@@ -4,16 +4,11 @@ import de.cuzim1tigaaa.spectate.Main;
 import de.cuzim1tigaaa.spectate.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectate.files.Config;
 import de.cuzim1tigaaa.spectate.files.Permissions;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Methods {
 
@@ -86,7 +81,10 @@ public class Methods {
         player.setFlying(isFlying);
         if(CycleHandler.isPlayerCycling(player)) CycleHandler.stopCycle(player);
     }
-    public void restoreAll() { for(Player all : instance.getSpectators()) unSpectate(all, false); }
+    public void restoreAll() {
+        Set<Player> spectators = instance.getSpectators();
+        for(Player player : spectators) this.unSpectate(player, false);
+    }
 
     public void hideFromTab(final Player player, final boolean hide) {
         for(Player target : Bukkit.getOnlinePlayers()) {

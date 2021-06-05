@@ -22,10 +22,6 @@ public class CycleHandler {
     public static void startCycle(final Player player, int seconds) {
         int ticks = seconds * 20;
         playerCycles.put(player, new Cycle(player, null));
-        if(Bukkit.getOnlinePlayers().size() > 1) {
-            player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_NOPLAYERS));
-            return;
-        }
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Main.getInstance(), () -> {
             Cycle cycle = playerCycles.get(player);
             if(!cycle.hasNextPlayer()) {

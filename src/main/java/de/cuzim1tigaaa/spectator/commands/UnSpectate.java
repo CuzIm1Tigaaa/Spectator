@@ -6,7 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-public class UnSpectate implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class UnSpectate implements CommandExecutor, TabCompleter {
 
     private final Main instance;
 
@@ -46,5 +49,13 @@ public class UnSpectate implements CommandExecutor {
         target.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
         sender.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getDisplayName()));
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+        final List<String> tab = new ArrayList<>();
+        if(args.length == 1) for(Player player : Bukkit.getOnlinePlayers()) tab.add(player.getDisplayName());
+        if(args.length == 2) { tab.add("true"); tab.add("false"); }
+        return tab;
     }
 }

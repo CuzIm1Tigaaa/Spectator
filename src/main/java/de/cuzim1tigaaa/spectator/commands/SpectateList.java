@@ -6,7 +6,10 @@ import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-public class SpectateList implements CommandExecutor {
+import java.util.Collections;
+import java.util.List;
+
+public class SpectateList implements CommandExecutor, TabCompleter {
 
     private final Main instance;
 
@@ -20,12 +23,12 @@ public class SpectateList implements CommandExecutor {
             sender.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
         }
-        int i = instance.getSpectators().size();
-        if(i == 0) {
+        int spectators = instance.getSpectators().size();
+        if(spectators == 0) {
             sender.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_LIST_NONE));
             return true;
         }
-        sender.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_LIST_TITLE, "AMOUNT", i));
+        sender.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_LIST_TITLE, "AMOUNT", spectators));
         for(Player all : instance.getSpectators()) {
             if(all != null) {
                 String msg;
@@ -37,5 +40,10 @@ public class SpectateList implements CommandExecutor {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        return Collections.emptyList();
     }
 }

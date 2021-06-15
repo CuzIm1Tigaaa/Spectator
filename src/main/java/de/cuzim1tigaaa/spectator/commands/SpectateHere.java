@@ -6,7 +6,10 @@ import org.bukkit.GameMode;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-public class SpectateHere implements CommandExecutor {
+import java.util.Collections;
+import java.util.List;
+
+public class SpectateHere implements CommandExecutor, TabCompleter {
 
     private final Main instance;
 
@@ -35,5 +38,10 @@ public class SpectateHere implements CommandExecutor {
             player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        return Collections.emptyList();
     }
 }

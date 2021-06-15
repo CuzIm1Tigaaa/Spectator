@@ -7,7 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-public class SpectateCycle implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SpectateCycle implements CommandExecutor, TabCompleter {
 
     private final Main instance;
 
@@ -66,5 +69,12 @@ public class SpectateCycle implements CommandExecutor {
         }
         player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+        final List<String> tab = new ArrayList<>();
+        if(args.length == 1) { tab.add("start"); tab.add("stop"); }
+        return tab;
     }
 }

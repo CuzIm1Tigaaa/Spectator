@@ -4,7 +4,10 @@ import de.cuzim1tigaaa.spectator.Main;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.command.*;
 
-public class SpectateReload implements CommandExecutor {
+import java.util.Collections;
+import java.util.List;
+
+public class SpectateReload implements CommandExecutor, TabCompleter {
 
     private final Main instance;
 
@@ -21,5 +24,10 @@ public class SpectateReload implements CommandExecutor {
         instance.reload();
         sender.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_RELOAD));
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        return Collections.emptyList();
     }
 }

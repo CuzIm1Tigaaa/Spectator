@@ -7,7 +7,10 @@ import org.bukkit.GameMode;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-public class Spectate implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Spectate implements CommandExecutor, TabCompleter {
 
     private final Main instance;
 
@@ -86,5 +89,12 @@ public class Spectate implements CommandExecutor {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+        final List<String> tab = new ArrayList<>();
+        if(args.length == 1) for(Player player : Bukkit.getOnlinePlayers()) tab.add(player.getDisplayName());
+        return tab;
     }
 }

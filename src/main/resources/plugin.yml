@@ -3,7 +3,7 @@ version: ${project.version}
 author: CuzIm1Tigaaa
 depend: [ProtocolLib]
 main: ${project.groupId}.Main
-api-version: 1.16
+api-version: 1.17
 commands:
   spectate:
     aliases: [spec]

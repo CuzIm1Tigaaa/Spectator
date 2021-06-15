@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
@@ -25,6 +26,7 @@ public class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        if(!isProtocolLibInstalled()) return;
         methods = new Methods();
 
         info();
@@ -55,6 +57,16 @@ public class Main extends JavaPlugin {
     public void disable() {
         Inventory.restoreAll();
         methods.restoreAll();
+    }
+
+    private boolean isProtocolLibInstalled() {
+        if(this.getServer().getPluginManager().getPlugin("ProtocolLib") == null) {
+            this.getLogger().log(Level.SEVERE, "ProtocolLib is not installed, disabling Plugin...!");
+            this.getLogger().log(Level.SEVERE, "Please install ProtocolLib to use this Plugin!");
+            this.getServer().getPluginManager().disablePlugin(instance);
+            return false;
+        }
+        return true;
     }
 
     private void register() {

@@ -7,6 +7,7 @@ import de.cuzim1tigaaa.spectator.files.Permissions;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
 
@@ -37,6 +38,7 @@ public class Methods {
         player.getInventory().clear();
         player.updateInventory();
         if(player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) && Config.hideTab) hideFromTab(player, true);
+        player.setMetadata("vanished", new FixedMetadataValue(Main.getInstance(), true));
         if(target != null) {
             if(player.hasPermission(Permissions.UTILS_MIRROR_INVENTORY) && Config.mirrorInventory) Inventory.getInventory(player, target);
             player.setSpectatorTarget(null);
@@ -79,6 +81,7 @@ public class Methods {
         }
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
+        player.removeMetadata("vanished", Main.getInstance());
         if(CycleHandler.isPlayerCycling(player)) CycleHandler.stopCycle(player);
     }
     public void restoreAll() {

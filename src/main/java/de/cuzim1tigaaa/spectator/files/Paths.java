@@ -2,11 +2,18 @@ package de.cuzim1tigaaa.spectator.files;
 
 public class Paths {
 
-    public final static String CONFIG_HIDE_TAB = "Config.Settings.HideInTab";
-    public final static String CONFIG_MIRROR_INVENTORY = "Config.Settings.MirrorInventory";
-    public final static String CONFIG_SAVE_LOCATION = "Config.Settings.SavePlayerLocation";
-    public final static String CONFIG_SAVE_FLIGHT_MODE = "Config.Settings.SavePlayerFlightMode";
-    public final static String CONFIG_KICK_CYCLING_PLAYER = "Config.Settings.KickCyclingPlayer";
+    public final static String CONFIG_VERSION = "ConfigVersion";
+
+    public final static String CONFIG_NOTIFY_UPDATE = "Settings.NotifyOnUpdate";
+    public final static String CONFIG_HIDE_PLAYERS_TAB = "Settings.HidePlayersInTab";
+    public final static String CONFIG_KICK_WHILE_CYCLING = "Settings.KickCyclingPlayer";
+    public final static String CONFIG_PAUSE_WHEN_NO_PLAYERS = "Settings.Cycle.PauseWhenNoPlayers";
+
+    public final static String CONFIG_SAVE_PLAYERS_LOCATION = "Settings.Save.PlayerLocation";
+    public final static String CONFIG_SAVE_PLAYERS_FLIGHTMODE = "Settings.Save.PlayerFlightMode";
+    public final static String CONFIG_MIRROR_TARGET_EFFECTS = "Settings.Mirror.TargetEffects";
+    public final static String CONFIG_MIRROR_TARGETS_INVENTORY = "Settings.Mirror.TargetInventory";
+
 
     public final static String MESSAGE_DEFAULT_SENDER = "Messages.Default.Sender";
     public final static String MESSAGE_DEFAULT_PERMISSION = "Messages.Default.Permission";
@@ -25,7 +32,8 @@ public class Paths {
     public final static String MESSAGES_COMMANDS_CYCLE_START = "Messages.Commands.Cycle.Start";
     public final static String MESSAGES_COMMANDS_CYCLE_STOP = "Messages.Commands.Cycle.Stop";
     public final static String MESSAGES_COMMANDS_CYCLE_CYCLING = "Messages.Commands.Cycle.Cycling";
-    public final static String MESSAGES_COMMANDS_CYCLE_NOTCYCLING = "Messages.Commands.Cycle.NotCycling";
+    public final static String MESSAGES_COMMANDS_CYCLE_NOT_CYCLING = "Messages.Commands.Cycle.NotCycling";
+    public final static String MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING = "Messages.Commands.Cycle.TargetNotCycling";
 
     public final static String MESSAGES_GENERAL_CYCLEONLY = "Messages.General.CycleOnly";
     public final static String MESSAGES_GENERAL_NUMBERFORMAT = "Messages.General.NumberFormat";

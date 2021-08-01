@@ -1,0 +1,31 @@
+# This is the configuration file of the plugin.
+
+# This is the current version of the config, DO NOT CHANGE!
+ConfigVersion: 2
+
+# These are all settings this plugin provides
+Settings:
+  # Should Players with Permission [spectator.notify.update]
+  # get a notification when an update is available?
+  NotifyOnUpdate: true
+  # Should Players with Permission [spectator.utils.hidetab] be hidden in TabList?
+  HidePlayersInTab: true
+  # Should Players who are currently cycling be able to be kicked?
+  KickCyclingPlayer: false
+
+  Save:
+    # Should the Location of a Player be saved when executing /spec?
+    PlayerLocation: true
+    # Should the FlightMode of a Player be saved when executing /spec?
+    PlayerFlightMode: true
+
+  Mirror:
+    # Should a Player get all effects his target currently has while spectating?
+    TargetEffects: true
+    # Should a Player get all contents of his targets inventory while spectating?
+    TargetInventory: true
+
+  Cycle:
+    # Should the Cycle be paused, when there are no
+    # players online? Otherwise, Cycle will be stopped
+    PauseWhenNoPlayers: false

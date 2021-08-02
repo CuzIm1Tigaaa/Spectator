@@ -1,93 +1,93 @@
 package de.cuzim1tigaaa.spectator.commands;
 
-import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Spectate implements CommandExecutor, TabCompleter {
 
-    private final Main instance;
+    private final Spectator instance;
 
-    public Spectate(Main plugin) {
+    public Spectate(Spectator plugin) {
+        Objects.requireNonNull(plugin.getCommand("spectate")).setExecutor(this);
         this.instance = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(sender instanceof Player) {
-            Player player = (Player) sender;
+        if(sender instanceof Player player) {
             if(args.length == 0) {
                 if(!player.hasPermission(Permissions.COMMAND_SPECTATE_GENERAL)) {
                     if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                        player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
+                        player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
                         return true;
                     }
-                    player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
                     return true;
                 }
                 if(instance.getSpectators().contains(player)) {
                     instance.getMethods().unSpectate(player, false);
-                    player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
                     return true;
                 }
                 instance.getMethods().spectate(player, null);
-                player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
                 return true;
             }
             if(!player.hasPermission(Permissions.COMMAND_SPECTATE_OTHERS)) {
                 if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                    player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
                     return true;
                 }
-                player.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
                 return true;
             }
             Player target = Bukkit.getPlayer(args[0]);
             if(target == null || !target.isOnline()) {
-                player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
                 return true;
             }
             if(target.getUniqueId().equals(player.getUniqueId())) {
-                player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_YOURSELF));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_YOURSELF));
                 return true;
             }
             if(instance.getRelation().get(player) == target) {
-                player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_SAMEPLAYER, "TARGET", target.getDisplayName()));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_SAMEPLAYER, "TARGET", target.getDisplayName()));
                 return true;
             }
             if(instance.getRelation().get(target) == player || target.hasPermission(Permissions.BYPASS_SPECTATED)) {
                 if(!player.hasPermission(Permissions.BYPASS_SPECTATEALL)) {
-                    player.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_BYPASS, "TARGET", target.getDisplayName()));
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_BYPASS, "TARGET", target.getDisplayName()));
                     return true;
                 }
             }
             instance.getMethods().spectate(player, target);
-            player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getDisplayName()));
+            player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getDisplayName()));
             return true;
         }
         if(args.length > 0) {
             Player player = Bukkit.getPlayer(args[0]);
             if(player == null) {
-                sender.sendMessage(Config.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
+                sender.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
                 return true;
             }
             if(player.getGameMode().equals(GameMode.SPECTATOR)) {
                 instance.getMethods().unSpectate(player, false);
-                player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
-                sender.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", player.getDisplayName()));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+                sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", player.getDisplayName()));
                 return true;
             }
             instance.getMethods().spectate(player, null);
-            player.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
-            sender.sendMessage(Config.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", player.getDisplayName()));
+            player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
+            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", player.getDisplayName()));
             return true;
         }
+        sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SENDER));
         return true;
     }
 

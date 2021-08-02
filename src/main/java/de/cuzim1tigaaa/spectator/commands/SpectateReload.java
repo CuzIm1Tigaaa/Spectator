@@ -1,28 +1,28 @@
 package de.cuzim1tigaaa.spectator.commands;
 
-import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.command.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SpectateReload implements CommandExecutor, TabCompleter {
 
-    private final Main instance;
+    private final Spectator instance;
 
-    public SpectateReload(Main plugin) {
+    public SpectateReload(Spectator plugin) {
+        Objects.requireNonNull(plugin.getCommand("spectatereload")).setExecutor(this);
         this.instance = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission(Permissions.COMMANDS_SPECTATE_RELOAD)) {
-            sender.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+            sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
         }
         instance.reload();
-        sender.sendMessage(Config.getMessage(Paths.MESSAGE_DEFAULT_RELOAD));
+        sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_RELOAD));
         return true;
     }
 

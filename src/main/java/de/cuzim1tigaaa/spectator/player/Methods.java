@@ -1,10 +1,11 @@
 package de.cuzim1tigaaa.spectator.player;
 
-import de.cuzim1tigaaa.spectator.Main;
+import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
-import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Paths;
 import de.cuzim1tigaaa.spectator.files.Permissions;
 import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -13,13 +14,12 @@ import java.util.*;
 
 public class Methods {
 
-    private final Set<Player> hidden = new HashSet<>();
-    private final HashMap<Player, PlayerAttributes> playerAttributes = new HashMap<>();
-    private final Main instance = Main.getInstance();
+    private final Spectator plugin = Spectator.getPlugin();
 
+    private final Set<Player> hidden = new HashSet<>();
     public Methods() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(instance, () -> {
-            for(Map.Entry<Player, Player> entry : instance.getRelation().entrySet()) {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            for(Map.Entry<Player, Player> entry : plugin.getRelation().entrySet()) {
                 final Player player = entry.getKey();
                 final Player target = entry.getValue();
                 Inventory.updateInventory(player, target);
@@ -30,26 +30,31 @@ public class Methods {
             }
         }, 0, 20);
     }
+    private final HashMap<Player, PlayerAttributes> playerAttributes = new HashMap<>();
+
+    public Set<Player> getHidden() { return hidden; }
+
+    public HashMap<Player, PlayerAttributes> getPlayerAttributes() { return playerAttributes; }
 
     public void spectate(final Player player, final Player target) {
         if(!playerAttributes.containsKey(player)) playerAttributes.put(player, new PlayerAttributes(player));
         player.setGameMode(GameMode.SPECTATOR);
-        instance.getSpectators().add(player);
-        player.getInventory().clear();
-        player.updateInventory();
-        if(player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) && Config.hideTab) hideFromTab(player, true);
-        player.setMetadata("vanished", new FixedMetadataValue(Main.getInstance(), true));
+        plugin.getSpectators().add(player);
+        Inventory.getInventory(player, null);
+
+        if(player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) && this.plugin.getConfiguration().getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) hideFromTab(player, true);
+        player.setMetadata("vanished", new FixedMetadataValue(Spectator.getPlugin(), true));
         if(target != null) {
-            if(player.hasPermission(Permissions.UTILS_MIRROR_INVENTORY) && Config.mirrorInventory) Inventory.getInventory(player, target);
+            Inventory.getInventory(player, target);
             player.setSpectatorTarget(null);
-            instance.getRelation().remove(player);
-            instance.getRelation().put(player, target);
+            plugin.getRelation().remove(player);
+            plugin.getRelation().put(player, target);
             player.setSpectatorTarget(target);
         }
     }
     public void unSpectate(final Player player, final boolean loc) {
         Location location = null;
-        if (Config.saveLocation && !loc) {
+        if (this.plugin.getConfiguration().getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION) && !loc) {
             if(playerAttributes.containsKey(player)) {
                 location = playerAttributes.get(player).getLocation();
             }
@@ -63,46 +68,53 @@ public class Methods {
             location.setYaw(yaw);
         }
         player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
-        instance.getSpectators().remove(player);
-        instance.getRelation().remove(player);
+        plugin.getSpectators().remove(player);
+        plugin.getRelation().remove(player);
         Inventory.restoreInventory(player);
-        if(hidden.contains(player) && player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) && Config.hideTab) hideFromTab(player, false);
+        if(hidden.contains(player) && player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) &&
+                this.plugin.getConfiguration().getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) hideFromTab(player, false);
         GameMode gameMode = null;
-        Boolean isFlying = false;
+        boolean isFlying = false;
         if(playerAttributes.containsKey(player)) {
             gameMode = playerAttributes.get(player).getGameMode();
-            isFlying = playerAttributes.get(player).getFlying();
+            isFlying = this.plugin.getServer().getAllowFlight() && playerAttributes.get(player).getFlying();
             playerAttributes.remove(player);
         }
-        if(!Config.saveFlying) isFlying = false;
+        if(!this.plugin.getConfiguration().getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHTMODE)) isFlying = false;
         if(gameMode == null) {
             gameMode = GameMode.SURVIVAL;
             isFlying = false;
         }
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
-        player.removeMetadata("vanished", Main.getInstance());
+        player.removeMetadata("vanished", Spectator.getPlugin());
         if(CycleHandler.isPlayerCycling(player)) CycleHandler.stopCycle(player);
     }
     public void restoreAll() {
-        Set<Player> spectators = new HashSet<>(instance.getSpectators());
+        Set<Player> spectators = new HashSet<>(plugin.getSpectators());
         for(Player player : spectators) this.unSpectate(player, false);
     }
 
-    public void hideFromTab(final Player player, final boolean hide) {
+    private void hideFromTab(final Player player, final boolean hide) {
         for(Player target : Bukkit.getOnlinePlayers()) {
             if(target.getUniqueId().equals(player.getUniqueId())) continue;
             if(target.hasPermission(Permissions.BYPASS_TABLIST)) continue;
             if(hide) {
                 hidden.add(player);
-                target.hidePlayer(instance, player);
+                target.hidePlayer(plugin, player);
             }else {
                 hidden.remove(player);
-                target.showPlayer(instance, player);
+                target.showPlayer(plugin, player);
             }
         }
     }
 
-    public HashMap<Player, PlayerAttributes> getPlayerAttributes() { return playerAttributes; }
-    public Set<Player> getHidden() { return hidden; }
+    public void dismountTarget(Player player) {
+        if(!player.getGameMode().equals(GameMode.SPECTATOR)) return;
+        if(player.getSpectatorTarget() == null || !player.getSpectatorTarget().getType().equals(EntityType.PLAYER)) return;
+        plugin.getRelation().remove(player);
+        player.getInventory().clear();
+        player.setSpectatorTarget(null);
+    }
+
 }

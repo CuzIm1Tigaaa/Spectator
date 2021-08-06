@@ -27,6 +27,11 @@
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="everything" />
+      <option name="name" value="everything" />
+      <option name="url" value="https://repo.citizensnpcs.co/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="dmulloy2-repo" />
       <option name="name" value="dmulloy2-repo" />
       <option name="url" value="https://repo.dmulloy2.net/nexus/repository/public/" />

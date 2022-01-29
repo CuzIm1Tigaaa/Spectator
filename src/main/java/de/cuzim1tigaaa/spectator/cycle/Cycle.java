@@ -9,6 +9,8 @@ import java.util.*;
 
 public class Cycle {
 
+    private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
+
     private final Player owner;
     private Player last;
     private final List<Player> alreadyVisited = new ArrayList<>();
@@ -42,12 +44,11 @@ public class Cycle {
 
     private void updateLists(Player spectator) {
         alreadyVisited.removeIf(p -> !p.isOnline());
-
         toVisit.addAll(Bukkit.getOnlinePlayers());
         toVisit.remove(owner);
         toVisit.removeAll(alreadyVisited);
 
         toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED) && !spectator.hasPermission(Permissions.BYPASS_SPECTATEALL));
-        toVisit.removeAll(Spectator.getPlugin().getSpectators());
+        toVisit.removeAll(plugin.getSpectators());
     }
 }

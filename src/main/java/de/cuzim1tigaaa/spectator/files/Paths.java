@@ -11,8 +11,11 @@ public class Paths {
 
     public final static String CONFIG_SAVE_PLAYERS_LOCATION = "Settings.Save.PlayerLocation";
     public final static String CONFIG_SAVE_PLAYERS_FLIGHTMODE = "Settings.Save.PlayerFlightMode";
+
     public final static String CONFIG_MIRROR_TARGET_EFFECTS = "Settings.Mirror.TargetEffects";
     public final static String CONFIG_MIRROR_TARGETS_INVENTORY = "Settings.Mirror.TargetInventory";
+    public final static String CONFIG_INVENTORY_CONTAINERS = "Settings.Inventory.OpenContainers";
+    public final static String CONFIG_INVENTORY_ENDERCHEST = "Settings.Inventory.OpenEnderChest";
 
 
     public final static String MESSAGE_DEFAULT_SENDER = "Messages.Default.Sender";
@@ -20,7 +23,8 @@ public class Paths {
     public final static String MESSAGE_DEFAULT_SYNTAX = "Messages.Default.Syntax";
     public final static String MESSAGE_DEFAULT_RELOAD = "Messages.Default.Reload";
 
-    public final static String MESSAGES_GENERAL_BYPASS = "Messages.General.Bypass";
+    public final static String MESSAGES_GENERAL_BYPASS_TELEPORT = "Messages.General.BypassTeleport";
+    public final static String MESSAGES_GENERAL_BYPASS_INVENTORY = "Messages.General.BypassInventory";
     public final static String MESSAGES_GENERAL_DISMOUNT = "Messages.General.Dismount";
     public final static String MESSAGES_GENERAL_GAMEMODE_CHANGE = "Messages.General.GameModeChange";
     public final static String MESSAGES_GENERAL_NOPLAYERS = "Messages.General.NoPlayers";

@@ -24,8 +24,8 @@ public class Messages {
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
 
-    public static void loadMessages() {
-        File messageFile = new File(Spectator.getPlugin().getDataFolder(), "messages.yml");
+    public static void loadMessages(Spectator plugin) {
+        File messageFile = new File(plugin.getDataFolder(), "messages.yml");
         try {
             if(!messageFile.exists()) {
                 message = new YamlConfiguration();
@@ -37,13 +37,14 @@ public class Messages {
             message.set(Paths.MESSAGE_DEFAULT_SYNTAX, message.getString(Paths.MESSAGE_DEFAULT_SYNTAX, "&cThere's a syntax error: %USAGE%"));
             message.set(Paths.MESSAGE_DEFAULT_RELOAD, message.getString(Paths.MESSAGE_DEFAULT_RELOAD, "&7The plugin was successfully reloaded."));
 
-            message.set(Paths.MESSAGES_GENERAL_BYPASS, message.getString(Paths.MESSAGES_GENERAL_BYPASS, "&7%TARGET% &ccannot be spectated at the moment!"));
+            message.set(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, message.getString(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "&7%TARGET% &ccannot be spectated at the moment!"));
+            message.set(Paths.MESSAGES_GENERAL_BYPASS_INVENTORY, message.getString(Paths.MESSAGES_GENERAL_BYPASS_INVENTORY, "&cYou cannot see the inventory of &7%TARGET% &cat the moment!"));
             message.set(Paths.MESSAGES_GENERAL_DISMOUNT, message.getString(Paths.MESSAGES_GENERAL_DISMOUNT, "&cYou cannot dismount while in Speccycle-Mode! Use &7/SpectateCycle stop &cto leave Speccycle-Mode."));
             message.set(Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE, message.getString(Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE, "&cYou cannot change your GameMode while spectating! Use &7/spec &cto leave Spectator-Mode."));
             message.set(Paths.MESSAGES_GENERAL_NOPLAYERS, message.getString(Paths.MESSAGES_GENERAL_NOPLAYERS, "&cThere are not enough Players online."));
             message.set(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, message.getString(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "&7%TARGET% &cis not Online!"));
             message.set(Paths.MESSAGES_GENERAL_NOTSPECTATING, message.getString(Paths.MESSAGES_GENERAL_NOTSPECTATING, "&7%TARGET% &cis currently not spectating!"));
-            message.set(Paths.MESSAGES_GENERAL_SAMEPLAYER, message.getString(Paths.MESSAGES_GENERAL_SAMEPLAYER, "&cYou are already spectating &7%TARGET&c!"));
+            message.set(Paths.MESSAGES_GENERAL_SAMEPLAYER, message.getString(Paths.MESSAGES_GENERAL_SAMEPLAYER, "&cYou are already spectating &7%TARGET%&c!"));
             message.set(Paths.MESSAGES_GENERAL_YOURSELF, message.getString(Paths.MESSAGES_GENERAL_YOURSELF, "&cYou cannot Spectate yourself!"));
             message.set(Paths.MESSAGES_GENERAL_CYCLEONLY, message.getString(Paths.MESSAGES_GENERAL_CYCLEONLY, "&cYou can only use &7/SpectateCycle start <Interval>"));
             message.set(Paths.MESSAGES_GENERAL_NUMBERFORMAT, message.getString(Paths.MESSAGES_GENERAL_NUMBERFORMAT, "&cPlease enter a valid number!"));

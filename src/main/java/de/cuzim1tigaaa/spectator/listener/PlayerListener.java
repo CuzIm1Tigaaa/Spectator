@@ -3,64 +3,65 @@ package de.cuzim1tigaaa.spectator.listener;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.player.SpectateManager;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
-import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.inventory.Inventory;
 
-import java.util.Map;
+import java.util.*;
 
 public class PlayerListener implements Listener {
 
     private final Spectator plugin;
+    private final SpectateManager manager;
 
     public PlayerListener(Spectator plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        this.manager = this.plugin.getSpectateManager();
     }
 
     @EventHandler @SuppressWarnings("unused")
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if(player.hasPermission(Permissions.NOTIFY_UPDATE_ON_JOIN) && this.plugin.getConfiguration().getBoolean(Paths.CONFIG_NOTIFY_UPDATE)) {
+        if(player.hasPermission(Permissions.NOTIFY_UPDATE_ON_JOIN) && Config.getBoolean(Paths.CONFIG_NOTIFY_UPDATE)) {
             if(this.plugin.getUpdateChecker().isAvailable()) {
                 player.sendMessage(ChatColor.RED + "Spectator " + ChatColor.DARK_GRAY + "|" + ChatColor.GOLD + ChatColor.BOLD + " An Update is available! "
-                        + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "v" + plugin.getUpdateChecker().getVersion() + ChatColor.DARK_GRAY + "]");
+                        + ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "v" + this.plugin.getUpdateChecker().getVersion().replace("v", "") + ChatColor.DARK_GRAY + "]");
                 player.sendMessage(ChatColor.DARK_GRAY + ChatColor.BOLD.toString() + "» " + ChatColor.YELLOW + "https://www.spigotmc.org/resources/spectator.93051/");
             }
         }
-        if(plugin.getConfiguration().getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS)) {
+        if(Config.getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS)) {
             for(Player all : CycleHandler.getPausedCycles().keySet()) CycleHandler.restartCycle(player);
         }
 
-        if(!player.hasPermission(Permissions.BYPASS_TABLIST) && this.plugin.getConfiguration().getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) for(Player hidden : plugin.getMethods().getHidden()) player.hidePlayer(plugin, hidden);
-        else for(Player hidden : plugin.getMethods().getHidden()) player.showPlayer(plugin, hidden);
+        if(!player.hasPermission(Permissions.BYPASS_TABLIST) && Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) {
+            for(Player hidden : this.manager.getHidden()) if(hidden.hasPermission(Permissions.UTILS_HIDE_IN_TAB)) player.hidePlayer(this.plugin, hidden);
+        }else for(Player hidden : this.manager.getHidden()) player.showPlayer(this.plugin, hidden);
     }
     @EventHandler @SuppressWarnings("unused")
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if(plugin.getSpectators().contains(player)) plugin.getMethods().unSpectate(player, false);
-        for (Map.Entry<Player, Player> entry : plugin.getRelation().entrySet()) {
+        if(this.plugin.getSpectators().contains(player)) this.manager.unSpectate(player, false);
+        for (Map.Entry<Player, Player> entry : this.plugin.getRelation().entrySet()) {
             if (entry.getValue().equals(player)) {
                 Player spectator = entry.getKey();
-                if (!CycleHandler.isPlayerCycling(spectator)) this.plugin.getMethods().dismountTarget(player);
+                if (!CycleHandler.isPlayerCycling(spectator)) this.manager.dismountTarget(player);
                 else CycleHandler.restartCycle(spectator);
             }
         }
     }
     @EventHandler @SuppressWarnings("unused")
-    public void onPluginDisable(PluginDisableEvent event) { if(event != null) plugin.disable(); }
-    @EventHandler @SuppressWarnings("unused")
     public void onDismount(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
-        if(plugin.getSpectators().contains(player)) {
+        if(this.plugin.getSpectators().contains(player)) {
             if(!CycleHandler.isPlayerCycling(player) || !player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                if(event.isSneaking()) this.plugin.getMethods().dismountTarget(player);
+                if(event.isSneaking()) this.manager.dismountTarget(player);
             }else {
                 if(event.isSneaking()) {
                     player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_DISMOUNT));
@@ -72,7 +73,7 @@ public class PlayerListener implements Listener {
     @EventHandler @SuppressWarnings("unused")
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
-        if(plugin.getSpectators().contains(player)) {
+        if(this.plugin.getSpectators().contains(player)) {
             player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
             event.setCancelled(true);
         }
@@ -81,10 +82,69 @@ public class PlayerListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST) @SuppressWarnings("unused")
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        if(!this.plugin.getConfiguration().getBoolean(Paths.CONFIG_KICK_WHILE_CYCLING) && CycleHandler.isPlayerCycling(player)) event.setCancelled(true);
+        if(!Config.getBoolean(Paths.CONFIG_KICK_WHILE_CYCLING) && CycleHandler.isPlayerCycling(player)) event.setCancelled(true);
     }
     @EventHandler @SuppressWarnings("unused")
-    public void onInventoryClick(InventoryClickEvent event) { if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true); }
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true);
+    }
     @EventHandler @SuppressWarnings("unused")
     public void onInventoryDrag(InventoryDragEvent event) { if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true); }
+
+    @EventHandler @SuppressWarnings("unused")
+    public void onChestOpen(InventoryOpenEvent event) {
+        Player player = (Player) event.getPlayer();
+        if(!this.plugin.getRelation().containsValue(player)) return;
+
+        Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
+        spectators.removeIf(p -> !this.plugin.getRelation().containsKey(p) || !this.plugin.getRelation().get(p).equals(player));
+
+        Inventory inventory = null;
+        switch(event.getInventory().getType()) {
+            case BARREL, BLAST_FURNACE, BREWING, CHEST, DISPENSER, DROPPER, FURNACE, HOPPER, SMOKER, SHULKER_BOX, LECTERN -> {
+                spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_CONTAINER));
+                if(Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS)) inventory = event.getInventory();
+            }
+            case ENDER_CHEST -> {
+                spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_ENDERCHEST));
+                if(Config.getBoolean(Paths.CONFIG_INVENTORY_ENDERCHEST)) inventory = player.getEnderChest();
+            }
+        }
+        if(inventory != null) for(Player spec : spectators) spec.openInventory(inventory);
+    }
+    @EventHandler @SuppressWarnings("unused")
+    public void onChestClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        if(!this.plugin.getRelation().containsValue(player)) return;
+
+        switch(event.getInventory().getType()) {
+            case WORKBENCH, STONECUTTER, CARTOGRAPHY, GRINDSTONE, ENCHANTING, COMPOSTER, SMITHING, CREATIVE, BEACON, ANVIL, LOOM, CRAFTING, MERCHANT, PLAYER -> { return; }
+            case ENDER_CHEST -> { if(!Config.getBoolean(Paths.CONFIG_INVENTORY_ENDERCHEST)) return; }
+            case BARREL, BLAST_FURNACE, BREWING, CHEST, DISPENSER, DROPPER, FURNACE, HOPPER, SMOKER, SHULKER_BOX, LECTERN -> { if(!Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS)) return; }
+        }
+
+        Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
+        spectators.removeIf(p -> p.getSpectatorTarget() == null || !(p.getSpectatorTarget() instanceof Player)
+                || !p.getSpectatorTarget().getUniqueId().equals(player.getUniqueId()));
+
+        for(Player spec : spectators) spec.closeInventory();
+    }
+
+    @EventHandler @SuppressWarnings("unused")
+    public void onTeleport(PlayerTeleportEvent event) {
+        if(event.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE) return;
+        Player player = event.getPlayer();
+        if(player.getSpectatorTarget() == null || !(player.getSpectatorTarget() instanceof Player target)) return;
+
+        if(!player.hasPermission(Permissions.COMMAND_SPECTATE_OTHERS)) return;
+        if(target.hasPermission(Permissions.BYPASS_SPECTATED)) {
+            if(!player.hasPermission(Permissions.BYPASS_SPECTATEALL)) {
+                player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_BYPASS_INVENTORY, "TARGET", target.getName()));
+                event.setCancelled(true);
+                return;
+            }
+        }
+        de.cuzim1tigaaa.spectator.player.Inventory.getInventory(player, target);
+        this.plugin.getRelation().put(player, target);
+    }
 }

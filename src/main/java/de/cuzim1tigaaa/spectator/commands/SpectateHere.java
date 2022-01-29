@@ -6,19 +6,20 @@ import org.bukkit.GameMode;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class SpectateHere implements CommandExecutor, TabCompleter {
 
-    private final Spectator instance;
+    private final Spectator plugin;
 
     public SpectateHere(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatehere")).setExecutor(this);
-        this.instance = plugin;
+        this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(sender instanceof Player player) {
             if(!player.hasPermission(Permissions.COMMAND_SPECTATE_HERE)) {
                 if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
@@ -29,11 +30,11 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
                 return true;
             }
             if(!player.getGameMode().equals(GameMode.SPECTATOR)) {
-                instance.getMethods().spectate(player, null);
+                this.plugin.getSpectateManager().spectate(player, null);
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
                 return true;
             }
-            instance.getMethods().unSpectate(player, true);
+            this.plugin.getSpectateManager().unSpectate(player, true);
             player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             return true;
         }
@@ -42,7 +43,7 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
         return Collections.emptyList();
     }
 }

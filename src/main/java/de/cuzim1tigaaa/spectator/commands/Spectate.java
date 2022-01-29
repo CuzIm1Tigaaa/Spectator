@@ -7,19 +7,20 @@ import org.bukkit.GameMode;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class Spectate implements CommandExecutor, TabCompleter {
 
-    private final Spectator instance;
+    private final Spectator plugin;
 
     public Spectate(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectate")).setExecutor(this);
-        this.instance = plugin;
+        this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(sender instanceof Player player) {
             if(args.length == 0) {
                 if(!player.hasPermission(Permissions.COMMAND_SPECTATE_GENERAL)) {
@@ -30,12 +31,12 @@ public class Spectate implements CommandExecutor, TabCompleter {
                     player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
                     return true;
                 }
-                if(instance.getSpectators().contains(player)) {
-                    instance.getMethods().unSpectate(player, false);
+                if(this.plugin.getSpectators().contains(player)) {
+                    this.plugin.getSpectateManager().unSpectate(player, false);
                     player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
                     return true;
                 }
-                instance.getMethods().spectate(player, null);
+                this.plugin.getSpectateManager().spectate(player, null);
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
                 return true;
             }
@@ -56,17 +57,17 @@ public class Spectate implements CommandExecutor, TabCompleter {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_YOURSELF));
                 return true;
             }
-            if(instance.getRelation().get(player) == target) {
+            if(this.plugin.getRelation().get(player) == target) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_SAMEPLAYER, "TARGET", target.getDisplayName()));
                 return true;
             }
-            if(instance.getRelation().get(target) == player || target.hasPermission(Permissions.BYPASS_SPECTATED)) {
+            if(this.plugin.getRelation().get(target) == player || target.hasPermission(Permissions.BYPASS_SPECTATED)) {
                 if(!player.hasPermission(Permissions.BYPASS_SPECTATEALL)) {
-                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_BYPASS, "TARGET", target.getDisplayName()));
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getDisplayName()));
                     return true;
                 }
             }
-            instance.getMethods().spectate(player, target);
+            this.plugin.getSpectateManager().spectate(player, target);
             player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getDisplayName()));
             return true;
         }
@@ -77,12 +78,12 @@ public class Spectate implements CommandExecutor, TabCompleter {
                 return true;
             }
             if(player.getGameMode().equals(GameMode.SPECTATOR)) {
-                instance.getMethods().unSpectate(player, false);
+                this.plugin.getSpectateManager().unSpectate(player, false);
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
                 sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", player.getDisplayName()));
                 return true;
             }
-            instance.getMethods().spectate(player, null);
+            this.plugin.getSpectateManager().spectate(player, null);
             player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
             sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", player.getDisplayName()));
             return true;
@@ -92,7 +93,7 @@ public class Spectate implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
         final List<String> tab = new ArrayList<>();
         if(args.length == 1) for(Player player : Bukkit.getOnlinePlayers()) tab.add(player.getDisplayName());
         return tab;

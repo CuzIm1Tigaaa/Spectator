@@ -7,19 +7,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class SpectateCycle implements CommandExecutor, TabCompleter {
 
-    private final Spectator instance;
+    private final Spectator plugin;
 
     public SpectateCycle(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatecycle")).setExecutor(this);
-        this.instance = plugin;
+        this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!(sender instanceof Player player)) {
             sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SENDER));
             return true;
@@ -65,12 +66,11 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             }
 
             if(!player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLE) && player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                instance.getMethods().unSpectate(player, false);
+                this.plugin.getSpectateManager().unSpectate(player, false);
                 return true;
             }
             if(!CycleHandler.isPlayerCycling(target)) {
-                String message = Messages.getMessage((player.equals(target) ? Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING :
-                        Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING), "TARGET", target.getDisplayName());
+                String message = Messages.getMessage((player.equals(target) ? Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING : Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING), "TARGET", target.getDisplayName());
                 player.sendMessage(message);
                 return true;
             }
@@ -83,12 +83,11 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
-        final List<String> tab = new ArrayList<>();
-        if(args.length == 1) { tab.add("start"); tab.add("stop"); }
-        if(args.length == 2 && args[0].equalsIgnoreCase("stop")) {
+    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
+        List<String> tab = new ArrayList<>();
+        if(args.length == 1) tab = List.of("start", "stop");
+        if(args.length == 2 && args[0].equalsIgnoreCase("stop") && sender.hasPermission(Permissions.COMMANDS_CYCLE_STOP_OTHERS))
             for(Player all : Bukkit.getOnlinePlayers()) tab.add(all.getDisplayName());
-        }
         return tab;
     }
 }

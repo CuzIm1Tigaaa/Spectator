@@ -1,7 +1,6 @@
 name: ${project.name}
 version: ${project.version}
 author: CuzIm1Tigaaa
-depend: [ProtocolLib]
 main: ${project.groupId}.Spectator
 api-version: 1.16
 commands:
@@ -28,92 +27,77 @@ permissions:
     description: Permission for every Permission (CycleOnly excluded!)
     default: false
     children:
-      spectator.commands.*: true
-      spectator.bypass.*: true
-      spectator.utils.*: true
-      spectator.notify.update: true
-  spectator.commands.*:
-    description: Permission for all commands (CycleOnly excluded!)
-    default: false
-    children:
-      spectator.commands.admin: true
-  spectator.commands.admin:
-    description: Permission for all admin commands
-    default: false
-    children:
-      spectator.commands.spectatereload: true
-      spectator.commands.unspectate: true
-      spectator.commands.spectate: true
-      spectator.commands.spectateothers: true
-      spectator.commands.spectatehere: true
-      spectator.commands.spectatelist: true
-      spectator.commands.spectatecycle.*: true
-  spectator.commands.spectatereload:
-    description: Permission for /spectatereload
-    default: op
-  spectator.commands.unspectate:
-    description: Permission for /unspectate
-    default: op
-  spectator.commands.spectate:
-    description: Permission for /spectate
-    default: false
-  spectator.commands.spectateothers:
-    description: Permission for /spectate [player]
-    default: false
-  spectator.commands.spectatehere:
-    description: Permission for /spectatehere
-    default: false
-  spectator.commands.spectatelist:
-    description: Permission for /spectatelist
-    default: false
-  spectator.commands.spectatecycle.*:
-    description: Permission for all SpectateCycle commands
-    default: false
-    children:
-      spectator.commands.spectatecycle.default: true
-      spectator.commands.spectatecycle.stopOthers: true
-      spectator.commands.spectatecycle.only: false
-  spectator.commands.spectatecycle.default:
-    description: Permission for /spectatecycle
-    default: false
-  spectator.commands.spectatecycle.stopOthers:
-    description: Permission for /spectatecycle stop <Player>
-    default: false
-  spectator.commands.spectatecycle.only:
-    description: Only Permission for /spectatecycle
-    default: false
-  spectator.notify.update:
-    description: Permission to get an alert when an update is available
-    default: false
-  spectator.bypass.*:
-    description: Permission for all .bypass Permissions
-    default: false
-    children:
-      spectator.bypass.tablist: true
-      spectator.bypass.spectated: true
-      spectator.bypass.spectateall: true
-  spectator.bypass.tablist:
-    description: Permission to see hidden players in Spigot Tablist
-    default: false
-  spectator.bypass.spectated:
-    description: Permission to not get spectated by other players
-    default: false
-  spectator.bypass.spectateall:
-    description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
-    default: false
-  spectator.utils.*:
-    description: Permission for all .utils Permissions
-    default: false
-    children:
-      spectator.utils.mirrorinventory: true
-      spectator.utils.mirroreffects: true
-      spectator.utils.hidetab: true
-  spectator.utils.mirrorinventory:
-    description: Permission to see other players Inventory during spectating
-    default: false
-  spectator.utils.mirroreffects:
-    description: Permission to see other players Inventory during spectating
-    default: false
-  spectator.utils.hidetab:
-    description: Permission to be hidden in Spigot Tablist
-    default: false
+      spectator.commands.*:
+        description: Permission for all commands (CycleOnly excluded!)
+          default: false
+          children:
+            spectator.commands.admin:
+              description: Permission for all admin commands
+                default: false
+                children:
+                  spectator.commands.spectatereload:
+                    description: Permission for /spectatereload
+                    default: op
+                    spectator.commands.unspectate:
+                      description: Permission for /unspectate
+                      default: op
+                    spectator.commands.spectate:
+                      description: Permission for /spectate
+                      default: false
+                    spectator.commands.spectateothers:
+                      description: Permission for /spectate [player]
+                      default: false
+                    spectator.commands.spectatehere:
+                      description: Permission for /spectatehere
+                      default: false
+                    spectator.commands.spectatelist:
+                      description: Permission for /spectatelist
+                      default: false
+                    spectator.commands.spectatecycle.*:
+                      description: Permission for all SpectateCycle commands
+                      default: false
+                      children:
+                        spectator.commands.spectatecycle.default:
+                          description: Permission for /spectatecycle
+                          default: false
+                          spectator.commands.spectatecycle.stopOthers:
+                            description: Permission for /spectatecycle stop <Player>
+                            default: false
+                          spectator.commands.spectatecycle.only:
+                            description: Only Permission for /spectatecycle
+                            default: false
+      spectator.bypass.*:
+        description: Permission for all .bypass Permissions
+        default: false
+        children:
+          spectator.bypass.tablist:
+            description: Permission to see hidden players in Spigot Tablist
+            default: false
+            spectator.bypass.spectated:
+              description: Permission to not get spectated by other players
+              default: false
+            spectator.bypass.spectateall:
+              description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
+              default: false
+        spectator.utils.*:
+          description: Permission for all .utils Permissions
+          default: false
+          children:
+            spectator.utils.openenderchest:
+              description: Permission to see the enderchest when opened by the current target during spectating
+              default: false
+              spectator.utils.opencontainer:
+                description: Permission to see contents of containers opened by the current target during spectating
+                default: false
+              spectator.utils.mirrorinventory:
+                description: Permission to see other players Inventory during spectating
+                default: false
+              spectator.utils.mirroreffects:
+                description: Permission to see other players Inventory during spectating
+                default: false
+              spectator.utils.hidetab:
+                description: Permission to be hidden in Spigot Tablist
+                default: false
+      spectator.notify.update:
+        description: Permission to get an alert when an update is available
+        default: false

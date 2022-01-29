@@ -1,31 +1,55 @@
-# This is the configuration file of the plugin.
+# This is the configuration file of the plugin. Everything should be self-explanatory
+# If there is anything unclear, first take a look into the GitHub wiki:
+# https://github.com/CuzIm1Tigaaa/Spectator/wiki
 
 # This is the current version of the config, DO NOT CHANGE!
-ConfigVersion: 2
+ConfigVersion: 4
 
-# These are all settings this plugin provides
 Settings:
-  # Should Players with Permission [spectator.notify.update]
-  # get a notification when an update is available?
+
+  # Notify players with following permission if there is an update :
+  # spectator.notify.update
   NotifyOnUpdate: true
-  # Should Players with Permission [spectator.utils.hidetab] be hidden in TabList?
+
+  # Hide spectators for player without following permission: spectator.bypass.tablist
+  # Requires following permission for spectator: spectator.utils.hidetab
   HidePlayersInTab: true
-  # Should Players who are currently cycling be able to be kicked?
+
+  # Allows cycling players to be kicked
   KickCyclingPlayer: false
 
   Save:
+
     # Should the Location of a Player be saved when executing /spec?
     PlayerLocation: true
+
     # Should the FlightMode of a Player be saved when executing /spec?
     PlayerFlightMode: true
 
   Mirror:
+
     # Should a Player get all effects his target currently has while spectating?
+    # Requires following permission: spectator.utils.mirroreffects
     TargetEffects: true
+
     # Should a Player get all contents of his targets inventory while spectating?
+    # Requires following permission: spectator.utils.mirrorinventory
     TargetInventory: true
 
+  Inventory:
+
+    # Should containers opened by a player also be opened for a spectator? Available types of containers:
+    # BARREL; BLAST_FURNACE; BREWING_STAND; (TRAPPED-)CHEST; DISPENSER; DROPPER; FURNACE; HOPPER; SMOKER; SHULKER_BOX; LECTERN
+    # Requires following permission: spectator.utils.opencontainers
+    OpenContainers: true
+
+    # Should enderchests opened by a player also be opened for a spectator?
+    # Requires following permission: spectator.utils.openenderchest
+    # OpenContainers: true
+    OpenEnderChest: false
+
   Cycle:
-    # Should the Cycle be paused, when there are no
-    # players online? Otherwise, Cycle will be stopped
+
+    # Should the Cycle be paused, when there are no players online?
+    # Otherwise, Cycle will be stopped
     PauseWhenNoPlayers: false

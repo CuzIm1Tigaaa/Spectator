@@ -1,8 +1,9 @@
 package de.cuzim1tigaaa.spectator;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 public class UpdateChecker {
@@ -24,23 +25,17 @@ public class UpdateChecker {
     private boolean checkUpdate() {
         this.plugin.getLogger().log(Level.INFO, "Checking for Updates...");
 
-        String versionString = this.plugin.getDescription().getVersion().replace(".", "").replace("v", "");
-        try {
-            HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
-            connection.setRequestMethod("GET");
-
-            String raw = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-
-            if(raw.contains("-")) this.version = raw.split("-")[0].trim();
-            else this.version = raw;
+        String versionString = this.plugin.getDescription().getVersion();
+        try(InputStream input = new URL(url).openStream()) {
+            Scanner scanner = new Scanner(input);
+            if(!scanner.hasNext()) return false;
+            this.version = scanner.nextLine().replace("v", "");
 
             if(!versionString.equalsIgnoreCase(this.version)) {
-                this.plugin.getLogger().log(Level.WARNING, "A new Version [" + this.version + "] is available!");
+                this.plugin.getLogger().log(Level.WARNING, "A new Version [v" + this.version + "] is available!");
                 this.plugin.getLogger().log(Level.WARNING, "https://www.spigotmc.org/resources/spectator.93051/");
                 return true;
             }
-            connection.disconnect();
-
         }catch(IOException exception) { return false; }
         return false;
     }

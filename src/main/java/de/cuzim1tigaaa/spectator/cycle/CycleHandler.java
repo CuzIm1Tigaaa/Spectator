@@ -12,13 +12,11 @@ import java.util.Map;
 
 public class CycleHandler {
 
+    private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
+    private static final Map<Player, CycleTask> cycleTasks = new HashMap<>();
     public static boolean isPlayerCycling(Player player) {
         return cycleTasks.containsKey(player);
     }
-
-    private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
-
-    private static final Map<Player, CycleTask> cycleTasks = new HashMap<>();
 
     private static void sendBossBar(Player player, Player target) {
         CycleTask cTask = cycleTasks.get(player);
@@ -52,7 +50,7 @@ public class CycleHandler {
             if(next != null && !next.isDead()) {
                 plugin.getSpectateManager().spectate(player, next);
                 if(Config.getBoolean(Paths.CONFIG_SHOW_BOSS_BAR)) sendBossBar(player, next);
-            }
+            }else if(next == null && cycle.getLastPlayer() == null) stopCycle(player);
         }, 0, ticks);
         cycleTasks.put(player, new CycleTask(seconds, new Cycle(player, null), task));
 

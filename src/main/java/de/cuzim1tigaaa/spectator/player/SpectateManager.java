@@ -22,9 +22,6 @@ public class SpectateManager {
                 final Player player = entry.getKey();
                 final Player target = entry.getValue();
 
-                if(CycleHandler.isPlayerCycling(player) && target == null) CycleHandler.stopCycle(player);
-
-                assert target != null;
                 Inventory.updateInventory(player, target);
                 if(!player.getWorld().equals(target.getWorld()) || player.getLocation().distanceSquared(target.getLocation()) > 1) {
                     player.setSpectatorTarget(null);

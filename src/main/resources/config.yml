@@ -3,53 +3,66 @@
 # https://github.com/CuzIm1Tigaaa/Spectator/wiki
 
 # This is the current version of the config, DO NOT CHANGE!
+# If the version changes, the plugin will automatically
+# backup your current config and create the new one
 ConfigVersion: 4
 
 Settings:
 
-  # Notify players with following permission if there is an update :
-  # spectator.notify.update
+  # If the plugin gets updated, players with the following permission
+  # will receive a message when they join.
+  # Permission: spectator.notify.update
   NotifyOnUpdate: true
 
-  # Hide spectators for player without following permission: spectator.bypass.tablist
-  # Requires following permission for spectator: spectator.utils.hidetab
+  # Spectators with the first following permission will be hidden in the tablist
+  # Can be bypassed by players with the second permission.
+  # Permission 1: spectator.utils.hidetab
+  # Permission 2: spectator.bypass.tablist
   HidePlayersInTab: true
 
-  # Allows cycling players to be kicked
+  # Cycling players cannot be kicked by any other player.
   KickCyclingPlayer: false
 
   Save:
 
-    # Should the Location of a Player be saved when executing /spec?
+    # The players' location (where he executed /spec) will be saved
+    # Otherwise when the player leaves spectator mode, he will be at
+    # his current location, equals to /spectatehere.
     PlayerLocation: true
 
-    # Should the FlightMode of a Player be saved when executing /spec?
+    # The players' flight mode will be saved. Otherwise, when the player
+    # leaves spectator mode, he won't be he won't be flying anymore.
+    # Requires allow-flight to true in server.properties!
     PlayerFlightMode: true
 
   Mirror:
 
-    # Should a Player get all effects his target currently has while spectating?
+    # Get all effects your spectator target currently has
     # Requires following permission: spectator.utils.mirroreffects
     TargetEffects: true
 
-    # Should a Player get all contents of his targets inventory while spectating?
+    # Adds all inventory content of your spectator target in your inventory
     # Requires following permission: spectator.utils.mirrorinventory
     TargetInventory: true
 
   Inventory:
 
-    # Should containers opened by a player also be opened for a spectator? Available types of containers:
+    # Allows spectators with the following permission to see into containers their target opens
+    # Only available for the following types of containers:
     # BARREL; BLAST_FURNACE; BREWING_STAND; (TRAPPED-)CHEST; DISPENSER; DROPPER; FURNACE; HOPPER; SMOKER; SHULKER_BOX; LECTERN
-    # Requires following permission: spectator.utils.opencontainers
+    # Permission: spectator.utils.opencontainers
     OpenContainers: true
 
-    # Should enderchests opened by a player also be opened for a spectator?
-    # Requires following permission: spectator.utils.openenderchest
-    # OpenContainers: true
+    # Allows spectators with the following permission to see into their target's enderchest
+    # Only when the target opens a physically enderchest!
+    # Permission: spectator.utils.openenderchest
     OpenEnderChest: false
 
   Cycle:
 
-    # Should the Cycle be paused, when there are no players online?
-    # Otherwise, Cycle will be stopped
+    # The cycle gets paused if there are no longer any players online and will automatically restart
+    # Otherwise the cycle will simply be stopped
     PauseWhenNoPlayers: false
+
+    # Shows a bossbar to cycling players with the name of the current target
+    ShowBossBar: false

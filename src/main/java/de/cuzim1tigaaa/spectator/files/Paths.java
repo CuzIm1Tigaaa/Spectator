@@ -7,16 +7,18 @@ public class Paths {
     public final static String CONFIG_NOTIFY_UPDATE = "Settings.NotifyOnUpdate";
     public final static String CONFIG_HIDE_PLAYERS_TAB = "Settings.HidePlayersInTab";
     public final static String CONFIG_KICK_WHILE_CYCLING = "Settings.KickCyclingPlayer";
-    public final static String CONFIG_PAUSE_WHEN_NO_PLAYERS = "Settings.Cycle.PauseWhenNoPlayers";
 
     public final static String CONFIG_SAVE_PLAYERS_LOCATION = "Settings.Save.PlayerLocation";
     public final static String CONFIG_SAVE_PLAYERS_FLIGHTMODE = "Settings.Save.PlayerFlightMode";
 
     public final static String CONFIG_MIRROR_TARGET_EFFECTS = "Settings.Mirror.TargetEffects";
     public final static String CONFIG_MIRROR_TARGETS_INVENTORY = "Settings.Mirror.TargetInventory";
+
     public final static String CONFIG_INVENTORY_CONTAINERS = "Settings.Inventory.OpenContainers";
     public final static String CONFIG_INVENTORY_ENDERCHEST = "Settings.Inventory.OpenEnderChest";
 
+    public final static String CONFIG_PAUSE_WHEN_NO_PLAYERS = "Settings.Cycle.PauseWhenNoPlayers";
+    public final static String CONFIG_SHOW_BOSS_BAR = "Settings.Cycle.ShowBossBar";
 
     public final static String MESSAGE_DEFAULT_SENDER = "Messages.Default.Sender";
     public final static String MESSAGE_DEFAULT_PERMISSION = "Messages.Default.Permission";
@@ -35,6 +37,9 @@ public class Paths {
 
     public final static String MESSAGES_COMMANDS_CYCLE_START = "Messages.Commands.Cycle.Start";
     public final static String MESSAGES_COMMANDS_CYCLE_STOP = "Messages.Commands.Cycle.Stop";
+    public final static String MESSAGES_COMMANDS_CYCLE_PAUSE = "Messages.Commands.Cycle.Pause";
+    public final static String MESSAGES_COMMANDS_CYCLE_RESTART = "Messages.Commands.Cycle.Restart";
+    public final static String MESSAGES_COMMANDS_CYCLE_BOSS_BAR = "Messages.Commands.Cycle.BossBar";
     public final static String MESSAGES_COMMANDS_CYCLE_CYCLING = "Messages.Commands.Cycle.Cycling";
     public final static String MESSAGES_COMMANDS_CYCLE_NOT_CYCLING = "Messages.Commands.Cycle.NotCycling";
     public final static String MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING = "Messages.Commands.Cycle.TargetNotCycling";

@@ -29,43 +29,43 @@ permissions:
     children:
       spectator.commands.*:
         description: Permission for all commands (CycleOnly excluded!)
-          default: false
-          children:
-            spectator.commands.admin:
-              description: Permission for all admin commands
+        default: op
+        children:
+          spectator.commands.admin:
+            description: Permission for all admin commands
+            default: op
+            children:
+              spectator.commands.spectatereload:
+                description: Permission for /spectatereload
                 default: false
-                children:
-                  spectator.commands.spectatereload:
-                    description: Permission for /spectatereload
-                    default: op
-                    spectator.commands.unspectate:
-                      description: Permission for /unspectate
-                      default: op
-                    spectator.commands.spectate:
-                      description: Permission for /spectate
-                      default: false
-                    spectator.commands.spectateothers:
-                      description: Permission for /spectate [player]
-                      default: false
-                    spectator.commands.spectatehere:
-                      description: Permission for /spectatehere
-                      default: false
-                    spectator.commands.spectatelist:
-                      description: Permission for /spectatelist
-                      default: false
-                    spectator.commands.spectatecycle.*:
-                      description: Permission for all SpectateCycle commands
-                      default: false
-                      children:
-                        spectator.commands.spectatecycle.default:
-                          description: Permission for /spectatecycle
-                          default: false
-                          spectator.commands.spectatecycle.stopOthers:
-                            description: Permission for /spectatecycle stop <Player>
-                            default: false
-                          spectator.commands.spectatecycle.only:
-                            description: Only Permission for /spectatecycle
-                            default: false
+              spectator.commands.unspectate:
+                description: Permission for /unspectate
+                default: false
+          spectator.commands.spectate:
+            description: Permission for /spectate
+            default: false
+          spectator.commands.spectateothers:
+            description: Permission for /spectate [player]
+            default: false
+          spectator.commands.spectatehere:
+            description: Permission for /spectatehere
+            default: false
+          spectator.commands.spectatelist:
+            description: Permission for /spectatelist
+            default: false
+          spectator.commands.spectatecycle.*:
+            description: Permission for all SpectateCycle commands
+            default: false
+            children:
+              spectator.commands.spectatecycle.default:
+                description: Permission for /spectatecycle
+                default: false
+              spectator.commands.spectatecycle.stopOthers:
+                description: Permission for /spectatecycle stop <Player>
+                default: false
+              spectator.commands.spectatecycle.only:
+                description: Only Permission for /spectatecycle
+                default: false
       spectator.bypass.*:
         description: Permission for all .bypass Permissions
         default: false
@@ -79,25 +79,25 @@ permissions:
             spectator.bypass.spectateall:
               description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
               default: false
-        spectator.utils.*:
-          description: Permission for all .utils Permissions
-          default: false
-          children:
-            spectator.utils.openenderchest:
-              description: Permission to see the enderchest when opened by the current target during spectating
+      spectator.utils.*:
+        description: Permission for all .utils Permissions
+        default: false
+        children:
+          spectator.utils.openenderchest:
+            description: Permission to see the enderchest when opened by the current target during spectating
+            default: false
+            spectator.utils.opencontainer:
+              description: Permission to see contents of containers opened by the current target during spectating
               default: false
-              spectator.utils.opencontainer:
-                description: Permission to see contents of containers opened by the current target during spectating
-                default: false
-              spectator.utils.mirrorinventory:
-                description: Permission to see other players Inventory during spectating
-                default: false
-              spectator.utils.mirroreffects:
-                description: Permission to see other players Inventory during spectating
-                default: false
-              spectator.utils.hidetab:
-                description: Permission to be hidden in Spigot Tablist
-                default: false
+            spectator.utils.mirrorinventory:
+              description: Permission to see other players Inventory during spectating
+              default: false
+            spectator.utils.mirroreffects:
+              description: Permission to see other players Inventory during spectating
+              default: false
+            spectator.utils.hidetab:
+              description: Permission to be hidden in Spigot Tablist
+              default: false
       spectator.notify.update:
         description: Permission to get an alert when an update is available
-        default: false
+        default: op

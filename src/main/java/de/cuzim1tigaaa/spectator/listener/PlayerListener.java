@@ -4,10 +4,10 @@ import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.player.SpectateManager;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
@@ -36,12 +36,12 @@ public class PlayerListener implements Listener {
                 player.sendMessage(ChatColor.DARK_GRAY + ChatColor.BOLD.toString() + "» " + ChatColor.YELLOW + "https://www.spigotmc.org/resources/spectator.93051/");
             }
         }
-        if(Config.getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS)) {
-            for(Player all : CycleHandler.getPausedCycles().keySet()) CycleHandler.restartCycle(player);
-        }
+        if(Config.getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS))
+            for(Player paused : CycleHandler.getPausedCycles().keySet()) CycleHandler.restartCycle(paused);
 
         if(!player.hasPermission(Permissions.BYPASS_TABLIST) && Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) {
-            for(Player hidden : this.manager.getHidden()) if(hidden.hasPermission(Permissions.UTILS_HIDE_IN_TAB)) player.hidePlayer(this.plugin, hidden);
+            for(Player hidden : this.manager.getHidden())
+                if(hidden.hasPermission(Permissions.UTILS_HIDE_IN_TAB)) player.hidePlayer(this.plugin, hidden);
         }else for(Player hidden : this.manager.getHidden()) player.showPlayer(this.plugin, hidden);
     }
     @EventHandler @SuppressWarnings("unused")
@@ -51,8 +51,14 @@ public class PlayerListener implements Listener {
         for (Map.Entry<Player, Player> entry : this.plugin.getRelation().entrySet()) {
             if (entry.getValue().equals(player)) {
                 Player spectator = entry.getKey();
-                if (!CycleHandler.isPlayerCycling(spectator)) this.manager.dismountTarget(player);
-                else CycleHandler.restartCycle(spectator);
+                if (!CycleHandler.isPlayerCycling(spectator)) this.manager.dismountTarget(spectator);
+                else {
+                    int onlineNonSpec = (Bukkit.getOnlinePlayers().size() - 1) - this.plugin.getSpectators().size();
+                    if(onlineNonSpec == 0) {
+                        if(Config.getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS)) CycleHandler.pauseCycle(spectator);
+                        else CycleHandler.stopCycle(spectator);
+                    }
+                }
             }
         }
     }
@@ -82,8 +88,27 @@ public class PlayerListener implements Listener {
     @EventHandler (priority = EventPriority.HIGHEST) @SuppressWarnings("unused")
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
-        if(!Config.getBoolean(Paths.CONFIG_KICK_WHILE_CYCLING) && CycleHandler.isPlayerCycling(player)) event.setCancelled(true);
+        if(!Config.getBoolean(Paths.CONFIG_KICK_WHILE_CYCLING) && CycleHandler.isPlayerCycling(player)) {
+            event.setCancelled(true);
+        }
     }
+
+    @EventHandler @SuppressWarnings("unused")
+    public void onDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        if(this.plugin.getSpectators().contains(player)) this.plugin.getSpectateManager().unSpectate(player, false);
+        for (Map.Entry<Player, Player> entry : this.plugin.getRelation().entrySet()) {
+            if (entry.getValue().equals(player)) {
+                Player spectator = entry.getKey();
+                if (!CycleHandler.isPlayerCycling(spectator)) this.manager.dismountTarget(spectator);
+                else {
+                    int onlineNonSpec = (Bukkit.getOnlinePlayers().size() - 1) - this.plugin.getSpectators().size();
+                    if(onlineNonSpec == 0) CycleHandler.pauseCycle(spectator);
+                }
+            }
+        }
+    }
+
     @EventHandler @SuppressWarnings("unused")
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true);

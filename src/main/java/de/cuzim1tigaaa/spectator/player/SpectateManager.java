@@ -4,7 +4,6 @@ import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -22,6 +21,10 @@ public class SpectateManager {
             for(Map.Entry<Player, Player> entry : plugin.getRelation().entrySet()) {
                 final Player player = entry.getKey();
                 final Player target = entry.getValue();
+
+                if(CycleHandler.isPlayerCycling(player) && target == null) CycleHandler.stopCycle(player);
+
+                assert target != null;
                 Inventory.updateInventory(player, target);
                 if(!player.getWorld().equals(target.getWorld()) || player.getLocation().distanceSquared(target.getLocation()) > 1) {
                     player.setSpectatorTarget(null);
@@ -47,8 +50,8 @@ public class SpectateManager {
         this.plugin.getSpectators().add(player);
         Inventory.getInventory(player, null);
 
-        if(player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) && Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) hideFromTab(player, true);
-        player.setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
+        if(player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) &&
+                Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) hideFromTab(player, true);
         if(target != null) {
             Inventory.getInventory(player, target);
             player.setSpectatorTarget(null);
@@ -90,14 +93,12 @@ public class SpectateManager {
         }
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
-        player.removeMetadata("vanished", this.plugin);
-        if(CycleHandler.isPlayerCycling(player)) CycleHandler.stopCycle(player);
+        if(CycleHandler.isPlayerCycling(player)) CycleHandler.breakCycle(player);
     }
     public void restoreAll() {
         Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
         for(Player player : spectators) this.unSpectate(player, false);
     }
-
     private void hideFromTab(final Player player, final boolean hide) {
         for(Player target : Bukkit.getOnlinePlayers()) {
             if(target.getUniqueId().equals(player.getUniqueId())) continue;
@@ -105,16 +106,16 @@ public class SpectateManager {
             if(hide) {
                 this.hidden.add(player);
                 target.hidePlayer(this.plugin, player);
+                player.setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
             }else {
                 this.hidden.remove(player);
                 target.showPlayer(this.plugin, player);
+                player.removeMetadata("vanished", this.plugin);
             }
         }
     }
-
     public void dismountTarget(Player player) {
         if(!player.getGameMode().equals(GameMode.SPECTATOR)) return;
-        if(player.getSpectatorTarget() == null || !player.getSpectatorTarget().getType().equals(EntityType.PLAYER)) return;
         this.plugin.getRelation().remove(player);
         player.getInventory().clear();
         player.setSpectatorTarget(null);

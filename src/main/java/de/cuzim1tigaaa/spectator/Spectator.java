@@ -62,7 +62,7 @@ public class Spectator extends JavaPlugin {
     public void reload() {
         getLogger().info("(Re-)loading the Configuration file...");
         Messages.loadMessages(this);
-        Config.loadConfig(this, true);
+        Config.loadConfig(this);
     }
 
     @Override

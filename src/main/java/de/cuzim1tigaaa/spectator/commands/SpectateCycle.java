@@ -47,7 +47,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 return true;
             }
             try {
-                CycleHandler.startCycle(player, Integer.parseInt(args[1]));
+                CycleHandler.startCycle(player, Integer.parseInt(args[1]), false);
                 return true;
             }catch(NumberFormatException exception) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NUMBERFORMAT));
@@ -75,7 +75,6 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 return true;
             }
             CycleHandler.stopCycle(target);
-            target.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
             return true;
         }
         player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));

@@ -25,7 +25,6 @@ public class Cycle {
     public boolean hasNextPlayer() { return toVisit.size() == 0; }
     public Player getLastPlayer() { return last; }
 
-
     public Player getNextPlayer(Player spectator) {
         this.updateLists(spectator);
         if (toVisit.size() == 0) return null;

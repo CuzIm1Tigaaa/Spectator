@@ -7,7 +7,7 @@
     <name>Spectator</name>
     <groupId>de.cuzim1tigaaa.spectator</groupId>
     <artifactId>Spectator</artifactId>
-    <version>1.6.10.1</version>
+    <version>1.6.10.2</version>
 
     <properties>
         <java.version>16</java.version>
@@ -58,7 +58,6 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <!-- Replace this with your package! -->
                             <shadedPattern>de.cuzim1tigaaa.spectator</shadedPattern>
                         </relocation>
                     </relocations>

@@ -19,9 +19,14 @@ public class CycleHandler {
     }
 
     private static void sendBossBar(Player player, Player target) {
+        if(!Config.getBoolean(Paths.CONFIG_SHOW_BOSS_BAR)) return;
+
         CycleTask cTask = cycleTasks.get(player);
-        BossBar bossBar = cTask.getBossBar() == null ? Bukkit.createBossBar("", BarColor.BLUE, BarStyle.SOLID) : cTask.getBossBar();
-        bossBar.setTitle(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_BOSS_BAR, "TARGET", target.getDisplayName()));
+        BossBar bossBar = cTask.getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : cTask.getBossBar();
+        bossBar.setTitle(target == null ? Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING) :
+                Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_BOSS_BAR, "TARGET", target.getDisplayName()));
+        bossBar.setColor(target == null ? BarColor.RED : BarColor.BLUE);
+
         bossBar.setVisible(true);
         bossBar.addPlayer(player);
         cTask.setBossBar(bossBar);
@@ -30,50 +35,59 @@ public class CycleHandler {
     private static final Map<Player, Integer> pausedCycles = new HashMap<>();
     public static Map<Player, Integer> getPausedCycles() { return pausedCycles; }
 
-    public static void breakCycle(Player player) {
+    public static void breakCycle(Player player, boolean bossBar) {
         if(cycleTasks.containsKey(player)) {
             CycleTask task = cycleTasks.get(player);
             Bukkit.getScheduler().cancelTask(task.getTask().getTaskId());
-            if(task.getBossBar() != null) cycleTasks.get(player).getBossBar().removeAll();
-            cycleTasks.remove(player);
+            if(bossBar) resetBossBar(player);
         }
         plugin.getSpectateManager().dismountTarget(player);
     }
+    private static void resetBossBar(Player player) {
+        if(cycleTasks.containsKey(player) && cycleTasks.get(player).getBossBar() != null) cycleTasks.get(player).getBossBar().removeAll();
+    }
+    public static void next(Player player) {
+        if(!cycleTasks.containsKey(player)) return;
+        Cycle cycle = cycleTasks.get(player).getCycle();
+        if(!cycle.hasNextPlayer()) cycleTasks.get(player).setCycle(new Cycle(player, cycle.getLastPlayer() != null ? cycle.getLastPlayer() : null));
+        Player next = cycle.getNextPlayer(player);
+
+        // if(next == player || (next == null && cycle.getLastPlayer() == null)) stopCycle(player);
+        if(next == null || next.isDead()) next = null;
+        plugin.getSpectateManager().spectate(player, next);
+        sendBossBar(player, next);
+    }
 
     public static void startCycle(final Player player, int seconds, boolean restart) {
-        breakCycle(player);
+        breakCycle(player, true);
+        cycleTasks.remove(player);
         int ticks = seconds * 20;
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            Cycle cycle = cycleTasks.get(player).getCycle();
-            if(!cycle.hasNextPlayer()) cycleTasks.get(player).setCycle(new Cycle(player, cycle.getLastPlayer() != null ? cycle.getLastPlayer() : null));
-            Player next = cycle.getNextPlayer(player);
-            if(next != null && !next.isDead()) {
-                plugin.getSpectateManager().spectate(player, next);
-                if(Config.getBoolean(Paths.CONFIG_SHOW_BOSS_BAR)) sendBossBar(player, next);
-            }else if(next == null && cycle.getLastPlayer() == null) stopCycle(player);
-        }, 0, ticks);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> next(player), 0, ticks);
         cycleTasks.put(player, new CycleTask(seconds, new Cycle(player, null), task));
 
         if(restart) player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_RESTART, "INTERVAL", seconds));
         else player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_START, "INTERVAL", seconds));
     }
-
     public static void stopCycle(Player player) {
-        breakCycle(player);
+        breakCycle(player, true);
+        if(cycleTasks.containsKey(player)) {
+            resetBossBar(player);
+            cycleTasks.remove(player);
+        }
         player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
     }
-
     public static void pauseCycle(Player player) {
-        pausedCycles.put(player, cycleTasks.get(player).getInterval());
-        breakCycle(player);
+        int interval = cycleTasks.get(player).getInterval();
+        pausedCycles.put(player, interval);
+        breakCycle(player, false);
+        sendBossBar(player, null);
         player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
     }
-
     public static void restartCycle(Player player) {
-        int seconds = pausedCycles.containsKey(player) ? pausedCycles.get(player) : cycleTasks.get(player).getInterval();
-        breakCycle(player);
+        int seconds = pausedCycles.getOrDefault(player, 0);
         pausedCycles.remove(player);
-        startCycle(player, seconds, true);
+        if(seconds == 0) breakCycle(player, true);
+        else startCycle(player, seconds, true);
     }
 
     private static class CycleTask {

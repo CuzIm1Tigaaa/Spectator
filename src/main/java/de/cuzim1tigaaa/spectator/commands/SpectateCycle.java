@@ -38,7 +38,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle start <Interval>"));
                 return true;
             }
-            if(Bukkit.getOnlinePlayers().size() <= 1) {
+            if(Bukkit.getOnlinePlayers().size() <= 1 && !Config.getBoolean(Paths.CONFIG_CYCLE_NO_PLAYERS)) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOPLAYERS));
                 return true;
             }
@@ -48,11 +48,10 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             }
             try {
                 CycleHandler.startCycle(player, Integer.parseInt(args[1]), false);
-                return true;
             }catch(NumberFormatException exception) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NUMBERFORMAT));
-                return true;
             }
+            return true;
         }
         if(args[0].equalsIgnoreCase("stop")) {
             Player target = player;

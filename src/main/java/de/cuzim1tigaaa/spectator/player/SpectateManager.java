@@ -90,7 +90,7 @@ public class SpectateManager {
         }
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
-        if(CycleHandler.isPlayerCycling(player)) CycleHandler.breakCycle(player);
+        if(CycleHandler.isPlayerCycling(player)) CycleHandler.breakCycle(player, true);
     }
     public void restoreAll() {
         Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());

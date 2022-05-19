@@ -36,13 +36,14 @@ public class PlayerListener implements Listener {
                 player.sendMessage(ChatColor.DARK_GRAY + ChatColor.BOLD.toString() + "» " + ChatColor.YELLOW + "https://www.spigotmc.org/resources/spectator.93051/");
             }
         }
-        if(Config.getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS))
+        if(Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS))
             for(Player paused : CycleHandler.getPausedCycles().keySet()) CycleHandler.restartCycle(paused);
 
-        if(!player.hasPermission(Permissions.BYPASS_TABLIST) && Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) {
-            for(Player hidden : this.manager.getHidden())
-                if(hidden.hasPermission(Permissions.UTILS_HIDE_IN_TAB)) player.hidePlayer(this.plugin, hidden);
-        }else for(Player hidden : this.manager.getHidden()) player.showPlayer(this.plugin, hidden);
+        boolean hide = !player.hasPermission(Permissions.BYPASS_TABLIST) && Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB);
+        for(Player hidden : this.manager.getHidden()) {
+            if(hide) player.hidePlayer(this.plugin, hidden);
+            else player.showPlayer(this.plugin, hidden);
+        }
     }
     @EventHandler @SuppressWarnings("unused")
     public void onQuit(PlayerQuitEvent event) {
@@ -54,9 +55,12 @@ public class PlayerListener implements Listener {
                 if (!CycleHandler.isPlayerCycling(spectator)) this.manager.dismountTarget(spectator);
                 else {
                     int onlineNonSpec = (Bukkit.getOnlinePlayers().size() - 1) - this.plugin.getSpectators().size();
-                    if(onlineNonSpec == 0) {
-                        if(Config.getBoolean(Paths.CONFIG_PAUSE_WHEN_NO_PLAYERS)) CycleHandler.pauseCycle(spectator);
+                    if(onlineNonSpec <= 0) {
+                        if(Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) CycleHandler.pauseCycle(spectator);
                         else CycleHandler.stopCycle(spectator);
+                    }else {
+                        spectator.setSpectatorTarget(null);
+                        CycleHandler.next(spectator);
                     }
                 }
             }
@@ -69,7 +73,7 @@ public class PlayerListener implements Listener {
             if(!CycleHandler.isPlayerCycling(player) || !player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
                 if(event.isSneaking()) this.manager.dismountTarget(player);
             }else {
-                if(event.isSneaking()) {
+                if(event.isSneaking() && this.plugin.getRelation().getOrDefault(player, null) != null) {
                     player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_DISMOUNT));
                     event.setCancelled(true);
                 }
@@ -102,8 +106,8 @@ public class PlayerListener implements Listener {
                 Player spectator = entry.getKey();
                 if (!CycleHandler.isPlayerCycling(spectator)) this.manager.dismountTarget(spectator);
                 else {
-                    int onlineNonSpec = (Bukkit.getOnlinePlayers().size() - 1) - this.plugin.getSpectators().size();
-                    if(onlineNonSpec == 0) CycleHandler.pauseCycle(spectator);
+                    spectator.setSpectatorTarget(null);
+                    CycleHandler.next(spectator);
                 }
             }
         }

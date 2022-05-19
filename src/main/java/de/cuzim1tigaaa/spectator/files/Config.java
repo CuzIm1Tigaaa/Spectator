@@ -97,7 +97,7 @@ public class Config {
             set("Settings.Cycle", comments(true), null);
 
             set(CONFIG_CYCLE_NO_PLAYERS, comments(true,
-                    "Allows to start cycling even with no players online",
+                    "Allows starting cycling even with no players online",
                     "Cycle will then work, when players are online!",
                     "Might be useful when using the plugin as a \"camera\""), true);
 

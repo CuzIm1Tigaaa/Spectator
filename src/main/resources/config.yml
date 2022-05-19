@@ -60,7 +60,7 @@ Settings:
 
   Cycle:
 
-    # Allows to start cycling even with no players online
+    # Allows starting cycling even with no players online
     # Cycle will then work, when players are online!
     # Might be useful when using the plugin as a "camera"
     StartWhenNoPlayers: true

@@ -19,7 +19,7 @@ public class Config {
     private static File configFile;
 
     public static void loadConfig(Spectator plugin) {
-        int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1]), currentVersion = 4;
+        int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1]), currentVersion = 5;
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
             if(config.getInt("ConfigVersion") < currentVersion) replaceConfig(plugin, true);
@@ -41,7 +41,7 @@ public class Config {
             set(CONFIG_VERSION, comments(false,
                     "This is the current version of the config, DO NOT CHANGE!",
                     "If the version changes, the plugin will automatically",
-                    "backup your current config and create the new one"), 4);
+                    "backup your current config and create the new one"), 5);
 
             set("Settings", comments(true), null);
 
@@ -96,7 +96,12 @@ public class Config {
 
             set("Settings.Cycle", comments(true), null);
 
-            set(CONFIG_PAUSE_WHEN_NO_PLAYERS, comments(true,
+            set(CONFIG_CYCLE_NO_PLAYERS, comments(true,
+                    "Allows to start cycling even with no players online",
+                    "Cycle will then work, when players are online!",
+                    "Might be useful when using the plugin as a \"camera\""), true);
+
+            set(CONFIG_CYCLE_PAUSE_NO_PLAYERS, comments(true,
                     "The cycle gets paused if there are no longer any players online and will automatically restart",
                     "Otherwise the cycle will simply be stopped"), false);
 

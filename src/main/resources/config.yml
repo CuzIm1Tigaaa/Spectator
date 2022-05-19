@@ -5,7 +5,7 @@
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
 # backup your current config and create the new one
-ConfigVersion: 4
+ConfigVersion: 5
 
 Settings:
 
@@ -59,6 +59,11 @@ Settings:
     OpenEnderChest: false
 
   Cycle:
+
+    # Allows to start cycling even with no players online
+    # Cycle will then work, when players are online!
+    # Might be useful when using the plugin as a "camera"
+    StartWhenNoPlayers: true
 
     # The cycle gets paused if there are no longer any players online and will automatically restart
     # Otherwise the cycle will simply be stopped

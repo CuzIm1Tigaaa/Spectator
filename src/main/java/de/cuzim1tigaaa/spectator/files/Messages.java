@@ -41,7 +41,7 @@ public class Messages {
 
             set(MESSAGES_GENERAL_BYPASS_TELEPORT, "&7%TARGET% &ccannot be spectated at the moment!");
             set(MESSAGES_GENERAL_BYPASS_INVENTORY, "&cYou cannot see the inventory of &7%TARGET% &cat the moment!");
-            set(MESSAGES_GENERAL_DISMOUNT, "&cYou cannot dismount while in Speccycle-Mode! Use &7/SpectateCycle stop &cto leave Speccycle-Mode.");
+            set(MESSAGES_GENERAL_DISMOUNT, "&cYou cannot dismount while in Speccycle-Mode! Use &7/spectatecycle stop &cto leave Speccycle-Mode.");
             set(MESSAGES_GENERAL_GAMEMODE_CHANGE, "&cYou cannot change your GameMode while spectating! Use &7/spec &cto leave Spectator-Mode.");
             set(MESSAGES_GENERAL_NOPLAYERS, "&cThere are not enough Players online.");
             set(MESSAGES_GENERAL_OFFLINEPLAYER, "&7%TARGET% &cis not Online!");
@@ -50,6 +50,7 @@ public class Messages {
             set(MESSAGES_GENERAL_YOURSELF, "&cYou cannot Spectate yourself!");
             set(MESSAGES_GENERAL_CYCLEONLY, "&cYou can only use &7/SpectateCycle start <Interval>");
             set(MESSAGES_GENERAL_NUMBERFORMAT, "&cPlease enter a valid number!");
+            set(MESSAGES_GENERAL_BOSS_BAR_WAITING, "&cSearching next Target...");
 
             set(MESSAGES_COMMANDS_LIST_NONE, "&cThere are no spectators at the moment!");
             set(MESSAGES_COMMANDS_LIST_TITLE, "&7There are currently &e%AMOUNT% &7Spectators:");

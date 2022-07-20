@@ -1,8 +1,8 @@
-name: ${project.name}
+name: ${project.artifactId}
 version: ${project.version}
 author: CuzIm1Tigaaa
 main: ${project.groupId}.Spectator
-api-version: 1.16
+api-version: 1.13
 commands:
   spectate:
     aliases: [spec]

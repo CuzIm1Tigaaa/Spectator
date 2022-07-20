@@ -9,7 +9,7 @@ import org.bukkit.potion.PotionEffect;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PlayerAttributes {
+public final class PlayerAttributes {
 
     private final GameMode gameMode;
     private final Location location;
@@ -25,9 +25,23 @@ public class PlayerAttributes {
         effects = new HashSet<>(player.getActivePotionEffects());
     }
 
-    public GameMode getGameMode() { return gameMode; }
-    public Location getLocation() { return location; }
-    public Boolean getFlying() { return isFlying; }
-    public ItemStack[] getPlayerInventory() { return playerInventory; }
-    public Set<PotionEffect> getEffects() { return effects; }
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public Boolean getFlying() {
+        return isFlying;
+    }
+
+    public ItemStack[] getPlayerInventory() {
+        return playerInventory;
+    }
+
+    public Set<PotionEffect> getEffects() {
+        return effects;
+    }
 }

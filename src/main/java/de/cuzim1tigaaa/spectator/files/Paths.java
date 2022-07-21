@@ -1,7 +1,6 @@
 package de.cuzim1tigaaa.spectator.files;
 
-public class Paths {
-
+public final class Paths {
     public final static String CONFIG_VERSION = "ConfigVersion";
 
     public final static String CONFIG_NOTIFY_UPDATE = "Settings.NotifyOnUpdate";

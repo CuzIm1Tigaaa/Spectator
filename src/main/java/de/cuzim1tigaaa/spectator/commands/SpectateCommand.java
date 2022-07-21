@@ -20,7 +20,6 @@ public final class SpectateCommand implements CommandExecutor, TabCompleter {
     private final SpectatorPlugin plugin;
 
     public SpectateCommand(SpectatorPlugin plugin) {
-        plugin.getCommand("spectate").setExecutor(this); //If defined in plugin.yml, never null!
         this.plugin = plugin;
     }
 

@@ -16,7 +16,6 @@ public final class SpectateHereCommand implements CommandExecutor {
     private final SpectatorPlugin plugin;
 
     public SpectateHereCommand(SpectatorPlugin plugin) {
-        plugin.getCommand("spectatehere").setExecutor(this);
         this.plugin = plugin;
     }
 

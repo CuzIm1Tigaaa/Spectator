@@ -1,7 +1,7 @@
 name: ${project.artifactId}
 version: ${project.version}
 author: CuzIm1Tigaaa
-main: ${project.groupId}.Spectator
+main: ${project.groupId}.SpectatorPlugin
 api-version: 1.13
 commands:
   spectate:

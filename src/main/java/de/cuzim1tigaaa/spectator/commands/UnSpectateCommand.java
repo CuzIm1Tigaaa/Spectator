@@ -19,7 +19,6 @@ public final class UnSpectateCommand implements CommandExecutor, TabCompleter {
     private final SpectatorPlugin plugin;
 
     public UnSpectateCommand(SpectatorPlugin plugin) {
-        plugin.getCommand("unspectate").setExecutor(this);
         this.plugin = plugin;
     }
 

@@ -22,7 +22,6 @@ public final class SpectateCycleCommand implements CommandExecutor, TabCompleter
     private final SpectatorPlugin plugin;
 
     public SpectateCycleCommand(SpectatorPlugin plugin) {
-        plugin.getCommand("spectatecycle").setExecutor(this);
         this.plugin = plugin;
     }
 

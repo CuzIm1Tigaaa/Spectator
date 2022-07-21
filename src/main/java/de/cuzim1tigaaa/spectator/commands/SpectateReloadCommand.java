@@ -13,7 +13,6 @@ public final class SpectateReloadCommand implements CommandExecutor {
     private final SpectatorPlugin plugin;
 
     public SpectateReloadCommand(SpectatorPlugin plugin) {
-        plugin.getCommand("spectatereload").setExecutor(this);
         this.plugin = plugin;
     }
 

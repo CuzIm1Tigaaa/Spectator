@@ -15,7 +15,6 @@ public final class SpectateListCommand implements CommandExecutor {
     private final SpectatorPlugin plugin;
 
     public SpectateListCommand(SpectatorPlugin plugin) {
-        plugin.getCommand("spectatelist").setExecutor(this);
         this.plugin = plugin;
     }
 

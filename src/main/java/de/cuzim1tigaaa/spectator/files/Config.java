@@ -19,7 +19,7 @@ public class Config {
     private static File configFile;
 
     public static void loadConfig(Spectator plugin) {
-        int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1]), currentVersion = 5;
+        int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2)), currentVersion = 5;
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
             if(config.getInt("ConfigVersion") < currentVersion) replaceConfig(plugin, true);

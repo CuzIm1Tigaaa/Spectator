@@ -5,7 +5,7 @@
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
 # backup your current config and create the new one
-ConfigVersion: 5
+ConfigVersion: 6
 
 Settings:
 
@@ -13,6 +13,10 @@ Settings:
   # will receive a message when they join.
   # Permission: spectator.notify.update
   NotifyOnUpdate: true
+
+  # Specify which language file should be used by the plugin
+  # You can also add new languages! :)
+  Language: en_US
 
   # Spectators with the first following permission will be hidden in the tablist
   # Can be bypassed by players with the second permission.

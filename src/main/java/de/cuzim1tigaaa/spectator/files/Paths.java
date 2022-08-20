@@ -1,9 +1,10 @@
 package de.cuzim1tigaaa.spectator.files;
 
-public class Paths {
+public final class Paths {
 
     public final static String CONFIG_VERSION = "ConfigVersion";
 
+    public final static String CONFIG_LANGUAGE = "Settings.Language";
     public final static String CONFIG_NOTIFY_UPDATE = "Settings.NotifyOnUpdate";
     public final static String CONFIG_HIDE_PLAYERS_TAB = "Settings.HidePlayersInTab";
     public final static String CONFIG_KICK_WHILE_CYCLING = "Settings.KickCyclingPlayer";

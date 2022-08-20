@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-public class Spectator extends JavaPlugin {
+public final class Spectator extends JavaPlugin {
 
     private UpdateChecker updateChecker;
     private SpectateManager spectateManager;
@@ -60,9 +60,10 @@ public class Spectator extends JavaPlugin {
         new UnSpectate(this);
     }
     public void reload() {
-        getLogger().info("(Re-)loading the Configuration file...");
-        Messages.loadMessages(this);
+        getLogger().info("Loading config settings...");
         Config.loadConfig(this);
+        getLogger().info("Loading plugin messages...");
+        Messages.loadLanguageFile(this);
     }
 
     @Override

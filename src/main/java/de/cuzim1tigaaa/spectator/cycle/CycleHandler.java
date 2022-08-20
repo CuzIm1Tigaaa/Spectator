@@ -13,10 +13,14 @@ import java.util.Map;
 public class CycleHandler {
 
     private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
+
     private static final Map<Player, CycleTask> cycleTasks = new HashMap<>();
     public static boolean isPlayerCycling(Player player) {
         return cycleTasks.containsKey(player);
     }
+
+    private static final Map<Player, Integer> pausedCycles = new HashMap<>();
+    public static Map<Player, Integer> getPausedCycles() { return pausedCycles; }
 
     private static void sendBossBar(Player player, Player target) {
         if(!Config.getBoolean(Paths.CONFIG_SHOW_BOSS_BAR)) return;
@@ -31,9 +35,10 @@ public class CycleHandler {
         bossBar.addPlayer(player);
         cTask.setBossBar(bossBar);
     }
-
-    private static final Map<Player, Integer> pausedCycles = new HashMap<>();
-    public static Map<Player, Integer> getPausedCycles() { return pausedCycles; }
+    private static void resetBossBar(Player player) {
+        if(cycleTasks.containsKey(player) && cycleTasks.get(player).getBossBar() != null)
+            cycleTasks.get(player).getBossBar().removeAll();
+    }
 
     public static void breakCycle(Player player, boolean bossBar) {
         if(cycleTasks.containsKey(player)) {
@@ -42,9 +47,6 @@ public class CycleHandler {
             if(bossBar) resetBossBar(player);
         }
         plugin.getSpectateManager().dismountTarget(player);
-    }
-    private static void resetBossBar(Player player) {
-        if(cycleTasks.containsKey(player) && cycleTasks.get(player).getBossBar() != null) cycleTasks.get(player).getBossBar().removeAll();
     }
     public static void next(Player player) {
         if(!cycleTasks.containsKey(player)) return;

@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.logging.Level;
 
-public class UpdateChecker {
+public final class UpdateChecker {
 
     private final String url;
     private final Spectator plugin;

@@ -2,7 +2,7 @@ name: ${project.name}
 version: ${project.version}
 author: CuzIm1Tigaaa
 main: ${project.groupId}.Spectator
-api-version: 1.16
+api-version: 1.19
 commands:
   spectate:
     aliases: [spec]

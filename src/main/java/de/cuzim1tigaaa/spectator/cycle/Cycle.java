@@ -2,6 +2,7 @@ package de.cuzim1tigaaa.spectator.cycle;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Permissions;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -42,14 +43,14 @@ public class Cycle {
     }
 
     private void updateLists(Player spectator) {
-        toVisit.clear();
-        alreadyVisited.removeIf(p -> !p.isOnline());
-        toVisit.removeAll(alreadyVisited);
-
+        toVisit.addAll(Bukkit.getOnlinePlayers());
         toVisit.remove(owner);
         toVisit.removeAll(plugin.getSpectators());
 
         toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED) &&
                 !spectator.hasPermission(Permissions.BYPASS_SPECTATEALL));
+
+        alreadyVisited.removeIf(p -> !p.isOnline());
+        toVisit.removeAll(alreadyVisited);
     }
 }

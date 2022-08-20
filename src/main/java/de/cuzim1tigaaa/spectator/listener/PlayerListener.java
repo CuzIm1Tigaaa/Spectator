@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.listener;
 
+import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
@@ -25,7 +26,7 @@ public class PlayerListener implements Listener {
         this.manager = this.plugin.getSpectateManager();
     }
 
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
@@ -45,7 +46,7 @@ public class PlayerListener implements Listener {
             else player.showPlayer(this.plugin, hidden);
         }
     }
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if(this.plugin.getSpectators().contains(player)) this.manager.unSpectate(player, false);
@@ -66,7 +67,7 @@ public class PlayerListener implements Listener {
             }
         }
     }
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onDismount(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         if(this.plugin.getSpectators().contains(player)) {
@@ -80,7 +81,7 @@ public class PlayerListener implements Listener {
             }
         }
     }
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onGameModeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
         if(this.plugin.getSpectators().contains(player)) {
@@ -89,7 +90,14 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST) @SuppressWarnings("unused")
+    @EventHandler
+    public void onAdvancementCriteriaGrant(PlayerAdvancementCriterionGrantEvent event) {
+        Player player = event.getPlayer();
+        if(!plugin.getSpectators().contains(player)) return;
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) 
     public void onKick(PlayerKickEvent event) {
         Player player = event.getPlayer();
         if(!Config.getBoolean(Paths.CONFIG_KICK_WHILE_CYCLING) && CycleHandler.isPlayerCycling(player)) {
@@ -97,7 +105,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         if(this.plugin.getSpectators().contains(player)) this.plugin.getSpectateManager().unSpectate(player, false);
@@ -113,14 +121,14 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true);
     }
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) { if (event.getWhoClicked().getGameMode().equals(GameMode.SPECTATOR)) event.setCancelled(true); }
 
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onChestOpen(InventoryOpenEvent event) {
         Player player = (Player) event.getPlayer();
         if(!this.plugin.getRelation().containsValue(player)) return;
@@ -141,7 +149,7 @@ public class PlayerListener implements Listener {
         }
         if(inventory != null) for(Player spec : spectators) spec.openInventory(inventory);
     }
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onChestClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
         if(!this.plugin.getRelation().containsValue(player)) return;
@@ -159,7 +167,7 @@ public class PlayerListener implements Listener {
         for(Player spec : spectators) spec.closeInventory();
     }
 
-    @EventHandler @SuppressWarnings("unused")
+    @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
         if(event.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE) return;
         Player player = event.getPlayer();

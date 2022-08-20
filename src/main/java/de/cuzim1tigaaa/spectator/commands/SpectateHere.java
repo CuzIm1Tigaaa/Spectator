@@ -7,9 +7,9 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Objects;
 
-public class SpectateHere implements CommandExecutor, TabCompleter {
+public class SpectateHere implements CommandExecutor {
 
     private final Spectator plugin;
 
@@ -40,10 +40,5 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
         }
         sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SENDER));
         return true;
-    }
-
-    @Override
-    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
-        return Collections.emptyList();
     }
 }

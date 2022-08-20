@@ -5,9 +5,9 @@ import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.command.*;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Objects;
 
-public class SpectateReload implements CommandExecutor, TabCompleter {
+public class SpectateReload implements CommandExecutor {
 
     private final Spectator plugin;
 
@@ -25,10 +25,5 @@ public class SpectateReload implements CommandExecutor, TabCompleter {
         this.plugin.reload();
         sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_RELOAD));
         return true;
-    }
-
-    @Override
-    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] strings) {
-        return Collections.emptyList();
     }
 }

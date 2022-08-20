@@ -1,7 +1,6 @@
 package de.cuzim1tigaaa.spectator.files;
 
-public class Permissions {
-
+public final class Permissions {
 
     public static final String COMMANDS_SPECTATE_RELOAD = "spectator.commands.spectatereload";
     public static final String COMMAND_UNSPECTATE = "spectator.commands.unspectate";

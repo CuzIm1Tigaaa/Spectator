@@ -1,0 +1,45 @@
+Messages:
+  Default:
+    Sender: '&cDu musst ein Spieler sein, um diesen Befehl ausführen zu können!'
+    Permission: '&cDu darfst diesen Befehl nicht benutzen!'
+    Syntax: '&cFalsche Benutzung: %USAGE%'
+    Reload: '&7Das Plugin wurde neu geladen.'
+  General:
+    BypassTeleport: '&cDu kannst &7%TARGET% &cnicht beobachten!'
+    BypassInventory: '&cDu kannst das Inventar von &7%TARGET% &cnicht beobachten!'
+    Dismount: '&cYou cannot dismount while in Speccycle-Mode! Benutze &7/spectatecycle stop &czum Verlassen.'
+    GameModeChange: '&cDu kannst deinen Gamemode im Zuschauermodus nicht ändern! Benutze &7/spec &czum Verlassen.'
+    NoPlayers: '&cEs sind nicht genügend Spieler online.'
+    OfflinePlayer: '&7%TARGET% &cist nicht online!'
+    NotSpectating: '&7%TARGET% &cbeobachtet keinen!'
+    SamePlayer: '&cDu beobachtest &7%TARGET% &cbereits!'
+    Yourself: '&cDu kannst dich nicht selbst beobachten!'
+    CycleOnly: '&cDu darfst nur &7/SpectateCycle start <Interval> &cbenutzen!'
+    NumberFormat: '&cGib eine gültige Zahl an!'
+    BossBarWaiting: '&cSuche nächstes Ziel...'
+  Commands:
+    List:
+      None: '&cKein Spieler ist im Zuschauermodus!'
+      Title: '&7Es sind &e%AMOUNT% Spieler &7im Zuschauermodus:'
+      Cycling: '&7- %SPECTATOR% &8[&bCYCLING&8]'
+      Default: '&7- %SPECTATOR%'
+      Spectating: '&7- %SPECTATOR% &8[&e%TARGET%&8]'
+    UnSpectate:
+      ResendAll: '&7All Spectators have been resend!'
+      ResendPlayer: '&e%TARGET% &7has been resend!'
+    Cycle:
+      Start: '&7Speccycle wurde mit dem Interval &c%INTERVAL% &agestartet&7.'
+      Stop: '&7Speccycle wurde &cgestoppt&7.'
+      Pause: '&7Speccycle wurde &epausiert&7.'
+      Restart: '&7Speccycle wurde mit dem interval &c%INTERVAL% &bneugestartet&7.'
+      BossBar: '&7Du beobachtest &6%TARGET%'
+      Cycling: '&cDu bist bereits im Speccycle-Modus!'
+      NotCycling: '&cDu bist nicht im Speccycle-Modus!'
+    Spectate:
+      Join:
+        Self: '&7Du bist nun im Zuschauermodus.'
+        Other: '&e%TARGET% &7ist nun im Zuschauermodus.'
+      Leave:
+        Self: '&7Du hast den Zuschauermodus verlassen.'
+        Other: '&e%TARGET% &7hat den Zuschauermodus verlassen.'
+      Player: '&7Du beobachtest nun &c%TARGET%&7.'

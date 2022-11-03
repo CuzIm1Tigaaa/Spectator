@@ -1,6 +1,7 @@
 package de.cuzim1tigaaa.spectator.files;
 
 import de.cuzim1tigaaa.spectator.Spectator;
+import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -15,11 +16,16 @@ public final class Config {
     private static FileConfiguration config;
     private static File configFile;
 
+    @Getter private static String showTargetMode;
+
     public static void loadConfig(Spectator plugin) {
-        int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2)), currentVersion = 6;
+        int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2));
+        int currentVersion = 7;
+
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
             if(config.getInt("ConfigVersion") < currentVersion) replaceConfig(plugin, true);
+            showTargetMode = getString(Paths.CONFIG_SHOW_CURRENT_TARGET);
             return;
         }
         try {
@@ -38,7 +44,7 @@ public final class Config {
             set(Paths.CONFIG_VERSION, comments(false,
                     "This is the current version of the config, DO NOT CHANGE!",
                     "If the version changes, the plugin will automatically",
-                    "backup your current config and create the new one"), 6);
+                    "backup your current config and create a new one"), currentVersion);
 
             set("Settings", comments(true), null);
 
@@ -106,8 +112,10 @@ public final class Config {
                     "The cycle gets paused if there are no longer any players online and will automatically restart",
                     "Otherwise the cycle will simply be stopped"), false);
 
-            set(Paths.CONFIG_SHOW_BOSS_BAR, comments(true,
-                    "Shows a bossbar to cycling players with the name of the current target"), false);
+            set(Paths.CONFIG_SHOW_CURRENT_TARGET, comments(true,
+                    "Shows a bossbar to cycling players with the name of the current target",
+                    "Possible values are: \"BOSSBAR\", \"ACTIONBAR\", \"NONE\""), "BOSSBAR");
+            showTargetMode = getString(Paths.CONFIG_SHOW_CURRENT_TARGET);
 
             config.save(configFile);
         }catch(IOException exception) {

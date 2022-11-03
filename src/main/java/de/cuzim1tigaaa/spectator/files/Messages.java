@@ -110,7 +110,7 @@ public final class Messages {
             set(Paths.MESSAGES_COMMANDS_CYCLE_STOP,             "&7Speccycle &cstopped&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE,            "&7Speccycle &epaused&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_RESTART,          "&7Speccycle &brestarted &7with interval &c%INTERVAL%&7.");
-            set(Paths.MESSAGES_COMMANDS_CYCLE_BOSS_BAR,         "&7Currently spectating &6%TARGET%");
+            set(Paths.MESSAGES_CYCLING_CURRENT_TARGET,         "&7Currently spectating &6%TARGET%");
             set(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING,          "&cYou are already in Speccycle-Mode!");
             set(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING,      "&cYou are not in Speccycle-Mode!");
             set(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING,      "&e%TARGET% &cis not in Speccycle-Mode!");

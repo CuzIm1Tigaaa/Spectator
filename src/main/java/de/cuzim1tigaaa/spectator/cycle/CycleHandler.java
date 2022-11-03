@@ -121,9 +121,13 @@ public class CycleHandler {
 			cycles.get(uuid).setCycle(newCycle);
 		}
 		Player next = cycle.getNextPlayer(player);
-		if(next == null || next.isDead() || !next.isOnline()) return;
-		if(next.equals(player.getSpectatorTarget())) return;
+		if(next == null || next.isDead() || !next.isOnline()) {
+			if(!plugin.getSpectators().contains(player))
+				plugin.getSpectateManager().spectate(player, null);
+			return;
+		}
 
+		if(next.equals(player.getSpectatorTarget())) return;
 		plugin.getSpectateManager().spectate(player, next);
 		this.showCurrentTargetMessage(player, next);
 	}

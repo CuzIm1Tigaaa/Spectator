@@ -1,42 +1,57 @@
 package de.cuzim1tigaaa.spectator;
 
-import java.io.IOException;
-import java.io.InputStream;
+import lombok.Getter;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public final class UpdateChecker {
 
-    private final String url;
     private final Spectator plugin;
-    private final boolean update;
-    private String version;
+
+    @Getter private boolean update;
+    @Getter private String version;
 
     public UpdateChecker(Spectator plugin) {
         this.plugin = plugin;
-        this.url = "https://api.spigotmc.org/legacy/update.php?resource=93051";
-        this.update = this.checkUpdate();
+
+        this.checkUpdate().thenAcceptAsync(result -> {
+            this.update = result;
+            if(result) this.updateAvailable();
+        });
     }
 
-    public boolean isAvailable() { return this.update; }
-    public String getVersion() { return version; }
+    private void updateAvailable() {
+        this.plugin.getLogger().log(Level.WARNING, "A new Version [v" + this.version + "] is available!");
+        this.plugin.getLogger().log(Level.WARNING, "https://www.spigotmc.org/resources/spectator.93051/");
+    }
 
-    private boolean checkUpdate() {
+    private CompletableFuture<Boolean> checkUpdate() {
+        final CompletableFuture<Boolean> result = new CompletableFuture<>();
+
         this.plugin.getLogger().log(Level.INFO, "Checking for Updates...");
-
         String versionString = this.plugin.getDescription().getVersion();
-        try(InputStream input = new URL(url).openStream()) {
-            Scanner scanner = new Scanner(input);
-            if(!scanner.hasNext()) return false;
-            this.version = scanner.nextLine().replace("v", "");
 
-            if(!versionString.equalsIgnoreCase(this.version)) {
-                this.plugin.getLogger().log(Level.WARNING, "A new Version [v" + this.version + "] is available!");
-                this.plugin.getLogger().log(Level.WARNING, "https://www.spigotmc.org/resources/spectator.93051/");
-                return true;
+        try {
+            URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=93051");
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            if(connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                result.complete(false);
+                return result;
             }
-        }catch(IOException exception) { return false; }
-        return false;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            this.version = reader.readLine().replace("v", "");
+            result.complete(!versionString.equalsIgnoreCase(this.version));
+            return result;
+        }catch(IOException exception) {
+            result.complete(false);
+            return result;
+        }
     }
 }

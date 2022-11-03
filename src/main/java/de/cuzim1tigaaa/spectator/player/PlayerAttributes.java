@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.player;
 
+import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,23 +12,17 @@ import java.util.Set;
 
 public class PlayerAttributes {
 
-    private final GameMode gameMode;
-    private final Location location;
-    private final Boolean isFlying;
-    private final ItemStack[] playerInventory;
-    private final Set<PotionEffect> effects;
+    @Getter private final GameMode gameMode;
+    @Getter private final Location location;
+    @Getter private final boolean flying;
+    @Getter private final ItemStack[] playerInventory;
+    @Getter private final Set<PotionEffect> effects;
 
     public PlayerAttributes(Player player) {
         gameMode = player.getGameMode();
         location = player.getLocation();
-        isFlying = player.isFlying();
+        flying = player.isFlying();
         playerInventory = player.getInventory().getContents();
         effects = new HashSet<>(player.getActivePotionEffects());
     }
-
-    public GameMode getGameMode() { return gameMode; }
-    public Location getLocation() { return location; }
-    public Boolean getFlying() { return isFlying; }
-    public ItemStack[] getPlayerInventory() { return playerInventory; }
-    public Set<PotionEffect> getEffects() { return effects; }
 }

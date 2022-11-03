@@ -1,11 +1,14 @@
 package de.cuzim1tigaaa.spectator;
 
 import de.cuzim1tigaaa.spectator.commands.*;
+import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.Config;
 import de.cuzim1tigaaa.spectator.files.Messages;
+import de.cuzim1tigaaa.spectator.listener.ContainerListener;
 import de.cuzim1tigaaa.spectator.listener.PlayerListener;
 import de.cuzim1tigaaa.spectator.player.Inventory;
 import de.cuzim1tigaaa.spectator.player.SpectateManager;
+import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,42 +17,44 @@ import java.util.*;
 
 public final class Spectator extends JavaPlugin {
 
-    private UpdateChecker updateChecker;
-    private SpectateManager spectateManager;
-
-    public UpdateChecker getUpdateChecker() { return updateChecker; }
-    private final Set<Player> spectators = new HashSet<>();
-
-    private final HashMap<Player, Player> relation = new HashMap<>();
-    public HashMap<Player, Player> getRelation() { return relation; }
-
-    public Set<Player> getSpectators() { return spectators; }
-
-    public SpectateManager getSpectateManager() { return spectateManager; }
+    @Getter private final Set<Player> spectators = new HashSet<>();
+    @Getter private final HashMap<Player, Player> relation = new HashMap<>();
+    @Getter private UpdateChecker updateChecker;
+    @Getter private SpectateManager spectateManager;
+    @Getter private CycleHandler cycleHandler;
 
     @Override
     public void onEnable() {
-        spectateManager = new SpectateManager(this);
-        updateChecker = new UpdateChecker(this);
+        this.info();
 
-        info();
-        new Metrics(this, 12235);
+        this.spectateManager = new SpectateManager(this);
+        this.cycleHandler = new CycleHandler(this);
+
         register();
     }
 
-    private void info() {
-        getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        getLogger().info("Plugin: " + getDescription().getName() + ", " +
-                "v" + getDescription().getVersion() + " by " + getDescription().getAuthors().get(0));
-        getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        getLogger().info("This Plugin is a modified Version");
-        getLogger().info("of kosakriszi's spectator Plugin!");
-        getLogger().info("spigotmc.org/resources/spectator.16745/");
-        getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+    @Override
+    public void onDisable() {
+        Inventory.restoreAll();
+        this.spectateManager.restoreAll();
     }
+
+    public void reload() {
+        this.getLogger().info("Loading config settings...");
+        Config.loadConfig(this);
+        this.getLogger().info("Loading plugin messages...");
+        Messages.loadLanguageFile(this);
+
+        this.updateChecker = new UpdateChecker(this);
+    }
+
+
     private void register() {
-        reload();
-        getLogger().info("Register Events & Commands...");
+        this.reload();
+        new Metrics(this, 12235);
+        this.getLogger().info("Register Events & Commands...");
+
+        new ContainerListener(this);
         new PlayerListener(this);
 
         new Spectate(this);
@@ -59,16 +64,15 @@ public final class Spectator extends JavaPlugin {
         new SpectateList(this);
         new UnSpectate(this);
     }
-    public void reload() {
-        getLogger().info("Loading config settings...");
-        Config.loadConfig(this);
-        getLogger().info("Loading plugin messages...");
-        Messages.loadLanguageFile(this);
-    }
 
-    @Override
-    public void onDisable() {
-        Inventory.restoreAll();
-        spectateManager.restoreAll();
+    private void info() {
+        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        this.getLogger().info("Plugin: " + getDescription().getName() + ", " +
+                "v" + getDescription().getVersion() + " by " + getDescription().getAuthors().get(0));
+        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        this.getLogger().info("This Plugin is a modified Version");
+        this.getLogger().info("of kosakriszi's spectator Plugin!");
+        this.getLogger().info("spigotmc.org/resources/spectator.16745/");
+        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
     }
 }

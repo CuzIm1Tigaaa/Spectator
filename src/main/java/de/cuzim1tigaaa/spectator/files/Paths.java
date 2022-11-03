@@ -20,8 +20,8 @@ public final class Paths {
 
     public static final String CONFIG_CYCLE_NO_PLAYERS = "Settings.Cycle.StartWhenNoPlayers";
 
-    public static final String CONFIG_CYCLE_PAUSE_NO_PLAYERS = "Settings.Spectate.PauseWhenNoPlayers";
-    public static final String CONFIG_SHOW_CURRENT_TARGET = "Settings.Spectate.ShowCurrentTarget";
+    public static final String CONFIG_CYCLE_PAUSE_NO_PLAYERS = "Settings.Cycle.PauseWhenNoPlayers";
+    public static final String CONFIG_SHOW_CURRENT_TARGET = "Settings.Cycle.ShowCurrentTarget";
 
     public static final String MESSAGE_DEFAULT_SENDER = "Messages.Default.Sender";
     public static final String MESSAGE_DEFAULT_PERMISSION = "Messages.Default.Permission";

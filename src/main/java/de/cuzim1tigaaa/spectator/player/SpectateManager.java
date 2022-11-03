@@ -1,8 +1,8 @@
 package de.cuzim1tigaaa.spectator.player;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -14,28 +14,33 @@ public class SpectateManager {
 
     private final Spectator plugin;
 
-    private final HashMap<Player, PlayerAttributes> pAttributes = new HashMap<>();
+    @Getter private final HashMap<Player, PlayerAttributes> pAttributes;
+    @Getter private final Set<Player> hidden;
+
     public SpectateManager(Spectator plugin) {
         this.plugin = plugin;
+        this.pAttributes = new HashMap<>();
+        this.hidden = new HashSet<>();
+        this.run();
+    }
+
+    private void run() {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             for(Map.Entry<Player, Player> entry : plugin.getRelation().entrySet()) {
                 final Player player = entry.getKey();
+                if(player.getGameMode() != GameMode.SPECTATOR) continue;
                 final Player target = entry.getValue();
 
-                Inventory.updateInventory(player, target);
-                if(!player.getWorld().equals(target.getWorld()) || player.getLocation().distanceSquared(target.getLocation()) > 1) {
+                if(player.getSpectatorTarget() == null || !player.getSpectatorTarget().equals(target)) {
+                    if(!player.getWorld().equals(target.getWorld()))
+                        player.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
                     player.setSpectatorTarget(null);
                     player.setSpectatorTarget(target);
                 }
+                Inventory.updateInventory(player, target);
             }
         }, 0, 20);
     }
-
-    private final Set<Player> hidden = new HashSet<>();
-
-    public HashMap<Player, PlayerAttributes> getPAttributes() { return pAttributes; }
-
-    public Set<Player> getHidden() { return hidden; }
 
     public void spectate(final Player player, final Player target) {
         Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
@@ -57,19 +62,14 @@ public class SpectateManager {
             player.setSpectatorTarget(target);
         }
     }
+
     public void unSpectate(final Player player, final boolean loc) {
         Location location = null;
-        if (Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION) && !loc) {
-            if(this.pAttributes.containsKey(player)) location = this.pAttributes.get(player).getLocation();
-        }
-        if (location == null) {
-            location = player.getLocation();
-            float pitch = location.getPitch();
-            float yaw = location.getYaw();
-            player.teleport(location);
-            location.setPitch(pitch);
-            location.setYaw(yaw);
-        }
+        if (Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION) && !loc)
+            if(this.pAttributes.containsKey(player))
+                location = this.pAttributes.get(player).getLocation();
+        if (location == null) location = player.getLocation();
+
         player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
         this.plugin.getSpectators().remove(player);
         this.plugin.getRelation().remove(player);
@@ -80,7 +80,7 @@ public class SpectateManager {
         boolean isFlying = false;
         if(this.pAttributes.containsKey(player)) {
             gameMode = this.pAttributes.get(player).getGameMode();
-            isFlying = this.plugin.getServer().getAllowFlight() && this.pAttributes.get(player).getFlying();
+            isFlying = this.plugin.getServer().getAllowFlight() && this.pAttributes.get(player).isFlying();
             this.pAttributes.remove(player);
         }
         if(!Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHTMODE)) isFlying = false;
@@ -90,12 +90,15 @@ public class SpectateManager {
         }
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
-        if(CycleHandler.isPlayerCycling(player)) CycleHandler.breakCycle(player, true);
+        if(plugin.getCycleHandler().isPlayerCycling(player))
+            plugin.getCycleHandler().stopRunningCycle(player, true);
     }
+
     public void restoreAll() {
         Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
         for(Player player : spectators) this.unSpectate(player, false);
     }
+
     private void hideFromTab(final Player player, final boolean hide) {
         for(Player target : Bukkit.getOnlinePlayers()) {
             if(target.getUniqueId().equals(player.getUniqueId())) continue;
@@ -111,11 +114,12 @@ public class SpectateManager {
             }
         }
     }
+
     public void dismountTarget(Player player) {
         if(!player.getGameMode().equals(GameMode.SPECTATOR)) return;
-        this.plugin.getRelation().remove(player);
-        player.getInventory().clear();
         player.setSpectatorTarget(null);
+        player.getInventory().clear();
+        this.plugin.getRelation().remove(player);
     }
 
 }

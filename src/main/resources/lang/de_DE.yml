@@ -16,7 +16,9 @@ Messages:
     Yourself: '&cDu kannst dich nicht selbst beobachten!'
     CycleOnly: '&cDu darfst nur &7/SpectateCycle start <Interval> &cbenutzen!'
     NumberFormat: '&cGib eine gültige Zahl an!'
-    BossBarWaiting: '&cSuche nächstes Ziel...'
+  Cycling:
+    CurrentTarget: '&7Du beobachtest nun &6%TARGET%'
+    SearchingTarget: '&cSuche nächstes Ziel...'
   Commands:
     List:
       None: '&cKein Spieler ist im Zuschauermodus!'
@@ -32,7 +34,7 @@ Messages:
       Stop: '&7Speccycle wurde &cgestoppt&7.'
       Pause: '&7Speccycle wurde &epausiert&7.'
       Restart: '&7Speccycle wurde mit dem interval &c%INTERVAL% &bneugestartet&7.'
-      BossBar: '&7Du beobachtest &6%TARGET%'
+
       Cycling: '&cDu bist bereits im Speccycle-Modus!'
       NotCycling: '&cDu bist nicht im Speccycle-Modus!'
     Spectate:

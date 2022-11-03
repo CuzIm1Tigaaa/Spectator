@@ -4,8 +4,8 @@
 
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
-# backup your current config and create the new one
-ConfigVersion: 6
+# backup your current config and create a new one
+ConfigVersion: 7
 
 Settings:
 
@@ -74,4 +74,5 @@ Settings:
     PauseWhenNoPlayers: false
 
     # Shows a bossbar to cycling players with the name of the current target
-    ShowBossBar: false
+    # Possible values are: "BOSSBAR", "ACTIONBAR", "NONE"
+    ShowCurrentTarget: BOSSBAR

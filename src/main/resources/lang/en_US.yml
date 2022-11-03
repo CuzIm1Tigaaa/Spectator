@@ -18,7 +18,9 @@ Messages:
     Yourself: '&cYou cannot Spectate yourself!'
     CycleOnly: '&cYou can only use &7/SpectateCycle start <Interval>&c!'
     NumberFormat: '&cPlease enter a valid number!'
-    BossBarWaiting: '&cSearching next Target...'
+  Cycling:
+    CurrentTarget: '&7Currently spectating &6%TARGET%'
+    SearchingTarget: '&cSearching next Target...'
   Commands:
     List:
       None: '&cThere are no spectators at the moment!'
@@ -34,7 +36,6 @@ Messages:
       Stop: '&7Speccycle &cstopped&7.'
       Pause: '&7Speccycle &epaused&7.'
       Restart: '&7Speccycle &brestarted &7with interval &c%INTERVAL%&7.'
-      BossBar: '&7Currently spectating &6%TARGET%'
       Cycling: '&cYou are already in Speccycle-Mode!'
       NotCycling: '&cYou are not in Speccycle-Mode!'
     Spectate:

@@ -1,7 +1,6 @@
 package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -34,7 +33,7 @@ public class SpectateList implements CommandExecutor {
             if(all != null) {
                 String msg;
                 if(this.plugin.getRelation().containsKey(all)) {
-                    if(CycleHandler.isPlayerCycling(all)) msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_CYCLING, "SPECTATOR", all.getDisplayName());
+                    if(plugin.getCycleHandler().isPlayerCycling(all)) msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_CYCLING, "SPECTATOR", all.getDisplayName());
                     else msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_SPECTATING, "SPECTATOR", all.getDisplayName(), "TARGET", this.plugin.getRelation().get(all).getDisplayName());
                 }else msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", all.getDisplayName());
                 sender.sendMessage(msg);

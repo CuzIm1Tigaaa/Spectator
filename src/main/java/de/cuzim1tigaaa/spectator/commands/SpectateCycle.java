@@ -1,7 +1,6 @@
 package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -42,12 +41,13 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOPLAYERS));
                 return true;
             }
-            if(CycleHandler.isPlayerCycling(player)) {
+            if(plugin.getCycleHandler().isPlayerCycling(player)) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING));
                 return true;
             }
             try {
-                CycleHandler.startCycle(player, Integer.parseInt(args[1]), false);
+                int seconds = Integer.parseInt(args[1]);
+                this.plugin.getCycleHandler().startNewCycle(player, seconds, false);
             }catch(NumberFormatException exception) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NUMBERFORMAT));
             }
@@ -68,12 +68,12 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 this.plugin.getSpectateManager().unSpectate(player, false);
                 return true;
             }
-            if(!CycleHandler.isPlayerCycling(target)) {
+            if(!plugin.getCycleHandler().isPlayerCycling(target)) {
                 String message = Messages.getMessage((player.equals(target) ? Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING : Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING), "TARGET", target.getDisplayName());
                 player.sendMessage(message);
                 return true;
             }
-            CycleHandler.stopCycle(target);
+           this.plugin.getCycleHandler().stopRunningCycle(target, true);
             return true;
         }
         player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));

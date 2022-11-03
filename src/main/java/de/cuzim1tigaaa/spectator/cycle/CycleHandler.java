@@ -2,116 +2,167 @@ package de.cuzim1tigaaa.spectator.cycle;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
+import lombok.Getter;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.*;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CycleHandler {
 
-    private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
+	private final Spectator plugin;
 
-    private static final Map<Player, CycleTask> cycleTasks = new HashMap<>();
-    public static boolean isPlayerCycling(Player player) {
-        return cycleTasks.containsKey(player);
-    }
+	@Getter private final Map<UUID, CycleTask> cycles;
+	@Getter private final Map<UUID, Integer> paused;
 
-    private static final Map<Player, Integer> pausedCycles = new HashMap<>();
-    public static Map<Player, Integer> getPausedCycles() { return pausedCycles; }
+	public CycleHandler(Spectator plugin) {
+		this.plugin = plugin;
+		this.cycles = new HashMap<>();
+		this.paused = new HashMap<>();
+	}
 
-    private static void sendBossBar(Player player, Player target) {
-        if(!Config.getBoolean(Paths.CONFIG_SHOW_BOSS_BAR)) return;
+	public boolean isPlayerCycling(Player player) {
+		return cycles.containsKey(player.getUniqueId());
+	}
 
-        CycleTask cTask = cycleTasks.get(player);
-        BossBar bossBar = cTask.getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : cTask.getBossBar();
-        bossBar.setTitle(target == null ? Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING) :
-                Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_BOSS_BAR, "TARGET", target.getDisplayName()));
-        bossBar.setColor(target == null ? BarColor.RED : BarColor.BLUE);
+	/**
+	 * start a new cycle
+	 *
+	 * @param player  The player who wants to cycle
+	 * @param seconds The interval in seconds in which the player should switch the target
+	 */
+	public void startNewCycle(Player player, int seconds, boolean restart) {
+		if(this.cycles.containsKey(player.getUniqueId())) {
+			player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING));
+			return;
+		}
+		this.hideCurrentTargetMessage(player);
+		this.plugin.getSpectateManager().dismountTarget(player);
+		this.paused.remove(player.getUniqueId());
 
-        bossBar.setVisible(true);
-        bossBar.addPlayer(player);
-        cTask.setBossBar(bossBar);
-    }
-    private static void resetBossBar(Player player) {
-        if(cycleTasks.containsKey(player) && cycleTasks.get(player).getBossBar() != null)
-            cycleTasks.get(player).getBossBar().removeAll();
-    }
+		int ticks = seconds * 20, taskId = Bukkit.getScheduler().runTaskTimer(plugin, () -> this.nextPlayer(player), 0L, ticks).getTaskId();
 
-    public static void breakCycle(Player player, boolean bossBar) {
-        if(cycleTasks.containsKey(player)) {
-            CycleTask task = cycleTasks.get(player);
-            Bukkit.getScheduler().cancelTask(task.getTask().getTaskId());
-            if(bossBar) resetBossBar(player);
-        }
-        plugin.getSpectateManager().dismountTarget(player);
-    }
-    public static void next(Player player) {
-        if(!cycleTasks.containsKey(player)) return;
-        Cycle cycle = cycleTasks.get(player).getCycle();
-        if(!cycle.hasNextPlayer()) cycleTasks.get(player).setCycle(new Cycle(player, cycle.getLastPlayer() != null ? cycle.getLastPlayer() : null));
-        Player next = cycle.getNextPlayer(player);
+		this.cycles.put(player.getUniqueId(), new CycleTask(seconds, new Cycle(player, null), taskId));
+		player.sendMessage(Messages.getMessage(restart ? Paths.MESSAGES_COMMANDS_CYCLE_RESTART : Paths.MESSAGES_COMMANDS_CYCLE_START, "INTERVAL", seconds));
+	}
 
-        // if(next == player || (next == null && cycle.getLastPlayer() == null)) stopCycle(player);
-        if(next == null || next.isDead()) next = null;
-        plugin.getSpectateManager().spectate(player, next);
-        sendBossBar(player, next);
-    }
+	/**
+	 * stop a running cycle
+	 *
+	 * @param player The player who wants to stop cycling
+	 */
+	public void stopRunningCycle(Player player, boolean message) {
+		if(!this.cycles.containsKey(player.getUniqueId())) {
+			player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
+			return;
+		}
+		CycleTask task = this.cycles.get(player.getUniqueId());
+		Bukkit.getScheduler().cancelTask(task.getTaskId());
 
-    public static void startCycle(final Player player, int seconds, boolean restart) {
-        breakCycle(player, true);
-        cycleTasks.remove(player);
-        int ticks = seconds * 20;
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> next(player), 0, ticks);
-        cycleTasks.put(player, new CycleTask(seconds, new Cycle(player, null), task));
+		this.hideCurrentTargetMessage(player);
+		this.paused.remove(player.getUniqueId());
+		this.cycles.remove(player.getUniqueId());
 
-        if(restart) player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_RESTART, "INTERVAL", seconds));
-        else player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_START, "INTERVAL", seconds));
-    }
-    public static void stopCycle(Player player) {
-        breakCycle(player, true);
-        if(cycleTasks.containsKey(player)) {
-            resetBossBar(player);
-            cycleTasks.remove(player);
-        }
-        player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
-    }
-    public static void pauseCycle(Player player) {
-        int interval = cycleTasks.get(player).getInterval();
-        pausedCycles.put(player, interval);
-        breakCycle(player, false);
-        sendBossBar(player, null);
-        player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
-    }
-    public static void restartCycle(Player player) {
-        int seconds = pausedCycles.getOrDefault(player, 0);
-        pausedCycles.remove(player);
-        if(seconds == 0) breakCycle(player, true);
-        else startCycle(player, seconds, true);
-    }
+		plugin.getSpectateManager().dismountTarget(player);
+		if(message) player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+	}
 
-    private static class CycleTask {
+	/**
+	 * pause a running cycle
+	 *
+	 * @param player The player who wants to pause his current cycle
+	 */
+	public void pauseRunningCycle(Player player) {
+		if(!this.cycles.containsKey(player.getUniqueId())) {
+			player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
+			return;
+		}
+		CycleTask task = this.cycles.get(player.getUniqueId());
+		Bukkit.getScheduler().cancelTask(task.getTaskId());
 
-        private final int interval;
-        private final BukkitTask task;
-        private Cycle cycle;
-        private BossBar bossBar;
+		this.hideCurrentTargetMessage(player);
+		this.paused.put(player.getUniqueId(), task.getInterval());
+		this.cycles.remove(player.getUniqueId());
 
-        public CycleTask(int interval, Cycle cycle, BukkitTask task) {
-            this.interval = interval;
-            this.cycle = cycle;
-            this.task = task;
-        }
+		plugin.getSpectateManager().dismountTarget(player);
+	}
 
-        public int getInterval() { return interval; }
-        public BukkitTask getTask() { return task; }
+	/**
+	 * restart a cycle
+	 * when a player paused his cycle, this cycle will restart
+	 * else the current cycle will be stopped and starts again with the old interval
+	 *
+	 * @param player The player who wants to restart his cycle
+	 */
+	public void restartCycle(Player player) {
+		final UUID playerId = player.getUniqueId();
+		if(this.paused.containsKey(playerId)) {
+			this.startNewCycle(player, this.paused.get(playerId), true);
+			return;
+		}
+		if(!this.cycles.containsKey(playerId)) return;
 
-        public Cycle getCycle() { return cycle; }
-        public void setCycle(Cycle cycle) { this.cycle = cycle; }
+		int seconds = this.cycles.get(playerId).getInterval();
 
-        public BossBar getBossBar() { return bossBar; }
-        public void setBossBar(BossBar bossBar) { this.bossBar = bossBar; }
-    }
+		this.stopRunningCycle(player, false);
+		this.startNewCycle(player, seconds, true);
+	}
+
+	public void nextPlayer(Player player) {
+		final UUID uuid = player.getUniqueId();
+		if(!cycles.containsKey(uuid)) return;
+		Cycle cycle = cycles.get(uuid).getCycle();
+
+		if(!cycle.hasNextPlayer()) {
+			Cycle newCycle = new Cycle(player, cycle.getLastPlayer());
+			cycles.get(uuid).setCycle(newCycle);
+		}
+		Player next = cycle.getNextPlayer(player);
+		if(next == null || next.isDead() || !next.isOnline()) return;
+		if(next.equals(player.getSpectatorTarget())) return;
+
+		plugin.getSpectateManager().spectate(player, next);
+		this.showCurrentTargetMessage(player, next);
+	}
+
+	private void showCurrentTargetMessage(Player player, Player target) {
+		CycleTask task = cycles.get(player.getUniqueId());
+		switch(Config.getShowTargetMode().toLowerCase()) {
+			case "bossbar" -> showBossBar(player, target);
+			case "actionbar" -> {
+				if(task.getActionBar() != null)
+					Bukkit.getScheduler().cancelTask(task.getActionBar());
+				task.setActionBar(Bukkit.getScheduler().runTaskTimer(plugin, () ->
+						player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+								target != null ? new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName()))
+										: new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET))
+						), 0L, 10L).getTaskId());
+			}
+			default -> hideCurrentTargetMessage(player);
+		}
+	}
+	private void hideCurrentTargetMessage(Player player) {
+		CycleTask task = cycles.getOrDefault(player.getUniqueId(), null);
+		if(task != null && task.getBossBar() != null)
+			task.getBossBar().removeAll();
+
+		if(task != null && task.getActionBar() != null)
+			Bukkit.getScheduler().cancelTask(task.getActionBar());
+	}
+
+	private void showBossBar(Player player, Player target) {
+		CycleTask task = cycles.get(player.getUniqueId());
+		BossBar bossBar = task.getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : task.getBossBar();
+
+		bossBar.setTitle(target == null ? Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING) :
+				Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName()));
+		bossBar.setColor(target == null ? BarColor.RED : BarColor.BLUE);
+
+		bossBar.setVisible(true);
+		bossBar.addPlayer(player);
+		task.setBossBar(bossBar);
+	}
 }

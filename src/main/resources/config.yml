@@ -73,6 +73,6 @@ Settings:
     # Otherwise the cycle will simply be stopped
     PauseWhenNoPlayers: false
 
-    # Shows a bossbar to cycling players with the name of the current target
+    # Shows a message to cycling players with the name of the current target
     # Possible values are: "BOSSBAR", "ACTIONBAR", "NONE"
     ShowCurrentTarget: BOSSBAR

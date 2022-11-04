@@ -137,13 +137,28 @@ public class CycleHandler {
 		switch(Config.getShowTargetMode().toLowerCase()) {
 			case "bossbar" -> showBossBar(player, target);
 			case "actionbar" -> {
-				if(task.getActionBar() != null)
-					Bukkit.getScheduler().cancelTask(task.getActionBar());
-				task.setActionBar(Bukkit.getScheduler().runTaskTimer(plugin, () ->
+				if(task.getShowTargetTask() != null)
+					Bukkit.getScheduler().cancelTask(task.getShowTargetTask());
+
+				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () ->
 						player.spigot().sendMessage(ChatMessageType.ACTION_BAR,
 								target != null ? new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName()))
 										: new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET))
 						), 0L, 10L).getTaskId());
+			}
+			case "title" -> {
+				if(task.getShowTargetTask() != null)
+					Bukkit.getScheduler().cancelTask(task.getShowTargetTask());
+
+				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.sendTitle(target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName())
+						: Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET), "", 0, 20, 0), 0L, 10L).getTaskId());
+			}
+			case "subtitle" -> {
+				if(task.getShowTargetTask() != null)
+					Bukkit.getScheduler().cancelTask(task.getShowTargetTask());
+
+				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> player.sendTitle("", target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName())
+						: Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET), 0, 20, 0), 0L, 10L).getTaskId());
 			}
 			default -> hideCurrentTargetMessage(player);
 		}
@@ -153,8 +168,8 @@ public class CycleHandler {
 		if(task != null && task.getBossBar() != null)
 			task.getBossBar().removeAll();
 
-		if(task != null && task.getActionBar() != null)
-			Bukkit.getScheduler().cancelTask(task.getActionBar());
+		if(task != null && task.getShowTargetTask() != null)
+			Bukkit.getScheduler().cancelTask(task.getShowTargetTask());
 	}
 
 	private void showBossBar(Player player, Player target) {

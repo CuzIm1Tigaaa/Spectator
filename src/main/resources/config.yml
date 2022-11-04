@@ -74,5 +74,5 @@ Settings:
     PauseWhenNoPlayers: false
 
     # Shows a message to cycling players with the name of the current target
-    # Possible values are: "BOSSBAR", "ACTIONBAR", "NONE"
+    # Possible values are: "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
     ShowCurrentTarget: BOSSBAR

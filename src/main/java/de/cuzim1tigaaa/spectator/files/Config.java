@@ -114,7 +114,7 @@ public final class Config {
 
             set(Paths.CONFIG_SHOW_CURRENT_TARGET, comments(true,
                     "Shows a message to cycling players with the name of the current target",
-                    "Possible values are: \"BOSSBAR\", \"ACTIONBAR\", \"NONE\""), "BOSSBAR");
+                    "Possible values are: \"BOSSBAR\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\" \"NONE\""), "BOSSBAR");
             showTargetMode = getString(Paths.CONFIG_SHOW_CURRENT_TARGET);
 
             config.save(configFile);

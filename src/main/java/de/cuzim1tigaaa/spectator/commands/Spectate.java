@@ -94,8 +94,8 @@ public class Spectate implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
-        final List<String> tab = new ArrayList<>();
-        if(args.length == 1) for(Player player : Bukkit.getOnlinePlayers()) tab.add(player.getDisplayName());
-        return tab;
+        if(args.length == 1)
+            return plugin.getOnlinePlayerNames();
+        return Collections.emptyList();
     }
 }

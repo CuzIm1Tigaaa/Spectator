@@ -54,9 +54,10 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
-        final List<String> tab = new ArrayList<>();
-        if(args.length == 1) for(Player player : Bukkit.getOnlinePlayers()) tab.add(player.getDisplayName());
-        if(args.length == 2) { tab.add("true"); tab.add("false"); }
-        return tab;
+        if(args.length == 1)
+            return plugin.getOnlinePlayerNames();
+        if(args.length == 2)
+            return List.of("true", "false");
+        return Collections.emptyList();
     }
 }

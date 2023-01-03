@@ -82,10 +82,10 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
-        List<String> tab = new ArrayList<>();
-        if(args.length == 1) tab = List.of("start", "stop");
+        if(args.length == 1)
+            return List.of("start", "stop");
         if(args.length == 2 && args[0].equalsIgnoreCase("stop") && sender.hasPermission(Permissions.COMMANDS_CYCLE_STOP_OTHERS))
-            for(Player all : Bukkit.getOnlinePlayers()) tab.add(all.getDisplayName());
-        return tab;
+            return plugin.getOnlinePlayerNames();
+        return Collections.emptyList();
     }
 }

@@ -10,12 +10,19 @@ import de.cuzim1tigaaa.spectator.player.Inventory;
 import de.cuzim1tigaaa.spectator.player.SpectateManager;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 public final class Spectator extends JavaPlugin {
+
+    public List<String> getOnlinePlayerNames() {
+        List<String> names = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
+        return names;
+    }
 
     @Getter private final Set<Player> spectators = new HashSet<>();
     @Getter private final HashMap<Player, Player> relation = new HashMap<>();

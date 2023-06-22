@@ -90,9 +90,10 @@ public class PlayerListener implements Listener {
 	public void dismountTarget(PlayerToggleSneakEvent event) {
 		Player player = event.getPlayer();
 		if(this.plugin.getSpectators().contains(player)) {
-			if(plugin.getCycleHandler().isPlayerCycling(player) || player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-				if(plugin.getRelation().getOrDefault(player, null) == null) return;
-				player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_DISMOUNT));
+			if(plugin.getRelation().getOrDefault(player, null) == null) return;
+			if(plugin.getCycleHandler().isPlayerCycling(player)) {
+				if(event.isSneaking())
+					player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_DISMOUNT));
 				event.setCancelled(true);
 				return;
 			}
@@ -136,8 +137,21 @@ public class PlayerListener implements Listener {
 		for(Player spectator : plugin.getRelation().keySet()) {
 			if(plugin.getRelation().get(spectator).equals(player)) {
 				manager.dismountTarget(spectator);
-				spectator.teleport(player, PlayerTeleportEvent.TeleportCause.PLUGIN);
-				plugin.getRelation().put(spectator, player);
+				Bukkit.getScheduler().runTaskLater(plugin, () -> manager.spectate(spectator, player), 20L);
+			}
+		}
+	}
+
+	@EventHandler
+	public void targetTeleport(PlayerTeleportEvent event) {
+		Player player = event.getPlayer();
+		if(plugin.getSpectators().contains(player)) return;
+		if(!plugin.getRelation().containsValue(player)) return;
+
+		for(Player spectator : plugin.getRelation().keySet()) {
+			if(plugin.getRelation().get(spectator).equals(player)) {
+				manager.dismountTarget(spectator);
+				Bukkit.getScheduler().runTaskLater(plugin, () -> manager.spectate(spectator, player), 20L);
 			}
 		}
 	}

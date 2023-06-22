@@ -31,12 +31,11 @@ public class SpectateManager {
                 if(player.getGameMode() != GameMode.SPECTATOR) continue;
                 final Player target = entry.getValue();
 
-                if(player.getSpectatorTarget() == null || !player.getSpectatorTarget().equals(target)) {
-                    if(!player.getWorld().equals(target.getWorld()))
+                if(player.getSpectatorTarget() == null || !player.getSpectatorTarget().equals(target) || !player.getLocation().equals(target.getLocation()))
+                    if(!player.getWorld().equals(target.getWorld())) {
                         player.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
-                    player.setSpectatorTarget(null);
-                    player.setSpectatorTarget(target);
-                }
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> player.setSpectatorTarget(target), 10);
+                    }
                 Inventory.updateInventory(player, target);
             }
         }, 0, 20);
@@ -57,9 +56,10 @@ public class SpectateManager {
         if(target != null) {
             Inventory.getInventory(player, target);
             player.setSpectatorTarget(null);
+            player.teleport(target);
             this.plugin.getRelation().remove(player);
             this.plugin.getRelation().put(player, target);
-            player.setSpectatorTarget(target);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.setSpectatorTarget(target), 10);
         }
     }
 

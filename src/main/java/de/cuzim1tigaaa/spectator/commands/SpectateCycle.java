@@ -34,7 +34,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
         }
         if(args[0].equalsIgnoreCase("start")) {
             if(args.length < 2) {
-                player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle start <Interval>"));
+                player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle start <Interval> [alphabetical|random]"));
                 return true;
             }
             if(Bukkit.getOnlinePlayers().size() <= 1 && !Config.getBoolean(Paths.CONFIG_CYCLE_NO_PLAYERS)) {
@@ -47,7 +47,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             }
             try {
                 int seconds = Integer.parseInt(args[1]);
-                this.plugin.getCycleHandler().startNewCycle(player, seconds, false);
+                this.plugin.getCycleHandler().startNewCycle(player, seconds, false, (args.length >= 3 && args[2].equalsIgnoreCase("alphabetical")));
             }catch(NumberFormatException exception) {
                 player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NUMBERFORMAT));
             }
@@ -59,7 +59,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             if(args.length >= 2 && player.hasPermission(Permissions.COMMANDS_CYCLE_STOP_OTHERS)) {
                 target = Bukkit.getPlayer(args[1]);
                 if(target == null || !target.isOnline()) {
-                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[1]));
                     return true;
                 }
             }
@@ -69,7 +69,8 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 return true;
             }
             if(!plugin.getCycleHandler().isPlayerCycling(target)) {
-                String message = Messages.getMessage((player.equals(target) ? Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING : Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING), "TARGET", target.getDisplayName());
+                String message = player.equals(target) ? Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING) :
+                        Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING, "TARGET", target.getDisplayName());
                 player.sendMessage(message);
                 return true;
             }
@@ -86,6 +87,8 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             return List.of("start", "stop");
         if(args.length == 2 && args[0].equalsIgnoreCase("stop") && sender.hasPermission(Permissions.COMMANDS_CYCLE_STOP_OTHERS))
             return plugin.getOnlinePlayerNames();
+        if(args.length == 3)
+            return List.of("alphabetical", "random");
         return Collections.emptyList();
     }
 }

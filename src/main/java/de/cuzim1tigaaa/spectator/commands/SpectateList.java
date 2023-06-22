@@ -32,10 +32,12 @@ public class SpectateList implements CommandExecutor {
         for(Player all : this.plugin.getSpectators()) {
             if(all != null) {
                 String msg;
-                if(this.plugin.getRelation().containsKey(all)) {
-                    if(plugin.getCycleHandler().isPlayerCycling(all)) msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_CYCLING, "SPECTATOR", all.getDisplayName());
-                    else msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_SPECTATING, "SPECTATOR", all.getDisplayName(), "TARGET", this.plugin.getRelation().get(all).getDisplayName());
-                }else msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", all.getDisplayName());
+                if(this.plugin.getRelation().containsKey(all))
+                    msg = Messages.getMessage(
+                            plugin.getCycleHandler().isPlayerCycling(all) ? Paths.MESSAGES_COMMANDS_LIST_CYCLING : Paths.MESSAGES_COMMANDS_LIST_SPECTATING,
+                            "SPECTATOR", all.getDisplayName(), "TARGET", this.plugin.getRelation().get(all).getDisplayName());
+
+                else msg = Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", all.getDisplayName());
                 sender.sendMessage(msg);
             }
         }

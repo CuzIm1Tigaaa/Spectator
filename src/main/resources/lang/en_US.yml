@@ -25,19 +25,20 @@ Messages:
     List:
       None: '&cThere are no spectators at the moment!'
       Title: '&7There are currently &e%AMOUNT% &7Spectators:'
-      Cycling: '&7- %SPECTATOR% &8[&bCYCLING&8]'
+      Cycling: '&7- &b%SPECTATOR% &8[&e%TARGET%&8]'
       Default: '&7- %SPECTATOR%'
       Spectating: '&7- %SPECTATOR% &8[&e%TARGET%&8]'
     UnSpectate:
       ResendAll: '&7All Spectators have been resend!'
       ResendPlayer: '&e%TARGET% &7has been resend!'
     Cycle:
-      Start: '&7Speccycle &astarted &7with interval &c%INTERVAL%&7.'
+      Start: '&7Speccycle &astarted &7with interval &c%INTERVAL% &7in %ORDER% order.'
       Stop: '&7Speccycle &cstopped&7.'
       Pause: '&7Speccycle &epaused&7.'
-      Restart: '&7Speccycle &brestarted &7with interval &c%INTERVAL%&7.'
+      Restart: '&7Speccycle &brestarted &7with interval &c%INTERVAL% &7in %ORDER% order.'
       Cycling: '&cYou are already in Speccycle-Mode!'
       NotCycling: '&cYou are not in Speccycle-Mode!'
+      TargetNotCycling: '&e%TARGET% &cis not in Speccycle-Mode!'
     Spectate:
       Join:
         Self: '&7You are now in Spectator-Mode.'

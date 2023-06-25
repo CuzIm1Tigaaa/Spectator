@@ -71,13 +71,14 @@ public class PlayerListener implements Listener {
 			if(entry.getValue().equals(player)) {
 				Player spectator = entry.getKey();
 				Bukkit.getScheduler().runTaskLater(plugin, () -> this.manager.dismountTarget(spectator), 5L);
-				if(plugin.getCycleHandler().isPlayerCycling(spectator)) {
-					if((Bukkit.getOnlinePlayers().size() - this.plugin.getSpectators().size() - 1) <= 0)
-						if(Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS))
-							plugin.getCycleHandler().pauseRunningCycle(spectator);
-						else this.plugin.getCycleHandler().stopRunningCycle(spectator, true);
-					return;
+				if(!plugin.getCycleHandler().isPlayerCycling(spectator)) continue;
+
+				if((Bukkit.getOnlinePlayers().size() - this.plugin.getSpectators().size() - 1) <= 0) {
+					if(Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS))
+						plugin.getCycleHandler().pauseRunningCycle(spectator);
+					else this.plugin.getCycleHandler().stopRunningCycle(spectator, true);
 				}
+				plugin.getCycleHandler().nextPlayer(spectator);
 			}
 		}
 	}
@@ -209,6 +210,9 @@ public class PlayerListener implements Listener {
 			if(entry.getValue().equals(player)) {
 				Player spectator = entry.getKey();
 				Bukkit.getScheduler().runTaskLater(plugin, () -> this.manager.dismountTarget(spectator), 5L);
+
+				if(plugin.getCycleHandler().isPlayerCycling(spectator))
+					plugin.getCycleHandler().nextPlayer(spectator);
 			}
 		}
 	}

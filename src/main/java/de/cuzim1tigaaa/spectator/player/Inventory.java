@@ -14,7 +14,8 @@ public class Inventory {
     private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
 
     private static void clearPotionEffects(Player player) {
-        for(PotionEffect potionEffect : player.getActivePotionEffects()) player.removePotionEffect(potionEffect.getType());
+        for(PotionEffect potionEffect : player.getActivePotionEffects())
+            player.removePotionEffect(potionEffect.getType());
     }
     private static void addPotionEffects(Player player, Player target) {
         Set<PotionEffect> effects = target == null ? plugin.getSpectateManager().getPAttributes().get(player).getEffects() : new HashSet<>(target.getActivePotionEffects());

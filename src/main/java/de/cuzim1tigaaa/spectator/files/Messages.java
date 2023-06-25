@@ -23,7 +23,8 @@ public final class Messages {
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
         for(int i = 0; i < replace.length; i++) {
             String target = replace[i] == null ? null : (String) replace[i];
-            if(target == null) continue;
+            if(target == null)
+                continue;
             i++;
             String replacement = replace[i] == null ? null : replace[i].toString();
             if(message != null) msg = replacement == null ? msg.replace("%" + target + "%", "") : msg.replace("%" + target + "%", replacement);

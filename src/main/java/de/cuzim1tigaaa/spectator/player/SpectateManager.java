@@ -44,9 +44,11 @@ public class SpectateManager {
     public void spectate(final Player player, final Player target) {
         Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
         spectators.removeIf(p -> !this.plugin.getRelation().containsKey(p) || !this.plugin.getRelation().get(p).equals(player));
-        for(Player spec : spectators) spectate(spec, null);
+        for(Player spec : spectators)
+            spectate(spec, null);
 
-        if(!this.pAttributes.containsKey(player)) this.pAttributes.put(player, new PlayerAttributes(player));
+        if(!this.pAttributes.containsKey(player))
+            this.pAttributes.put(player, new PlayerAttributes(player));
         player.setGameMode(GameMode.SPECTATOR);
         this.plugin.getSpectators().add(player);
         Inventory.getInventory(player, null);
@@ -68,7 +70,8 @@ public class SpectateManager {
         if (Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION) && !loc)
             if(this.pAttributes.containsKey(player))
                 location = this.pAttributes.get(player).getLocation();
-        if (location == null) location = player.getLocation();
+        if (location == null)
+            location = player.getLocation();
 
         player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
         this.plugin.getSpectators().remove(player);
@@ -96,13 +99,16 @@ public class SpectateManager {
 
     public void restoreAll() {
         Set<Player> spectators = new HashSet<>(this.plugin.getSpectators());
-        for(Player player : spectators) this.unSpectate(player, false);
+        for(Player player : spectators)
+            this.unSpectate(player, false);
     }
 
     private void hideFromTab(final Player player, final boolean hide) {
         for(Player target : Bukkit.getOnlinePlayers()) {
-            if(target.getUniqueId().equals(player.getUniqueId())) continue;
-            if(target.hasPermission(Permissions.BYPASS_TABLIST)) continue;
+            if(target.getUniqueId().equals(player.getUniqueId()))
+                continue;
+            if(target.hasPermission(Permissions.BYPASS_TABLIST))
+                continue;
             if(hide) {
                 this.hidden.add(player);
                 target.hidePlayer(this.plugin, player);

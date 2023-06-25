@@ -30,7 +30,9 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
                 return true;
             }
             this.plugin.getSpectateManager().restoreAll();
-            for(Player player : this.plugin.getSpectators()) if(!player.equals(sender)) player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+            for(Player player : this.plugin.getSpectators())
+                if(!player.equals(sender))
+                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
             return true;
         }

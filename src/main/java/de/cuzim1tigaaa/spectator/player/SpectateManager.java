@@ -1,9 +1,13 @@
 package de.cuzim1tigaaa.spectator.player;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Paths;
+import de.cuzim1tigaaa.spectator.files.Permissions;
 import lombok.Getter;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -67,32 +71,27 @@ public class SpectateManager {
 
     public void unSpectate(final Player player, final boolean loc) {
         Location location = null;
-        if (Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION) && !loc)
-            if(this.pAttributes.containsKey(player))
-                location = this.pAttributes.get(player).getLocation();
-        if (location == null)
+        if(!loc && this.pAttributes.containsKey(player))
+            if(Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION))
+                location = Optional.of(this.pAttributes.get(player).getLocation()).orElse(null);
+
+        if(location == null)
             location = player.getLocation();
 
-        player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
         this.plugin.getSpectators().remove(player);
         this.plugin.getRelation().remove(player);
         Inventory.restoreInventory(player);
+
         if(this.hidden.contains(player) && player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) &&
                 Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB)) hideFromTab(player, false);
-        GameMode gameMode = null;
-        boolean isFlying = false;
-        if(this.pAttributes.containsKey(player)) {
-            gameMode = this.pAttributes.get(player).getGameMode();
-            isFlying = this.plugin.getServer().getAllowFlight() && this.pAttributes.get(player).isFlying();
-            this.pAttributes.remove(player);
-        }
-        if(!Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHTMODE)) isFlying = false;
-        if(gameMode == null) {
-            gameMode = GameMode.SURVIVAL;
-            isFlying = false;
-        }
-        player.setGameMode(gameMode);
-        player.setFlying(isFlying);
+
+        PlayerAttributes.restorePlayerAttributes(player, this.pAttributes.get(player));
+        this.pAttributes.remove(player);
+
+        if(!(this.plugin.getServer().getAllowFlight() && Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHTMODE)))
+            player.setFlying(false);
+
+        player.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN);
         if(plugin.getCycleHandler().isPlayerCycling(player))
             plugin.getCycleHandler().stopRunningCycle(player, true);
     }
@@ -105,19 +104,18 @@ public class SpectateManager {
 
     private void hideFromTab(final Player player, final boolean hide) {
         for(Player target : Bukkit.getOnlinePlayers()) {
-            if(target.getUniqueId().equals(player.getUniqueId()))
+            if(target.getUniqueId().equals(player.getUniqueId()) || target.hasPermission(Permissions.BYPASS_TABLIST))
                 continue;
-            if(target.hasPermission(Permissions.BYPASS_TABLIST))
-                continue;
+
             if(hide) {
                 this.hidden.add(player);
                 target.hidePlayer(this.plugin, player);
                 player.setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
-            }else {
-                this.hidden.remove(player);
-                target.showPlayer(this.plugin, player);
-                player.removeMetadata("vanished", this.plugin);
+                continue;
             }
+            this.hidden.remove(player);
+            target.showPlayer(this.plugin, player);
+            player.removeMetadata("vanished", this.plugin);
         }
     }
 
@@ -127,5 +125,4 @@ public class SpectateManager {
         player.getInventory().clear();
         this.plugin.getRelation().remove(player);
     }
-
 }

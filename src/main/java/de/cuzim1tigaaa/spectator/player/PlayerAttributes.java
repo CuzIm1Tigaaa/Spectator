@@ -17,6 +17,7 @@ public class PlayerAttributes {
     @Getter private final boolean flying;
     @Getter private final ItemStack[] playerInventory;
     @Getter private final Set<PotionEffect> effects;
+    @Getter private final int remainingAir;
 
     public PlayerAttributes(Player player) {
         gameMode = player.getGameMode();
@@ -24,5 +25,21 @@ public class PlayerAttributes {
         flying = player.isFlying();
         playerInventory = player.getInventory().getContents();
         effects = new HashSet<>(player.getActivePotionEffects());
+        remainingAir = player.getRemainingAir();
+    }
+
+    public static void restorePlayerAttributes(Player player, PlayerAttributes pAttributes) {
+        GameMode gameMode = GameMode.SURVIVAL;
+        boolean isFlying = false;
+        int remainingAir = player.getMaximumAir();
+
+        if(pAttributes != null) {
+            gameMode = pAttributes.getGameMode();
+            isFlying = pAttributes.isFlying();
+            remainingAir = pAttributes.getRemainingAir();
+        }
+        player.setGameMode(gameMode);
+        player.setFlying(isFlying);
+        player.setRemainingAir(remainingAir);
     }
 }

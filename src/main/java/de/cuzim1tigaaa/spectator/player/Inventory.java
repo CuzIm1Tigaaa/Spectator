@@ -1,7 +1,9 @@
 package de.cuzim1tigaaa.spectator.player;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Paths;
+import de.cuzim1tigaaa.spectator.files.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -32,13 +34,11 @@ public class Inventory {
             if(player.hasPermission(Permissions.UTILS_MIRROR_EFFECTS) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGET_EFFECTS))
                 addPotionEffects(player, target);
         }
-        player.updateInventory();
     }
     public static void updateInventory(Player player, Player target) {
         clearPotionEffects(player);
         addPotionEffects(player, target);
         player.getInventory().setContents(target.getInventory().getContents());
-        player.updateInventory();
     }
     public static void restoreInventory(Player player) {
         if(plugin.getSpectateManager().getPAttributes().containsKey(player)) {
@@ -51,7 +51,6 @@ public class Inventory {
             if(pInventory != null && pInventory.length != 0) player.getInventory().setContents(pInventory);
             if(effects != null && effects.size() != 0) addPotionEffects(player, null);
         }
-        player.updateInventory();
     }
     public static void restoreAll() {
         if(!plugin.getSpectateManager().getPAttributes().isEmpty())

@@ -67,6 +67,17 @@ public class Spectate implements CommandExecutor, TabCompleter {
                     return true;
                 }
             }
+
+            if(plugin.getMultiverse() != null) {
+                if(!Objects.equals(player.getWorld(), target.getWorld())) {
+                    String world = plugin.getMultiverse().getMVWorldManager().getMVWorld(target.getWorld()).getPermissibleName();
+                    if(!player.hasPermission("multiverse.access." + world)) {
+                        player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE, "TARGET", target.getDisplayName()));
+                        return true;
+                    }
+                }
+            }
+
             this.plugin.getSpectateManager().spectate(player, target);
             player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getDisplayName()));
             return true;

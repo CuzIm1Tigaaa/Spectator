@@ -31,7 +31,7 @@ public class Cycle {
 
     public Player getNextPlayer() {
         if(toVisit.size() == 0)
-        alreadyVisited.clear();
+            alreadyVisited.clear();
         updateLists();
         if(toVisit.size() == 0) return null;
 
@@ -60,6 +60,13 @@ public class Cycle {
 
         if(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL))
             toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED));
+
+        if(plugin.getMultiverse() != null) {
+            toVisit.removeIf(p -> {
+                String world = plugin.getMultiverse().getMVWorldManager().getMVWorld(p.getWorld()).getPermissibleName();
+                return !owner.hasPermission("multiverse.access." + world);
+            });
+        }
 
         alreadyVisited.removeIf(p -> !p.isOnline());
         toVisit.removeAll(alreadyVisited);

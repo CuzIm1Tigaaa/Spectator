@@ -11,6 +11,7 @@ public final class Paths {
 
     public static final String CONFIG_SAVE_PLAYERS_LOCATION = "Settings.Save.PlayerLocation";
     public static final String CONFIG_SAVE_PLAYERS_FLIGHTMODE = "Settings.Save.PlayerFlightMode";
+    public static final String CONFIG_SAVE_PLAYERS_DATA = "Settings.Save.PlayerData";
 
     public static final String CONFIG_MIRROR_TARGET_EFFECTS = "Settings.Mirror.TargetEffects";
     public static final String CONFIG_MIRROR_TARGETS_INVENTORY = "Settings.Mirror.TargetInventory";
@@ -67,4 +68,5 @@ public final class Paths {
     public static final String MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN = "Messages.Commands.Spectate.Leave.Self";
     public static final String MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER = "Messages.Commands.Spectate.Leave.Other";
     public static final String MESSAGES_COMMANDS_SPECTATE_PLAYER = "Messages.Commands.Spectate.Player";
+    public static final String MESSAGES_COMMANDS_SPECTATE_MULTIVERSE = "Messages.Commands.Spectate.Multiverse";
 }

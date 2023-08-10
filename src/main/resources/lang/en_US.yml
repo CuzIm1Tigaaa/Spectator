@@ -47,3 +47,4 @@ Messages:
         Self: '&7You are no longer in Spectator-Mode.'
         Other: '&e%TARGET% &7is no longer in Spectator-Mode.'
       Player: '&7You are now spectating &c%TARGET%&7.'
+      Multiverse: '&cYou do not have permission to spectate &e%TARGET% &cin this world!'

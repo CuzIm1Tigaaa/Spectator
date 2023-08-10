@@ -121,6 +121,7 @@ public final class Messages {
             set(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN,         "&7You are no longer in Spectator-Mode.");
             set(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER,       "&e%TARGET% &7is no longer in Spectator-Mode.");
             set(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER,            "&7You are now spectating &c%TARGET%&7.");
+            set(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE,        "&cYou do not have permission to spectate &e%TARGET% &cin this world!");
             message.save(messageFile);
         }catch (IOException exception) {
             exception.printStackTrace();

@@ -1,5 +1,7 @@
 package de.cuzim1tigaaa.spectator.player;
 
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Paths;
 import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -17,7 +19,8 @@ public class PlayerAttributes {
     @Getter private final boolean flying;
     @Getter private final ItemStack[] playerInventory;
     @Getter private final Set<PotionEffect> effects;
-    @Getter private final int remainingAir;
+
+    @Getter private final int remainingAir, fireTicks;
 
     public PlayerAttributes(Player player) {
         gameMode = player.getGameMode();
@@ -25,21 +28,28 @@ public class PlayerAttributes {
         flying = player.isFlying();
         playerInventory = player.getInventory().getContents();
         effects = new HashSet<>(player.getActivePotionEffects());
+
         remainingAir = player.getRemainingAir();
+        fireTicks = player.getFireTicks();
     }
 
     public static void restorePlayerAttributes(Player player, PlayerAttributes pAttributes) {
         GameMode gameMode = GameMode.SURVIVAL;
         boolean isFlying = false;
-        int remainingAir = player.getMaximumAir();
+        int remainingAir = player.getMaximumAir(), fireTicks = 0;
 
         if(pAttributes != null) {
             gameMode = pAttributes.getGameMode();
             isFlying = pAttributes.isFlying();
-            remainingAir = pAttributes.getRemainingAir();
+
+            if(Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_DATA)) {
+                remainingAir = pAttributes.getRemainingAir();
+                fireTicks = pAttributes.getFireTicks();
+            }
         }
         player.setGameMode(gameMode);
         player.setFlying(isFlying);
         player.setRemainingAir(remainingAir);
+        player.setFireTicks(fireTicks);
     }
 }

@@ -45,3 +45,4 @@ Messages:
         Self: '&7Du hast den Zuschauermodus verlassen.'
         Other: '&e%TARGET% &7hat den Zuschauermodus verlassen.'
       Player: '&7Du beobachtest nun &c%TARGET%&7.'
+      Multiverse: '&cDu kannst &e%TARGET% &cnicht beobachten, da du für diese Welt keine Rechte hast!'

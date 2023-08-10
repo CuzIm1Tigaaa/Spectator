@@ -20,7 +20,7 @@ public final class Config {
 
     public static void loadConfig(Spectator plugin) {
         int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2));
-        int currentVersion = 7;
+        int currentVersion = 8;
 
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
@@ -77,6 +77,11 @@ public final class Config {
                     "The players' flight mode will be saved. Otherwise, when the player",
                     "leaves spectator mode, he won't be he won't be flying anymore.",
                     "Requires allow-flight to true in server.properties!"), true);
+
+            set(Paths.CONFIG_SAVE_PLAYERS_DATA, comments(true,
+                    "The players' data will be saved. This includes remaining air amd the",
+                    "burning time. Otherwise, when the player leaves spectator mode, all",
+                    "these values reset to default."), true);
 
             set("Settings.Mirror", comments(true), null);
 

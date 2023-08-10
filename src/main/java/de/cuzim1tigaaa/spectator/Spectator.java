@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator;
 
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.commands.*;
 import de.cuzim1tigaaa.spectator.cycle.CycleHandler;
 import de.cuzim1tigaaa.spectator.files.Config;
@@ -29,6 +30,8 @@ public final class Spectator extends JavaPlugin {
     @Getter private UpdateChecker updateChecker;
     @Getter private SpectateManager spectateManager;
     @Getter private CycleHandler cycleHandler;
+
+    @Getter private MultiverseCore multiverse;
 
     @Override
     public void onEnable() {
@@ -60,6 +63,10 @@ public final class Spectator extends JavaPlugin {
         this.reload();
         new Metrics(this, 12235);
         this.getLogger().info("Register Events & Commands...");
+
+
+        if((multiverse = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
+            this.getLogger().info("Multiverse-Core was found!");
 
         new ContainerListener(this);
         new PlayerListener(this);

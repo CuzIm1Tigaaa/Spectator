@@ -16,16 +16,17 @@ public final class Config {
     private static FileConfiguration config;
     private static File configFile;
 
-    @Getter private static String showTargetMode;
+    @Getter private static String showTargetMode, notifyTargetMode;
 
     public static void loadConfig(Spectator plugin) {
         int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2));
-        int currentVersion = 8;
+        int currentVersion = 9;
 
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
             if(config.getInt("ConfigVersion") < currentVersion) replaceConfig(plugin, true);
             showTargetMode = getString(Paths.CONFIG_SHOW_CURRENT_TARGET);
+            notifyTargetMode = getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET);
             return;
         }
         try {
@@ -65,6 +66,12 @@ public final class Config {
 
             set(Paths.CONFIG_KICK_WHILE_CYCLING, comments(true,
                     "Cycling players cannot be kicked by any other player."), false);
+
+            set(Paths.CONFIG_NOTIFY_CURRENT_TARGET, comments(true,
+                    "Shows a message to target players that they are being spectated",
+                    "Possible values are (without quotation):",
+                    "\"CHAT\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\""), "NONE");
+            notifyTargetMode = getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET);
 
             set("Settings.Save", comments(true), null);
 
@@ -119,7 +126,8 @@ public final class Config {
 
             set(Paths.CONFIG_SHOW_CURRENT_TARGET, comments(true,
                     "Shows a message to cycling players with the name of the current target",
-                    "Possible values are: \"BOSSBAR\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\" \"NONE\""), "BOSSBAR");
+                    "Possible values are (without quotation):",
+                    "\"BOSSBAR\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\""), "BOSSBAR");
             showTargetMode = getString(Paths.CONFIG_SHOW_CURRENT_TARGET);
 
             config.save(configFile);

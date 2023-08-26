@@ -1,9 +1,7 @@
 package de.cuzim1tigaaa.spectator.player;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.Config;
-import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.files.Permissions;
+import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;

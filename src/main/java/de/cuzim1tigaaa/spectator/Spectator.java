@@ -64,7 +64,6 @@ public final class Spectator extends JavaPlugin {
         new Metrics(this, 12235);
         this.getLogger().info("Register Events & Commands...");
 
-
         if((multiverse = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
             this.getLogger().info("Multiverse-Core was found!");
 

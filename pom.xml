@@ -7,7 +7,7 @@
     <name>Spectator</name>
     <groupId>de.cuzim1tigaaa.spectator</groupId>
     <artifactId>Spectator</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.3</version>
 
     <properties>
         <java.version>16</java.version>

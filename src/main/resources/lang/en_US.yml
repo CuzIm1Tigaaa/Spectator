@@ -18,6 +18,9 @@ Messages:
     Yourself: '&cYou cannot Spectate yourself!'
     CycleOnly: '&cYou can only use &7/SpectateCycle start <Interval>&c!'
     NumberFormat: '&cPlease enter a valid number!'
+    Notify:
+      Spectate: '&7You are now being spectated by &e%TARGET%&7.'
+      Unspectate: '&7You are no longer being spectated by &e%TARGET%&7.'
   Cycling:
     CurrentTarget: '&7Currently spectating &6%TARGET%'
     SearchingTarget: '&cSearching next Target...'

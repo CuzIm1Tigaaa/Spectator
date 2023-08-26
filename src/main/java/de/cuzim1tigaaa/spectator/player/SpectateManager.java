@@ -1,13 +1,11 @@
 package de.cuzim1tigaaa.spectator.player;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.Config;
-import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.files.Permissions;
+import de.cuzim1tigaaa.spectator.files.*;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -79,7 +77,13 @@ public class SpectateManager {
             location = player.getLocation();
 
         this.plugin.getSpectators().remove(player);
-        this.plugin.getRelation().remove(player);
+
+        if(this.plugin.getRelation().containsKey(player)) {
+            Player target = this.plugin.getRelation().get(player);
+            notifyTarget(target, player, false);
+            this.plugin.getRelation().remove(player);
+        }
+
         Inventory.restoreInventory(player);
 
         if(this.hidden.contains(player) && player.hasPermission(Permissions.UTILS_HIDE_IN_TAB) &&
@@ -124,5 +128,17 @@ public class SpectateManager {
         player.setSpectatorTarget(null);
         player.getInventory().clear();
         this.plugin.getRelation().remove(player);
+    }
+
+    public void notifyTarget(Player target, Player spectator, boolean spectate) {
+        if(spectator.hasPermission(Permissions.BYPASS_NOTIFY)) return;
+        String message = Messages.getMessage(spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE : Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getDisplayName());
+
+        switch(Config.getNotifyTargetMode().toLowerCase()) {
+            case "chat" -> target.spigot().sendMessage(ChatMessageType.CHAT, new TextComponent(message));
+            case "actionbar" -> target.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+            case "title" -> target.sendTitle(message, "", 5, 50, 5);
+            case "subtitle" -> target.sendTitle("", message, 5, 50, 5);
+        }
     }
 }

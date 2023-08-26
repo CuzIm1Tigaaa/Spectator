@@ -16,6 +16,9 @@ Messages:
     Yourself: '&cDu kannst dich nicht selbst beobachten!'
     CycleOnly: '&cDu darfst nur &7/SpectateCycle start <Interval> &cbenutzen!'
     NumberFormat: '&cGib eine gültige Zahl an!'
+    Notify:
+      Spectate: '&7Du wirst nun von &e%TARGET%&7 beobachtet.'
+      Unspectate: '&7Du wirst nicht mehr von &e%TARGET%&7 beobachtet.'
   Cycling:
     CurrentTarget: '&7Du beobachtest nun &6%TARGET%'
     SearchingTarget: '&cSuche nächstes Ziel...'

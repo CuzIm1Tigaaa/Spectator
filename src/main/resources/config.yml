@@ -5,7 +5,7 @@
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
 # backup your current config and create a new one
-ConfigVersion: 8
+ConfigVersion: 9
 
 Settings:
 
@@ -26,6 +26,11 @@ Settings:
 
   # Cycling players cannot be kicked by any other player.
   KickCyclingPlayer: false
+
+  # Shows a message to target players that they are being spectated
+  # Possible values are (without quotation):
+  # "CHAT", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
+  NotifyCurrentTarget: NONE
 
   Save:
 
@@ -79,5 +84,6 @@ Settings:
     PauseWhenNoPlayers: false
 
     # Shows a message to cycling players with the name of the current target
-    # Possible values are: "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
+    # Possible values are (without quotation):
+    # "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
     ShowCurrentTarget: BOSSBAR

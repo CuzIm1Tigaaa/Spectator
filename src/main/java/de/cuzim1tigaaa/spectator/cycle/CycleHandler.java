@@ -35,16 +35,16 @@ public class CycleHandler {
 	 * @param seconds The interval in seconds in which the player should switch the target
 	 */
 	public void startNewCycle(Player player, int seconds, boolean restart, boolean alphabetical) {
-		if(this.cycles.containsKey(player.getUniqueId())) {
+		if(cycles.containsKey(player.getUniqueId())) {
 			player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING));
 			return;
 		}
-		this.hideCurrentTargetMessage(player);
-		this.plugin.getSpectateManager().dismountTarget(player);
-		this.paused.remove(player.getUniqueId());
+		hideCurrentTargetMessage(player);
+		plugin.getSpectateManager().dismountTarget(player);
+		paused.remove(player.getUniqueId());
 
-		int ticks = seconds * 20, taskId = Bukkit.getScheduler().runTaskTimer(plugin, () -> this.nextPlayer(player), 0L, ticks).getTaskId();
-		this.cycles.put(player.getUniqueId(), new CycleTask(seconds, new Cycle(player, null, alphabetical), taskId));
+		int ticks = seconds * 20, taskId = Bukkit.getScheduler().runTaskTimer(plugin, () -> nextPlayer(player), 0L, ticks).getTaskId();
+		cycles.put(player.getUniqueId(), new CycleTask(seconds, new Cycle(player, null, alphabetical), taskId));
 
 		player.sendMessage(Messages.getMessage(restart ? Paths.MESSAGES_COMMANDS_CYCLE_RESTART : Paths.MESSAGES_COMMANDS_CYCLE_START,
 				"INTERVAL", seconds, "ORDER", alphabetical ? "Alphabetic" : "Random"));
@@ -56,16 +56,16 @@ public class CycleHandler {
 	 * @param player The player who wants to stop cycling
 	 */
 	public void stopRunningCycle(Player player, boolean message) {
-		if(!this.cycles.containsKey(player.getUniqueId())) {
+		if(!cycles.containsKey(player.getUniqueId())) {
 			player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
 			return;
 		}
-		CycleTask task = this.cycles.get(player.getUniqueId());
+		CycleTask task = cycles.get(player.getUniqueId());
 		Bukkit.getScheduler().cancelTask(task.getTaskId());
 
-		this.hideCurrentTargetMessage(player);
-		this.paused.remove(player.getUniqueId());
-		this.cycles.remove(player.getUniqueId());
+		hideCurrentTargetMessage(player);
+		paused.remove(player.getUniqueId());
+		cycles.remove(player.getUniqueId());
 
 		plugin.getSpectateManager().dismountTarget(player);
 		if(message) player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
@@ -77,16 +77,16 @@ public class CycleHandler {
 	 * @param player The player who wants to pause his current cycle
 	 */
 	public void pauseRunningCycle(Player player) {
-		if(!this.cycles.containsKey(player.getUniqueId())) {
+		if(!cycles.containsKey(player.getUniqueId())) {
 			player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
 			return;
 		}
-		CycleTask task = this.cycles.get(player.getUniqueId());
+		CycleTask task = cycles.get(player.getUniqueId());
 		Bukkit.getScheduler().cancelTask(task.getTaskId());
 
-		this.hideCurrentTargetMessage(player);
-		this.paused.put(player.getUniqueId(), task);
-		this.cycles.remove(player.getUniqueId());
+		hideCurrentTargetMessage(player);
+		paused.put(player.getUniqueId(), task);
+		cycles.remove(player.getUniqueId());
 
 		plugin.getSpectateManager().dismountTarget(player);
 	}
@@ -100,23 +100,24 @@ public class CycleHandler {
 	 */
 	public void restartCycle(Player player) {
 		final UUID playerId = player.getUniqueId();
-		if(this.paused.containsKey(playerId)) {
-			CycleTask paused = this.paused.get(playerId);
-			this.startNewCycle(player, paused.getInterval(), true, paused.getCycle().isAlphabetical());
+		if(paused.containsKey(playerId)) {
+			CycleTask pausedTask = paused.get(playerId);
+			startNewCycle(player, pausedTask.getInterval(), true, pausedTask.getCycle().isAlphabetical());
 			return;
 		}
-		if(!this.cycles.containsKey(playerId)) return;
+		if(!cycles.containsKey(playerId)) return;
 
-		CycleTask current = this.cycles.get(playerId);
+		CycleTask current = cycles.get(playerId);
 
-		this.stopRunningCycle(player, false);
-		this.startNewCycle(player, current.getInterval(), true, current.getCycle().isAlphabetical());
+		stopRunningCycle(player, false);
+		startNewCycle(player, current.getInterval(), true, current.getCycle().isAlphabetical());
 	}
 
 	public void nextPlayer(Player player) {
 		final UUID uuid = player.getUniqueId();
-		if(!this.cycles.containsKey(uuid)) return;
-		Cycle cycle = this.cycles.get(uuid).getCycle();
+		if(!cycles.containsKey(uuid)) return;
+		Cycle cycle = cycles.get(uuid).getCycle();
+
 
 		Player next = cycle.getNextPlayer();
 		if(next == null || next.isDead() || !next.isOnline()) {
@@ -127,11 +128,13 @@ public class CycleHandler {
 
 		if(next.equals(player.getSpectatorTarget())) return;
 		plugin.getSpectateManager().spectate(player, next);
-		this.showCurrentTargetMessage(player, next);
+		plugin.getSpectateManager().notifyTarget(cycle.getLastPlayer(), player, true);
+		plugin.getSpectateManager().notifyTarget(next, player, true);
+		showCurrentTargetMessage(player, next);
 	}
 
 	private void showCurrentTargetMessage(Player player, Player target) {
-		CycleTask task = this.cycles.get(player.getUniqueId());
+		CycleTask task = cycles.get(player.getUniqueId());
 		switch(Config.getShowTargetMode().toLowerCase()) {
 			case "bossbar" -> showBossBar(player, target);
 			case "actionbar" -> {
@@ -162,7 +165,7 @@ public class CycleHandler {
 		}
 	}
 	private void hideCurrentTargetMessage(Player player) {
-		CycleTask task = this.cycles.getOrDefault(player.getUniqueId(), null);
+		CycleTask task = cycles.getOrDefault(player.getUniqueId(), null);
 		if(task != null && task.getBossBar() != null)
 			task.getBossBar().removeAll();
 
@@ -171,7 +174,7 @@ public class CycleHandler {
 	}
 
 	private void showBossBar(Player player, Player target) {
-		CycleTask task = this.cycles.get(player.getUniqueId());
+		CycleTask task = cycles.get(player.getUniqueId());
 		BossBar bossBar = task.getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : task.getBossBar();
 
 		bossBar.setTitle(target == null ? Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING) :

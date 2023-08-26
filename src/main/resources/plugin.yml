@@ -80,6 +80,9 @@ permissions:
           spectator.bypass.spectateall:
             description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
             default: false
+          spectator.bypass.notify:
+            description: Permission to bypass sending notification message when activated in config.yml
+            default: false
       spectator.utils.*:
         description: Permission for all .utils Permissions
         default: false

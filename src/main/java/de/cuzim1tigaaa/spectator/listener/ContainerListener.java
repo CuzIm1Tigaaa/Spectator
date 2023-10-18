@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
-import org.bukkit.GameMode;
+import de.cuzim1tigaaa.spectator.player.SpectateUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,15 +15,14 @@ import java.util.*;
 
 public class ContainerListener implements Listener {
 
-	private final Spectator plugin;
+	private final SpectateUtils spectateUtils;
 
 	private final ImmutableSet<InventoryType> container = Sets.immutableEnumSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
 			InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
 			InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
 
 	public ContainerListener(Spectator plugin) {
-		this.plugin = plugin;
-		this.plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		this.spectateUtils = plugin.getSpectateUtils();
 	}
 
 	/**
@@ -32,7 +31,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
-		if(player.getGameMode() != GameMode.SPECTATOR) return;
+		if(!spectateUtils.isSpectator(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -42,7 +41,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onInventoryDrag(InventoryDragEvent event) {
 		Player player = (Player) event.getWhoClicked();
-		if(player.getGameMode() != GameMode.SPECTATOR) return;
+		if(!spectateUtils.isSpectator(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -52,9 +51,9 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onChestOpen(InventoryOpenEvent event) {
 		Player player = (Player) event.getPlayer();
-		if(!this.plugin.getRelation().containsValue(player)) return;
+		if(!spectateUtils.isSpectated(player)) return;
 
-		Set<Player> spectators = new HashSet<>(this.plugin.getRelation().keySet());
+		Set<Player> spectators = new HashSet<>(spectateUtils.getSpectators());
 		spectators.removeIf(p -> !Objects.equals(p.getSpectatorTarget(), player));
 
 		Inventory inventory = null, openedInventory = event.getInventory();
@@ -79,7 +78,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		Player player = (Player) event.getPlayer();
-		if(!this.plugin.getRelation().containsValue(player)) return;
+		if(!spectateUtils.isSpectated(player)) return;
 
 		Inventory openedInventory = event.getInventory();
 
@@ -92,7 +91,7 @@ public class ContainerListener implements Listener {
 				return;
 		}
 
-		Set<Player> spectators = new HashSet<>(this.plugin.getRelation().keySet());
+		Set<Player> spectators = new HashSet<>(spectateUtils.getSpectators());
 		spectators.removeIf(p -> !Objects.equals(p.getSpectatorTarget(), player));
 
 		for(Player spec : spectators)

@@ -11,13 +11,11 @@ import java.util.*;
 
 public class SpectateList implements CommandExecutor, TabCompleter {
 
-    private final Spectator plugin;
-    private final SpectateUtils spectateUtils;
+	private final SpectateUtils spectateUtils;
 
     public SpectateList(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatelist")).setExecutor(this);
-        this.plugin = plugin;
-        this.spectateUtils = plugin.getSpectateUtils();
+	    this.spectateUtils = plugin.getSpectateUtils();
     }
 
     @Override

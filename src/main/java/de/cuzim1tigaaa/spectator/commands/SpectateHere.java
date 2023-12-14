@@ -14,13 +14,11 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class SpectateHere implements CommandExecutor, TabCompleter {
 
-    private final Spectator plugin;
-    private final SpectateUtils spectateUtils;
+	private final SpectateUtils spectateUtils;
 
     public SpectateHere(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatehere")).setExecutor(this);
-        this.plugin = plugin;
-        this.spectateUtils = plugin.getSpectateUtils();
+	    this.spectateUtils = plugin.getSpectateUtils();
     }
 
     @Override

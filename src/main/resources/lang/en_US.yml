@@ -7,8 +7,7 @@ Messages:
   General:
     BypassTeleport: '&7%TARGET% &ccannot be spectated at the moment!'
     BypassInventory: '&cYou cannot see the inventory of &7%TARGET% &cat the moment!'
-    Dismount: '&cYou cannot dismount while in Speccycle-Mode! Use &7/spectatecycle
-      stop &cto leave Speccycle-Mode.'
+    Dismount: '&cYou cannot dismount while in Speccycle-Mode! Use &7/spectatecycle stop &cto leave Speccycle-Mode.'
     GameModeChange: '&cYou cannot change your GameMode while spectating! Use &7/spec
       &cto leave Spectator-Mode.'
     NoPlayers: '&cThere are not enough Players online.'
@@ -16,21 +15,22 @@ Messages:
     NotSpectating: '&7%TARGET% &cis currently not spectating!'
     SamePlayer: '&cYou are already spectating &7%TARGET%&c!'
     Yourself: '&cYou cannot Spectate yourself!'
-    CycleOnly: '&cYou can only use &7/SpectateCycle start <Interval>&c!'
+    CycleOnly: '&cYou can only use &7/spectatecycle start <Interval>&c!'
     NumberFormat: '&cPlease enter a valid number!'
     Notify:
       Spectate: '&7You are now being spectated by &e%TARGET%&7.'
       Unspectate: '&7You are no longer being spectated by &e%TARGET%&7.'
   Cycling:
     CurrentTarget: '&7Currently spectating &6%TARGET%'
-    SearchingTarget: '&cSearching next Target...'
+    SearchingTarget: '&cSearching next Target…'
   Commands:
     List:
       None: '&cThere are no spectators at the moment!'
       Title: '&7There are currently &e%AMOUNT% &7Spectators:'
       Cycling: '&7- &b%SPECTATOR% &8[&e%TARGET%&8]'
       Default: '&7- %SPECTATOR%'
-      Spectating: '&7- %SPECTATOR% &8[&e%TARGET%&8]'
+      Spectating: '&7- %SPECTATOR% » &e%TARGET%'
+      Paused: '&7- %SPECTATOR% &8[&cPAUSED&8]'
     UnSpectate:
       ResendAll: '&7All Spectators have been resend!'
       ResendPlayer: '&e%TARGET% &7has been resend!'

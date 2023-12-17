@@ -1,4 +1,6 @@
 .idea
 target
 
+src/main/java/de/cuzim1tigaaa/spectator/commands/SpectateInfo.java
+
 Spectator.iml

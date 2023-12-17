@@ -33,7 +33,7 @@ public final class UpdateChecker {
     private CompletableFuture<Boolean> checkUpdate() {
         final CompletableFuture<Boolean> result = new CompletableFuture<>();
 
-        this.plugin.getLogger().log(Level.INFO, "Checking for Updates...");
+        this.plugin.getLogger().log(Level.INFO, "Checking for Updates…");
         String versionString = this.plugin.getDescription().getVersion();
 
         try {

@@ -2,8 +2,9 @@ package de.cuzim1tigaaa.spectator.files;
 
 public final class Paths {
 
-    public static final String CONFIG_VERSION = "ConfigVersion";
+    public static final String CONFIG_VERSION =                             "ConfigVersion";
 
+    public static final String CONFIG_DEBUG =                               "Settings.Debugging";
     public static final String CONFIG_LANGUAGE =                            "Settings.Language";
     public static final String CONFIG_NOTIFY_UPDATE =                       "Settings.NotifyOnUpdate";
     public static final String CONFIG_HIDE_PLAYERS_TAB =                    "Settings.HidePlayersInTab";
@@ -11,19 +12,19 @@ public final class Paths {
     public static final String CONFIG_NOTIFY_CURRENT_TARGET =               "Settings.NotifyCurrentTarget";
 
     public static final String CONFIG_SAVE_PLAYERS_LOCATION =               "Settings.Save.PlayerLocation";
-    public static final String CONFIG_SAVE_PLAYERS_FLIGHTMODE =             "Settings.Save.PlayerFlightMode";
+    public static final String CONFIG_SAVE_PLAYERS_FLIGHT_MODE =            "Settings.Save.PlayerFlightMode";
     public static final String CONFIG_SAVE_PLAYERS_DATA =                   "Settings.Save.PlayerData";
 
     public static final String CONFIG_MIRROR_TARGET_EFFECTS =               "Settings.Mirror.TargetEffects";
     public static final String CONFIG_MIRROR_TARGETS_INVENTORY =            "Settings.Mirror.TargetInventory";
 
     public static final String CONFIG_INVENTORY_CONTAINERS =                "Settings.Inventory.OpenContainers";
-    public static final String CONFIG_INVENTORY_ENDERCHEST =                "Settings.Inventory.OpenEnderChest";
+    public static final String CONFIG_INVENTORY_ENDER_CHEST =               "Settings.Inventory.OpenEnderChest";
 
     public static final String CONFIG_CYCLE_NO_PLAYERS =                    "Settings.Cycle.StartWhenNoPlayers";
-
     public static final String CONFIG_CYCLE_PAUSE_NO_PLAYERS =              "Settings.Cycle.PauseWhenNoPlayers";
     public static final String CONFIG_SHOW_CURRENT_TARGET =                 "Settings.Cycle.ShowCurrentTarget";
+
 
     public static final String MESSAGE_DEFAULT_SENDER =                     "Messages.Default.Sender";
     public static final String MESSAGE_DEFAULT_PERMISSION =                 "Messages.Default.Permission";
@@ -57,7 +58,6 @@ public final class Paths {
     public static final String MESSAGES_COMMANDS_CYCLE_NOT_CYCLING =        "Messages.Commands.Cycle.NotCycling";
     public static final String MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING = "Messages.Commands.Cycle.TargetNotCycling";
 
-
     public static final String MESSAGES_COMMANDS_UNSPECTATE_ALL =           "Messages.Commands.UnSpectate.ResendAll";
     public static final String MESSAGES_COMMANDS_UNSPECTATE_PLAYER =        "Messages.Commands.UnSpectate.ResendPlayer";
 
@@ -66,6 +66,7 @@ public final class Paths {
     public static final String MESSAGES_COMMANDS_LIST_DEFAULT =             "Messages.Commands.List.Default";
     public static final String MESSAGES_COMMANDS_LIST_SPECTATING =          "Messages.Commands.List.Spectating";
     public static final String MESSAGES_COMMANDS_LIST_CYCLING =             "Messages.Commands.List.Cycling";
+    public static final String MESSAGES_COMMANDS_LIST_PAUSED =             "Messages.Commands.List.Paused";
 
     public static final String MESSAGES_COMMANDS_SPECTATE_JOIN_OWN =        "Messages.Commands.Spectate.Join.Self";
     public static final String MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER =      "Messages.Commands.Spectate.Join.Other";

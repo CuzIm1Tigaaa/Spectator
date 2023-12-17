@@ -1,58 +1,79 @@
 package de.cuzim1tigaaa.spectator.player;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Paths;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static de.cuzim1tigaaa.spectator.files.Permissions.*;
+
 public class Inventory {
 
-    private static final Spectator plugin = Spectator.getPlugin(Spectator.class);
+    private static final SpectateUtils spectateUtils = Spectator.getPlugin(Spectator.class).getSpectateUtils();
 
-    private static void clearPotionEffects(Player player) {
-        for(PotionEffect potionEffect : player.getActivePotionEffects())
-            player.removePotionEffect(potionEffect.getType());
-    }
-    private static void addPotionEffects(Player player, Player target) {
-        Set<PotionEffect> effects = target == null ? plugin.getSpectateManager().getPAttributes().get(player).getEffects() : new HashSet<>(target.getActivePotionEffects());
-        player.addPotionEffects(effects);
+    private static void clearActivePotionEffects(Player spectator) {
+        for(PotionEffect activePotionEffect : spectator.getActivePotionEffects())
+            spectator.removePotionEffect(activePotionEffect.getType());
     }
 
-    public static void getInventory(Player player, Player target) {
-        player.getInventory().clear();
-        clearPotionEffects(player);
+    private static void addPotionEffectsOfTarget(Player spectator, Player target) {
+        if(target != null)
+            spectator.addPotionEffects(new HashSet<>(target.getActivePotionEffects()));
+    }
+
+    public static void getInventory(Player spectator, Player target) {
+        spectator.getInventory().clear();
+        clearActivePotionEffects(spectator);
+
+        if(target == null)
+            return;
+
+        if(hasPermission(target, BYPASS_SPECTATED))
+            return;
+
+        if(hasPermission(spectator, UTILS_MIRROR_INVENTORY) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGETS_INVENTORY))
+            spectator.getInventory().setContents(target.getInventory().getContents());
+
+        if(hasPermission(spectator, UTILS_MIRROR_EFFECTS) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGET_EFFECTS))
+            addPotionEffectsOfTarget(spectator, target);
+    }
+
+    public static void updateInventory(Player spectator, Player target) {
+        clearActivePotionEffects(spectator);
 
         if(target != null) {
-            if(player.hasPermission(Permissions.UTILS_MIRROR_INVENTORY) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGETS_INVENTORY))
-                player.getInventory().setContents(target.getInventory().getContents());
-            if(player.hasPermission(Permissions.UTILS_MIRROR_EFFECTS) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGET_EFFECTS))
-                addPotionEffects(player, target);
+            spectator.getInventory().setContents(target.getInventory().getContents());
+            addPotionEffectsOfTarget(spectator, target);
         }
     }
-    public static void updateInventory(Player player, Player target) {
-        clearPotionEffects(player);
-        addPotionEffects(player, target);
-        player.getInventory().setContents(target.getInventory().getContents());
-    }
-    public static void restoreInventory(Player player) {
-        if(plugin.getSpectateManager().getPAttributes().containsKey(player)) {
-            player.getInventory().clear();
-            clearPotionEffects(player);
 
-            ItemStack[] pInventory = plugin.getSpectateManager().getPAttributes().get(player).getPlayerInventory();
-            Set<PotionEffect> effects = plugin.getSpectateManager().getPAttributes().get(player).getEffects();
+    public static void resetInventory(Player spectator) {
+        if(!spectateUtils.isSpectator(spectator))
+            return;
 
-            if(pInventory != null && pInventory.length != 0) player.getInventory().setContents(pInventory);
-            if(effects != null && effects.size() != 0) addPotionEffects(player, null);
-        }
+        spectator.getInventory().clear();
+        clearActivePotionEffects(spectator);
     }
+
+    public static void restoreInventory(Player spectator, PlayerAttributes pAttributes) {
+        if(pAttributes == null)
+            return;
+
+        if(pAttributes.getInventory() != null)
+            spectator.getInventory().setContents(pAttributes.getInventory());
+        if(pAttributes.getEffects() != null)
+            spectator.addPotionEffects(pAttributes.getEffects());
+    }
+
     public static void restoreAll() {
-        if(!plugin.getSpectateManager().getPAttributes().isEmpty())
-            for(Player all : plugin.getSpectateManager().getPAttributes().keySet())
-                if(all.isOnline()) restoreInventory(all);
+        Set<Player> players = new HashSet<>(spectateUtils.getSpectators());
+
+        for(Player spectator : players)
+            if(spectator.isOnline()) restoreInventory(spectator, spectateUtils.getPlayerAttributes(spectator));
     }
 }

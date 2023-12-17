@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 public final class Messages {
 
@@ -43,7 +44,7 @@ public final class Messages {
             message = YamlConfiguration.loadConfiguration(messageFile);
             message.save(messageFile);
         }catch(IOException exception) {
-            exception.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "An error occurred while loading language files", exception);
         }
     }
 
@@ -52,26 +53,25 @@ public final class Messages {
         if(dirURL == null) return;
 
         String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
-        JarFile jarFile = null;
 
-        try {
-            jarFile = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
+        try(JarFile jarFile = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8))) {
+	        Enumeration<JarEntry> entries = jarFile.entries();
+
+            while(entries.hasMoreElements()) {
+                String name = entries.nextElement().getName();
+                if(name.startsWith("lang"))
+                    if(!name.endsWith(File.separator) && name.endsWith(".yml")) {
+                        File file = new File(plugin.getDataFolder(), name);
+                        if(!file.exists()) plugin.saveResource(name, false);
+                    }
+            }
         }catch(IOException exception) {
-            exception.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "An error occurred while creating language files", exception);
         }
 
-        if(jarFile == null) return;
-        Enumeration<JarEntry> entries = jarFile.entries();
 
-        while(entries.hasMoreElements()) {
-            String name = entries.nextElement().getName();
-            if(name.startsWith("lang"))
-                if(!name.endsWith(File.separator) && name.endsWith(".yml")) {
-                    File file = new File(plugin.getDataFolder(), name);
-                    if(!file.exists()) plugin.saveResource(name, false);
-                }
-        }
     }
+
     private static void loadDefaultMessages(Spectator plugin) {
         File messageFile = new File(plugin.getDataFolder() + "/lang", "en_US.yml");
         try {
@@ -96,13 +96,14 @@ public final class Messages {
             set(Paths.MESSAGES_GENERAL_YOURSELF,                    "&cYou cannot Spectate yourself!");
             set(Paths.MESSAGES_GENERAL_CYCLEONLY,                   "&cYou can only use &7/SpectateCycle start <Interval>&c!");
             set(Paths.MESSAGES_GENERAL_NUMBERFORMAT,                "&cPlease enter a valid number!");
-            set(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING,            "&cSearching next Target...");
+            set(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING,            "&cSearching next Target…");
 
             set(Paths.MESSAGES_COMMANDS_LIST_NONE,                  "&cThere are no spectators at the moment!");
             set(Paths.MESSAGES_COMMANDS_LIST_TITLE,                 "&7There are currently &e%AMOUNT% &7Spectators:");
             set(Paths.MESSAGES_COMMANDS_LIST_CYCLING,               "&7- &b%SPECTATOR% &8[&e%TARGET%&8]");
+            set(Paths.MESSAGES_COMMANDS_LIST_PAUSED,                "&7- %SPECTATOR% &8[&cPAUSED&8]");
             set(Paths.MESSAGES_COMMANDS_LIST_DEFAULT,               "&7- %SPECTATOR%");
-            set(Paths.MESSAGES_COMMANDS_LIST_SPECTATING,            "&7- %SPECTATOR% &8[&e%TARGET%&8]");
+            set(Paths.MESSAGES_COMMANDS_LIST_SPECTATING,            "&7- %SPECTATOR% » &e%TARGET%");
 
             set(Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL,             "&7All Spectators have been resend!");
             set(Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER,          "&e%TARGET% &7has been resend!");
@@ -124,7 +125,7 @@ public final class Messages {
             set(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE,        "&cYou do not have permission to spectate &e%TARGET% &cin this world!");
             message.save(messageFile);
         }catch (IOException exception) {
-            exception.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "An error occurred while loading default messages", exception);
         }
     }
 

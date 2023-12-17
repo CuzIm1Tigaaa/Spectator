@@ -1,44 +1,51 @@
 package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.*;
-import org.bukkit.GameMode;
+import de.cuzim1tigaaa.spectator.files.Messages;
+import de.cuzim1tigaaa.spectator.files.Paths;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
+import java.util.*;
 
-public class SpectateHere implements CommandExecutor {
+import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
-    private final Spectator plugin;
+public class SpectateHere implements CommandExecutor, TabCompleter {
+
+	private final SpectateUtils spectateUtils;
 
     public SpectateHere(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatehere")).setExecutor(this);
-        this.plugin = plugin;
+	    this.spectateUtils = plugin.getSpectateUtils();
     }
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
-        if(sender instanceof Player player) {
-            if(!player.hasPermission(Permissions.COMMAND_SPECTATE_HERE)) {
-                if(player.hasPermission(Permissions.COMMANDS_SPECTATE_CYCLEONLY)) {
-                    player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_CYCLEONLY));
-                    return true;
-                }
-                player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
-                return true;
-            }
-            if(!player.getGameMode().equals(GameMode.SPECTATOR)) {
-                this.plugin.getSpectateManager().spectate(player, null);
-                player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
-                return true;
-            }
-            this.plugin.getSpectateManager().unSpectate(player, true);
+        if(!(sender instanceof Player player)) {
+            sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SENDER));
+            return true;
+        }
+
+        if(!hasPermission(player, COMMAND_SPECTATE_HERE)) {
+            player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+            return true;
+        }
+
+        if(spectateUtils.isSpectator(player)) {
+            spectateUtils.Unspectate(player, false);
             player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             return true;
         }
-        sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SENDER));
+
+        spectateUtils.Spectate(player, null);
+        player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
+        return Collections.emptyList();
     }
 }

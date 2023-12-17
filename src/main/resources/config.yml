@@ -5,9 +5,13 @@
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
 # backup your current config and create a new one
-ConfigVersion: 9
+ConfigVersion: 10
 
 Settings:
+
+  # This prints different debug messages in the server console
+  # Can be useful for reporting problems
+  Debugging: false
 
   # If the plugin gets updated, players with the following permission
   # will receive a message when they join.
@@ -44,7 +48,7 @@ Settings:
     # Requires allow-flight to true in server.properties!
     PlayerFlightMode: true
 
-    # The players' data will be saved. This includes remaining air amd the
+    # The players' data will be saved. This includes remaining air and the
     # burning time. Otherwise, when the player leaves spectator mode, all
     # these values reset to default.
     PlayerData: true

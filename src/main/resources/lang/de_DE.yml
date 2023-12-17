@@ -7,28 +7,29 @@ Messages:
   General:
     BypassTeleport: '&cDu kannst &7%TARGET% &cnicht beobachten!'
     BypassInventory: '&cDu kannst das Inventar von &7%TARGET% &cnicht beobachten!'
-    Dismount: '&cYou cannot dismount while in Speccycle-Mode! Benutze &7/spectatecycle stop &czum Verlassen.'
-    GameModeChange: '&cDu kannst deinen Gamemode im Zuschauermodus nicht ändern! Benutze &7/spec &czum Verlassen.'
+    Dismount: '&cDu kannst die Spieleransicht nicht verlassen, während du im Spectatecycle bist! Benutze &7/spectatecycle stop &czum Verlassen.'
+    GameModeChange: '&cDu kannst deinen Spielmodus im Zuschauermodus nicht ändern! Benutze &7/spec &czum Verlassen.'
     NoPlayers: '&cEs sind nicht genügend Spieler online.'
     OfflinePlayer: '&7%TARGET% &cist nicht online!'
     NotSpectating: '&7%TARGET% &cbeobachtet keinen!'
     SamePlayer: '&cDu beobachtest &7%TARGET% &cbereits!'
     Yourself: '&cDu kannst dich nicht selbst beobachten!'
-    CycleOnly: '&cDu darfst nur &7/SpectateCycle start <Interval> &cbenutzen!'
+    CycleOnly: '&cDu darfst nur &7/spectatecycle start <Interval> &cbenutzen!'
     NumberFormat: '&cGib eine gültige Zahl an!'
     Notify:
       Spectate: '&7Du wirst nun von &e%TARGET%&7 beobachtet.'
       Unspectate: '&7Du wirst nicht mehr von &e%TARGET%&7 beobachtet.'
   Cycling:
     CurrentTarget: '&7Du beobachtest nun &6%TARGET%'
-    SearchingTarget: '&cSuche nächstes Ziel...'
+    SearchingTarget: '&cSuche nächstes Ziel…'
   Commands:
     List:
       None: '&cKein Spieler ist im Zuschauermodus!'
       Title: '&7Es sind &e%AMOUNT% Spieler &7im Zuschauermodus:'
       Cycling: '&7- &b%SPECTATOR% &8[&e%TARGET%&8]'
       Default: '&7- %SPECTATOR%'
-      Spectating: '&7- %SPECTATOR% &8[&e%TARGET%&8]'
+      Paused: '&7- %SPECTATOR% &8[&cPAUSIERT&8]'
+      Spectating: '&7- %SPECTATOR% » &e%TARGET%'
     UnSpectate:
       ResendAll: '&7All Spectators have been resend!'
       ResendPlayer: '&e%TARGET% &7has been resend!'

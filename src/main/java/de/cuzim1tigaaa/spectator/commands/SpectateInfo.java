@@ -22,17 +22,15 @@ public class SpectateInfo implements CommandExecutor, TabCompleter {
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(args.length > 0) {
             switch(args[0].toLowerCase()) {
-                case "list" -> {
-                    spectateUtils.getSpectateInfo().forEach((uuid, info) -> {
-                        final String msg = " > " + info.getSpectator().getName() +
-                                " " +
-                                info.getState().name() +
-                                " " +
-                                "Target: " + (info.getTarget() == null ? "NONE" : info.getTarget().getName()) +
-                                "\n" + String.join(", ", info.getAttributes().keySet().stream().map(WorldInfo::getName).toList());
-                        sender.sendMessage(msg);
-                    });
-                }
+                case "list" -> spectateUtils.getSpectateInfo().forEach((uuid, info) -> {
+                    final String msg = " > " + info.getSpectator().getName() +
+                            " " +
+                            info.getState().name() +
+                            " " +
+                            "Target: " + (info.getTarget() == null ? "NONE" : info.getTarget().getName()) +
+                            "\n" + String.join(", ", info.getAttributes().keySet().stream().map(WorldInfo::getName).toList());
+                    sender.sendMessage(msg);
+                });
                 case "inv" -> spectateUtils.getSpectateInfo().forEach((uuid, info) -> info.getAttributes().forEach((w, attr) -> {
                     sender.sendMessage(w.getName() + ":");
                     StringBuilder msg = new StringBuilder("\t");

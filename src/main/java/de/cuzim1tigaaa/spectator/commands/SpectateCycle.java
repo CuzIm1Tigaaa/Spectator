@@ -1,6 +1,8 @@
 package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.Spectator;
+import de.cuzim1tigaaa.spectator.cycle.Cycle;
+import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.Bukkit;
@@ -71,7 +73,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                         player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
                         return true;
                     }
-                    plugin.getCycleHandler().stopRunningCycle(player);
+                    spectateUtils.StopCycle(player);
                     player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
                     return true;
                 }
@@ -89,7 +91,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    plugin.getCycleHandler().stopRunningCycle(target);
+                    spectateUtils.StopCycle(target);
                     target.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
                     return true;
                 }
@@ -100,18 +102,20 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    private void startSpectateCycle(Player player, int interval, boolean alphabetical) {
+    private void startSpectateCycle(Player spectator, int seconds, boolean alphabetical) {
         if(!Config.getBoolean(Paths.CONFIG_CYCLE_NO_PLAYERS) && Bukkit.getOnlinePlayers().size() <= 1) {
-            player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOPLAYERS));
+            spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOPLAYERS));
             return;
         }
 
-        if(spectateUtils.isCycling(player)) {
-            player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING));
+        if(spectateUtils.isCycling(spectator)) {
+            spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING));
             return;
         }
 
-        plugin.getCycleHandler().startNewCycle(player, interval, false, alphabetical);
+        spectateUtils.StartCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
+        spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_START,
+                "INTERVAL", seconds, "ORDER", alphabetical ? "Alphabetic" : "Random"));
     }
 
     @Override

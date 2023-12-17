@@ -8,68 +8,76 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public class Cycle {
 
-    private final Spectator plugin = Spectator.getPlugin(Spectator.class);
+	private final Spectator plugin = Spectator.getPlugin(Spectator.class);
 
-    private final Player owner;
-    @Getter private final boolean alphabetical;
-    @Getter private Player lastPlayer;
+	private static final ThreadLocalRandom random = ThreadLocalRandom.current();
 
-    private final List<Player> alreadyVisited;
-    private List<Player> toVisit;
+	@Getter
+	private final Player owner;
+	@Getter
+	private final boolean alphabetical;
+	@Getter
+	private Player lastPlayer;
 
-    public Cycle(Player owner, Player last, boolean alphabetical) {
-        this.owner = owner;
-        this.lastPlayer = last;
-        this.alphabetical = alphabetical;
+	private final List<Player> alreadyVisited;
+	private List<Player> toVisit;
 
-        this.alreadyVisited = new ArrayList<>();
-        this.toVisit = new ArrayList<>();
-    }
+	public Cycle(Player owner, Player last, boolean alphabetical) {
+		this.owner = owner;
+		this.lastPlayer = last;
+		this.alphabetical = alphabetical;
 
-    public Player getNextPlayer() {
-        if(toVisit.size() == 0)
-            alreadyVisited.clear();
-        updateLists();
-        if(toVisit.size() == 0) return null;
+		this.alreadyVisited = new ArrayList<>();
+		this.toVisit = new ArrayList<>();
+	}
 
-        Player player;
-        if(alphabetical) {
-            this.toVisit.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
-            player = toVisit.get(0);
-            if(player == null) return null;
-        }else {
-            player = toVisit.get(ThreadLocalRandom.current().nextInt(toVisit.size()));
-            if(player == null || player.equals(lastPlayer)) return null;
-        }
-        return this.visit(player);
-    }
+	public Player getNextTarget() {
+		updateLists();
+		if(toVisit.isEmpty()) {
+			alreadyVisited.clear();
+			updateLists();
+		}
 
-    private Player visit(Player player) {
-        this.lastPlayer = player;
-        this.alreadyVisited.add(player);
-        return player;
-    }
+		Player target = alphabetical ? toVisit.stream().sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName())).toList().get(0) :
+				toVisit.get(random.nextInt(toVisit.size()));
 
-    private void updateLists() {
-        toVisit.addAll(Bukkit.getOnlinePlayers());
-        toVisit.remove(owner);
-        toVisit.removeAll(plugin.getSpectators());
+		plugin.Debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
+				toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
 
-        if(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL))
-            toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED));
+		if(toVisit.size() > 1 && target.equals(lastPlayer))
+			return getNextTarget();
 
-        if(plugin.getMultiverse() != null) {
-            toVisit.removeIf(p -> {
-                String world = plugin.getMultiverse().getMVWorldManager().getMVWorld(p.getWorld()).getPermissibleName();
-                return !owner.hasPermission("multiverse.access." + world);
-            });
-        }
+		return visit(target);
+	}
 
-        alreadyVisited.removeIf(p -> !p.isOnline());
-        toVisit.removeAll(alreadyVisited);
-        toVisit = new ArrayList<>(new HashSet<>(toVisit));
-    }
+	private Player visit(Player player) {
+		this.lastPlayer = player;
+		this.alreadyVisited.add(player);
+		return player;
+	}
+
+	private void updateLists() {
+		toVisit.addAll(Bukkit.getOnlinePlayers());
+		toVisit.remove(owner);
+		toVisit.removeAll(plugin.getSpectateUtils().getSpectators());
+		toVisit.removeIf(p -> p == null || !p.isOnline());
+
+		if(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL))
+			toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED));
+
+		if(plugin.getMultiverseCore() != null) {
+			toVisit.removeIf(p -> {
+				String world = plugin.getMultiverseCore().getMVWorldManager().getMVWorld(p.getWorld()).getPermissibleName();
+				return !owner.hasPermission("multiverse.access." + world);
+			});
+		}
+
+		alreadyVisited.removeIf(p -> !p.isOnline());
+		toVisit.removeAll(alreadyVisited);
+		toVisit = new ArrayList<>(new HashSet<>(toVisit));
+	}
 }

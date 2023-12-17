@@ -101,7 +101,8 @@ public class CycleTask {
 		if(next == null || next.isDead() || !next.isOnline())
 			return;
 
-		plugin.getSpectateUtils().notifyTarget(last, spectator, false);
+		if(!last.equals(next))
+			plugin.getSpectateUtils().notifyTarget(last, spectator, false);
 		plugin.getSpectateUtils().Spectate(spectator, next);
 	}
 

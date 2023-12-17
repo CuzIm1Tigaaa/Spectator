@@ -251,7 +251,7 @@ public class SpectateUtils {
 		long l = System.currentTimeMillis();
 		getIgnoreGameModeChange().put(l, spectator);
 		spectator.setGameMode(gamemode);
-		getIgnoreGameModeChange().remove(l);
+		Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> getIgnoreGameModeChange().remove(l), 20L);
 	}
 
 

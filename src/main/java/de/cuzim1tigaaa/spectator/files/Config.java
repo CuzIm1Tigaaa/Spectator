@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public final class Config {
 
@@ -20,7 +21,7 @@ public final class Config {
 
     public static void loadConfig(Spectator plugin) {
         int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2));
-        int currentVersion = 9;
+        int currentVersion = 10;
 
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
@@ -29,6 +30,7 @@ public final class Config {
             notifyTargetMode = getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET);
             return;
         }
+
         try {
             configFile = new File(plugin.getDataFolder(), "config.yml");
             if(!configFile.exists()) {
@@ -48,6 +50,10 @@ public final class Config {
                     "backup your current config and create a new one"), currentVersion);
 
             set("Settings", comments(true), null);
+
+            set(Paths.CONFIG_DEBUG, comments(true,
+                    "This prints different debug messages in the server console",
+                    "Can be useful for reporting problems"), false);
 
             set(Paths.CONFIG_NOTIFY_UPDATE, comments(true,
                     "If the plugin gets updated, players with the following permission",
@@ -80,13 +86,13 @@ public final class Config {
                     "Otherwise when the player leaves spectator mode, he will be at",
                     "his current location, equals to /spectatehere."), true);
 
-            set(Paths.CONFIG_SAVE_PLAYERS_FLIGHTMODE, comments(true,
+            set(Paths.CONFIG_SAVE_PLAYERS_FLIGHT_MODE, comments(true,
                     "The players' flight mode will be saved. Otherwise, when the player",
                     "leaves spectator mode, he won't be he won't be flying anymore.",
                     "Requires allow-flight to true in server.properties!"), true);
 
             set(Paths.CONFIG_SAVE_PLAYERS_DATA, comments(true,
-                    "The players' data will be saved. This includes remaining air amd the",
+                    "The players' data will be saved. This includes remaining air and the",
                     "burning time. Otherwise, when the player leaves spectator mode, all",
                     "these values reset to default."), true);
 
@@ -108,7 +114,7 @@ public final class Config {
                     "BARREL; BLAST_FURNACE; BREWING_STAND; (TRAPPED-)CHEST; DISPENSER; DROPPER; FURNACE; HOPPER; SMOKER; SHULKER_BOX; LECTERN",
                     "Permission: spectator.utils.opencontainers"), true);
 
-            set(Paths.CONFIG_INVENTORY_ENDERCHEST, comments(true,
+            set(Paths.CONFIG_INVENTORY_ENDER_CHEST, comments(true,
                     "Allows spectators with the following permission to see into their target's enderchest",
                     "Only when the target opens a physically enderchest!",
                     "Permission: spectator.utils.openenderchest"), false);
@@ -132,15 +138,19 @@ public final class Config {
 
             config.save(configFile);
         }catch(IOException exception) {
-            exception.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "An error occurred while loading config", exception);
         }
         if(config.getInt(Paths.CONFIG_VERSION) < currentVersion) replaceConfig(plugin, false);
     }
+
+
     private static void set(String path, List<String> comment, Object value) {
         if(value == null && config.getConfigurationSection(path) == null) config.createSection(path);
         else config.set(path, config.get(path, value));
-        if(comment != null && comment.size() > 0) config.setComments(path, comment);
+        if(comment != null && !comment.isEmpty()) config.setComments(path, comment);
     }
+
+
     private static List<String> comments(boolean empty, String... comment) {
         List<String> comments = new ArrayList<>();
         if(empty) comments.add(null);
@@ -148,8 +158,11 @@ public final class Config {
         return comments;
     }
 
+
     public static boolean getBoolean(String path) { return config.getBoolean(path); }
+
     public static String getString(String path) { return config.getString(path); }
+
 
     private static void replaceConfig(Spectator plugin, boolean old) {
         int i = 1;
@@ -158,8 +171,8 @@ public final class Config {
 
         try {
             Files.copy(configFile.toPath(), backUp.toPath());
-        }catch(IOException e) {
-            e.printStackTrace();
+        }catch(IOException exception) {
+            plugin.getLogger().log(Level.SEVERE, "An error occurred while creating backup config", exception);
         }
 
         //noinspection ResultOfMethodCallIgnored
@@ -167,6 +180,7 @@ public final class Config {
         if(old) saveDefaultConfig(plugin);
         else loadConfig(plugin);
     }
+
     public static void saveDefaultConfig(Spectator plugin) {
         if (configFile == null) configFile = new File(plugin.getDataFolder(), "config.yml");
         if (!configFile.exists()) plugin.saveResource("config.yml", false);

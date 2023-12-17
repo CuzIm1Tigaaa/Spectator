@@ -20,14 +20,10 @@ import java.util.stream.Collectors;
 public class SpectateUtils {
 
 	private final Spectator plugin;
-
-	private final Map<Long, Player> ignoreGameModeChange;
 	private final Map<UUID, SpectateInformation> spectateInfo;
 
 	public SpectateUtils(Spectator plugin) {
 		this.plugin = plugin;
-
-		this.ignoreGameModeChange = new HashMap<>();
 		this.spectateInfo = new HashMap<>();
 
 		this.run();
@@ -248,10 +244,7 @@ public class SpectateUtils {
 
 
 	public void changeGameMode(Player spectator, GameMode gamemode) {
-		long l = System.currentTimeMillis();
-		getIgnoreGameModeChange().put(l, spectator);
 		spectator.setGameMode(gamemode);
-		Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> getIgnoreGameModeChange().remove(l), 20L);
 	}
 
 

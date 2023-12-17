@@ -12,7 +12,7 @@ public final class Paths {
     public static final String CONFIG_NOTIFY_CURRENT_TARGET =               "Settings.NotifyCurrentTarget";
 
     public static final String CONFIG_SAVE_PLAYERS_LOCATION =               "Settings.Save.PlayerLocation";
-    public static final String CONFIG_SAVE_PLAYERS_FLIGHT_MODE =             "Settings.Save.PlayerFlightMode";
+    public static final String CONFIG_SAVE_PLAYERS_FLIGHT_MODE =            "Settings.Save.PlayerFlightMode";
     public static final String CONFIG_SAVE_PLAYERS_DATA =                   "Settings.Save.PlayerData";
 
     public static final String CONFIG_MIRROR_TARGET_EFFECTS =               "Settings.Mirror.TargetEffects";
@@ -22,7 +22,6 @@ public final class Paths {
     public static final String CONFIG_INVENTORY_ENDER_CHEST =               "Settings.Inventory.OpenEnderChest";
 
     public static final String CONFIG_CYCLE_NO_PLAYERS =                    "Settings.Cycle.StartWhenNoPlayers";
-
     public static final String CONFIG_CYCLE_PAUSE_NO_PLAYERS =              "Settings.Cycle.PauseWhenNoPlayers";
     public static final String CONFIG_SHOW_CURRENT_TARGET =                 "Settings.Cycle.ShowCurrentTarget";
 

@@ -136,10 +136,9 @@ public class SpectatorListener implements Listener {
 		if(!spectateUtils.isSpectator(player))
 			return;
 
-		if(!spectateUtils.getIgnoreGameModeChange().containsValue(player)) {
+		if(!spectateUtils.isCycling(player))
 			player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
-			event.setCancelled(true);
-		}
+		event.setCancelled(true);
 	}
 
 	/**

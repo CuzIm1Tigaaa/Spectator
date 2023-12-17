@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.player.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -51,7 +51,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onChestOpen(InventoryOpenEvent event) {
 		Player player = (Player) event.getPlayer();
-		if(!spectateUtils.isSpectated(player)) return;
+		if(spectateUtils.isNotSpectated(player)) return;
 
 		Set<Player> spectators = new HashSet<>(spectateUtils.getSpectators());
 		spectators.removeIf(p -> !Objects.equals(p.getSpectatorTarget(), player));
@@ -60,11 +60,12 @@ public class ContainerListener implements Listener {
 
 		if(openedInventory.getType() == InventoryType.ENDER_CHEST) {
 			spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_ENDERCHEST));
-			if(Config.getBoolean(Paths.CONFIG_INVENTORY_ENDERCHEST)) inventory = player.getEnderChest();
+			if(Config.getBoolean(Paths.CONFIG_INVENTORY_ENDER_CHEST)) inventory = player.getEnderChest();
 		}
 		if(this.container.contains(openedInventory.getType())) {
 			spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_CONTAINER));
-			if(Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS)) inventory = openedInventory;
+			if(Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))
+				inventory = openedInventory;
 		}
 		if(inventory != null) {
 			for(Player spec : spectators)
@@ -78,18 +79,20 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		Player player = (Player) event.getPlayer();
-		if(!spectateUtils.isSpectated(player)) return;
+		if(spectateUtils.isNotSpectated(player)) return;
 
 		Inventory openedInventory = event.getInventory();
 
 		if(openedInventory.getType() == InventoryType.ENDER_CHEST) {
-			if(!Config.getBoolean(Paths.CONFIG_INVENTORY_ENDERCHEST))
+			if(!Config.getBoolean(Paths.CONFIG_INVENTORY_ENDER_CHEST))
 				return;
 		}
-		if(this.container.contains(openedInventory.getType())) {
-			if(!Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))
-				return;
-		}
+
+		if(!this.container.contains(openedInventory.getType()))
+			return;
+
+		if(!Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))
+			return;
 
 		Set<Player> spectators = new HashSet<>(spectateUtils.getSpectators());
 		spectators.removeIf(p -> !Objects.equals(p.getSpectatorTarget(), player));

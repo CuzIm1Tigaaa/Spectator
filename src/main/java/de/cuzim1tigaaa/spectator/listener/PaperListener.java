@@ -2,7 +2,7 @@ package de.cuzim1tigaaa.spectator.listener;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.player.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 

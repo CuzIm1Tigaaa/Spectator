@@ -42,13 +42,13 @@ public class Spectate implements CommandExecutor, TabCompleter {
             if(spectateUtils.isSpectator(target)) {
                 spectateUtils.Unspectate(target, true);
                 target.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
-                sender.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", target.getDisplayName()));
+                sender.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", target.getName()));
                 return true;
             }
 
             spectateUtils.Spectate(target, null);
             target.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
-            sender.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", target.getDisplayName()));
+            sender.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", target.getName()));
             return true;
         }
 
@@ -81,13 +81,13 @@ public class Spectate implements CommandExecutor, TabCompleter {
         }
 
         if(spectateUtils.isSpectating(player, target)) {
-            player.sendMessage(getMessage(Paths.MESSAGES_GENERAL_SAMEPLAYER, "TARGET", target.getDisplayName()));
+            player.sendMessage(getMessage(Paths.MESSAGES_GENERAL_SAMEPLAYER, "TARGET", target.getName()));
             return true;
         }
 
         if(spectateUtils.isSpectating(target, player) || hasPermission(target, BYPASS_SPECTATED)) {
             if(!hasPermission(player, BYPASS_SPECTATEALL)) {
-                player.sendMessage(getMessage(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getDisplayName()));
+                player.sendMessage(getMessage(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
                 return true;
             }
         }
@@ -96,15 +96,14 @@ public class Spectate implements CommandExecutor, TabCompleter {
             if(!player.getWorld().getUID().equals(target.getWorld().getUID())) {
                 String world = plugin.getMultiverseCore().getMVWorldManager().getMVWorld(target.getWorld()).getPermissibleName();
                 if(!player.hasPermission("multiverse.access." + world)) {
-                    player.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE, "TARGET", target.getDisplayName()));
+                    player.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE, "TARGET", target.getName()));
                     return true;
                 }
             }
         }
 
         spectateUtils.Spectate(player, target);
-        // TODO plugin.getSpectateManager().notifyTarget(target, player, true);
-        player.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getDisplayName()));
+        player.sendMessage(getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
         return true;
     }
 

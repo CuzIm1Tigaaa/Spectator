@@ -113,9 +113,9 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             return;
         }
 
-        spectateUtils.StartCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
         spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_START,
                 "INTERVAL", seconds, "ORDER", alphabetical ? "Alphabetic" : "Random"));
+        spectateUtils.StartCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
     }
 
     @Override

@@ -34,7 +34,7 @@ public class Displays {
 				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 					Player target = task.getCycle().getLastPlayer();
 					spectator.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-							target != null ? new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName()))
+							target != null ? new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()))
 									: new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET)));
 				}, 0L, 10L).getTaskId());
 			}
@@ -44,7 +44,7 @@ public class Displays {
 
 				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 					Player target = task.getCycle().getLastPlayer();
-					spectator.sendTitle("", target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName())
+					spectator.sendTitle("", target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName())
 							: Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET), 0, 20, 0);
 				}, 0L, 10L).getTaskId());
 			}
@@ -54,7 +54,7 @@ public class Displays {
 
 				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 					Player target = task.getCycle().getLastPlayer();
-					spectator.sendTitle(target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName())
+					spectator.sendTitle(target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName())
 							: Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET), "", 0, 20, 0);
 				}, 0L, 10L).getTaskId());
 			}

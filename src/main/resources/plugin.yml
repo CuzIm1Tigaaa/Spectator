@@ -126,4 +126,4 @@ permissions:
       spectator.commands.*: true
       spectator.bypass.*: true
       spectator.utils.*: true
-      spectator.notify.update: true
+      spectator.notify: true

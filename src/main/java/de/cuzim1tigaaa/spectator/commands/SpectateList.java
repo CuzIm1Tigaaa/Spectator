@@ -38,7 +38,7 @@ public class SpectateList implements CommandExecutor, TabCompleter {
             Player target = spectateUtils.getTargetOf(spectator);
 
             if(target == null || !target.isOnline()) {
-                sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", spectator.getDisplayName()));
+                sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", spectator.getName()));
                 continue;
             }
 

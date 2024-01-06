@@ -313,7 +313,7 @@ public class SpectateUtils {
 			return;
 
         String message = Messages.getMessage(spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE :
-		        Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getDisplayName());
+		        Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getName());
 
         switch(Config.getNotifyTargetMode().toLowerCase()) {
             case "chat" -> target.spigot().sendMessage(ChatMessageType.CHAT, new TextComponent(message));

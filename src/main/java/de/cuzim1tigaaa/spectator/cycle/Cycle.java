@@ -40,6 +40,9 @@ public class Cycle {
 		if(toVisit.isEmpty()) {
 			alreadyVisited.clear();
 			updateLists();
+
+			if(toVisit.isEmpty())
+				return null;
 		}
 
 		Player target = alphabetical ? toVisit.stream().sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName())).toList().get(0) :

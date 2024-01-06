@@ -32,18 +32,31 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if(args.length == 0) {
-            if(spectateUtils.getSpectators().isEmpty()) {
-                sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_NONE));
-                return true;
-            }
+        if(spectateUtils.getSpectators().isEmpty()) {
+            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_NONE));
+            return true;
+        }
 
+        if(args.length == 0) {
             for(Player spectator : spectateUtils.getSpectators()) {
+                plugin.getSpectateUtils().Unspectate(spectator, true);
                 if(spectator.equals(sender)) continue;
                 spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             }
+            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
+            return true;
+        }
 
-            // TODO plugin.getSpectateManager().restoreAll();
+        boolean oldLocation = true;
+        if(args.length > 1)
+            oldLocation = Boolean.parseBoolean(args[1]);
+
+        if(args[0].equalsIgnoreCase("*")) {
+            for(Player spectator : spectateUtils.getSpectators()) {
+                plugin.getSpectateUtils().Unspectate(spectator, oldLocation);
+                if(spectator.equals(sender)) continue;
+                spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+            }
             sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
             return true;
         }
@@ -54,22 +67,25 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
         }
 
         if(!spectateUtils.isSpectator(target)) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOTSPECTATING, "TARGET", target.getDisplayName()));
+            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOTSPECTATING, "TARGET", target.getName()));
             return true;
         }
-
-        spectateUtils.Unspectate(target, !(args.length > 1 && Boolean.parseBoolean(args[1])));
+        spectateUtils.Unspectate(target, oldLocation);
         target.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
-        sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getDisplayName()));
+        sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getName()));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
-        return switch(args.length) {
-            case 1 -> plugin.getOnlinePlayerNames();
-            case 2 -> List.of("true", "false");
-            default -> Collections.emptyList();
-        };
+        if(args.length == 1) {
+            List<String> names = plugin.getOnlinePlayerNames();
+            names.add("*");
+            return names;
+        }
+        if(args.length == 2)
+            return List.of("true", "false");
+
+        return Collections.emptyList();
     }
 }

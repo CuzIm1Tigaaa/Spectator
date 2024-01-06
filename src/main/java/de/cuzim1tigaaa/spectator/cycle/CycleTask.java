@@ -34,6 +34,18 @@ public class CycleTask {
 		if(taskId != -1)
 			return;
 
+		Player spectator = cycle.getOwner();
+		if(Bukkit.getOnlinePlayers().size() - plugin.getSpectateUtils().getSpectators().size() == 0) {
+			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
+				plugin.getSpectateUtils().StopCycle(spectator);
+				spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				return;
+			}
+			plugin.getSpectateUtils().PauseCycle(spectator);
+			spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+			return;
+		}
+
 		if(Config.getShowTargetMode().equalsIgnoreCase("BOSSBAR")) {
 			BossBar bar = getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : getBossBar();
 			bar.setVisible(true);
@@ -46,7 +58,7 @@ public class CycleTask {
 				bar.setTitle(Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING));
 				bar.setColor(BarColor.RED);
 			}else {
-				bar.setTitle(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName()));
+				bar.setTitle(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
 				bar.setColor(BarColor.BLUE);
 			}
 
@@ -64,7 +76,7 @@ public class CycleTask {
 							bar.setTitle(Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING));
 							bar.setColor(BarColor.RED);
 						}else {
-							bar.setTitle(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getDisplayName()));
+							bar.setTitle(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
 							bar.setColor(BarColor.BLUE);
 						}
 
@@ -101,7 +113,7 @@ public class CycleTask {
 		if(next == null || next.isDead() || !next.isOnline())
 			return;
 
-		if(!last.equals(next))
+		if(last == null || !last.equals(next))
 			plugin.getSpectateUtils().notifyTarget(last, spectator, false);
 		plugin.getSpectateUtils().Spectate(spectator, next);
 	}

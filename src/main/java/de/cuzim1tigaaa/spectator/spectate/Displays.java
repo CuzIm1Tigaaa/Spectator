@@ -34,8 +34,8 @@ public class Displays {
 				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 					Player target = task.getCycle().getLastPlayer();
 					spectator.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-							target != null ? new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()))
-									: new TextComponent(Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET)));
+							target != null ? new TextComponent(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()))
+									: new TextComponent(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET)));
 				}, 0L, 10L).getTaskId());
 			}
 			case "SUBTITLE" -> {
@@ -44,8 +44,8 @@ public class Displays {
 
 				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 					Player target = task.getCycle().getLastPlayer();
-					spectator.sendTitle("", target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName())
-							: Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET), 0, 20, 0);
+					spectator.sendTitle("", target != null ? Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName())
+							: Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET), 0, 20, 0);
 				}, 0L, 10L).getTaskId());
 			}
 			case "TITLE" -> {
@@ -54,8 +54,8 @@ public class Displays {
 
 				task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 					Player target = task.getCycle().getLastPlayer();
-					spectator.sendTitle(target != null ? Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName())
-							: Messages.getMessage(Paths.MESSAGES_CYCLING_SEARCHING_TARGET), "", 0, 20, 0);
+					spectator.sendTitle(target != null ? Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName())
+							: Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET), "", 0, 20, 0);
 				}, 0L, 10L).getTaskId());
 			}
 			default -> {

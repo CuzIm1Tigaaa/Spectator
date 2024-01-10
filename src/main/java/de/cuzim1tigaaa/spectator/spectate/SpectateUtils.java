@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Getter
@@ -46,19 +47,15 @@ public class SpectateUtils {
 					Unspectate(spectator, true);
 					continue;
 				}
-				spectator.setSpectatorTarget(null);
-
 				Location spLoc = spectator.getLocation(), taLoc = target.getLocation();
-
-				if(!Objects.equals(spLoc.getWorld(), taLoc.getWorld()) || spLoc.distanceSquared(taLoc) > 3)
+				if(!Objects.equals(spLoc.getWorld(), taLoc.getWorld()) || spLoc.distanceSquared(taLoc) > 3) {
+					spectator.setSpectatorTarget(null);
 					spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
-
-				if(spectator.getGameMode() != GameMode.SPECTATOR) {
-					Unspectate(spectator, true);
-					continue;
+					spectator.setSpectatorTarget(target);
 				}
 
-				spectator.setSpectatorTarget(target);
+				if(spectator.getGameMode() != GameMode.SPECTATOR)
+					Unspectate(spectator, true);
 			}
 		}, 0, 10);
 	}
@@ -74,20 +71,20 @@ public class SpectateUtils {
 		}else
 			info = new SpectateInformation(spectator, target);
 
-		if(info.getState() == SpectateState.PAUSED)
-			info.setState(SpectateState.SPECTATING);
-
 		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld()))
 			spectator.teleport(target);
 
-		if(!info.getAttributes().containsKey(spectator.getWorld()))
+		if(info.getState() == SpectateState.SPECTATING)
 			info.saveAttributes();
 
 		changeGameMode(spectator, GameMode.SPECTATOR);
 
 		if(target != null) {
 			spectator.teleport(target);
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.setSpectatorTarget(target), 5L);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+				if(spectator.getGameMode() == GameMode.SPECTATOR)
+					spectator.setSpectatorTarget(target);
+			}, 5L);
 		}
 
 		this.spectateInfo.put(spectator.getUniqueId(), info);
@@ -201,10 +198,10 @@ public class SpectateUtils {
 			return;
 
 		SpectateInformation info = getSpectateInformation(spectator);
-		CycleTask task = info.getCycleTask();
-		spectator.sendMessage("Cycle restart.");
-		spectateInfo.remove(spectator.getUniqueId());
-		StartCycle(spectator, task);
+		info.setTarget(null);
+		info.setState(SpectateState.CYCLING);
+		spectateInfo.replace(spectator.getUniqueId(), info);
+		info.getCycleTask().startTask();
 	}
 
 	public void PauseCycle(Player spectator) {
@@ -250,6 +247,13 @@ public class SpectateUtils {
 
 	public Set<Player> getSpectators() {
 		return spectateInfo.values().stream().map(SpectateInformation::getSpectator).collect(Collectors.toSet());
+	}
+
+	public Set<Player> getSpectateablePlayers() {
+		Set<Player> spectateable = new HashSet<>(Bukkit.getOnlinePlayers());
+		spectateable.removeAll(getSpectators());
+		spectateable.removeIf(player -> player.hasPermission(Permissions.BYPASS_SPECTATED));
+		return spectateable;
 	}
 
 	public Set<Player> getSpectatorsOf(Player target) {
@@ -312,7 +316,7 @@ public class SpectateUtils {
         if(spectator.hasPermission(Permissions.BYPASS_NOTIFY))
 			return;
 
-        String message = Messages.getMessage(spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE :
+        String message = Messages.getMessage(target, spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE :
 		        Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getName());
 
         switch(Config.getNotifyTargetMode().toLowerCase()) {

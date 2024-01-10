@@ -5,7 +5,6 @@ import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -53,7 +52,7 @@ public class SpectatorListener implements Listener {
 		for(Player spectator : spectateUtils.getPausedSpectators()) {
 			spectateUtils.RestartCycle(spectator);
 			CycleTask task = spectateUtils.getCycleTask(spectator);
-			spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
+			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
 					"INTERVAL", task.getInterval(), "ORDER", task.getCycle().isAlphabetical() ? "Alphabetic" : "Random"));
 		}
 	}
@@ -91,15 +90,15 @@ public class SpectatorListener implements Listener {
 			if(!spectateUtils.isCycling(spectator))
 				continue;
 
-			if((Bukkit.getOnlinePlayers().size() - spectateUtils.getSpectators().size()) - 1 > 0)
+			if(player.hasPermission(BYPASS_SPECTATED) || plugin.getSpectateUtils().getSpectateablePlayers().size() -1 > 0)
 				continue;
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
 				spectateUtils.StopCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 			}else {
 				spectateUtils.PauseCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			}
 		}
 	}
@@ -119,7 +118,7 @@ public class SpectatorListener implements Listener {
 			return;
 
 		if(spectateUtils.isCycling(player)) {
-			player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_DISMOUNT));
+			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_DISMOUNT));
 			event.setCancelled(true);
 			return;
 		}
@@ -137,7 +136,7 @@ public class SpectatorListener implements Listener {
 			return;
 
 		if(!spectateUtils.isCycling(player))
-			player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
+			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
 		event.setCancelled(true);
 	}
 

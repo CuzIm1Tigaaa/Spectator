@@ -28,12 +28,12 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!hasPermission(sender, COMMAND_UNSPECTATE)) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
         }
 
         if(spectateUtils.getSpectators().isEmpty()) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_NONE));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_LIST_NONE));
             return true;
         }
 
@@ -41,9 +41,9 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             for(Player spectator : spectateUtils.getSpectators()) {
                 plugin.getSpectateUtils().Unspectate(spectator, true);
                 if(spectator.equals(sender)) continue;
-                spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+                spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             }
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
             return true;
         }
 
@@ -55,24 +55,24 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             for(Player spectator : spectateUtils.getSpectators()) {
                 plugin.getSpectateUtils().Unspectate(spectator, oldLocation);
                 if(spectator.equals(sender)) continue;
-                spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+                spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             }
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_UNSPECTATE_ALL));
             return true;
         }
         Player target = Bukkit.getPlayer(args[0]);
         if(target == null || !target.isOnline()) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
             return true;
         }
 
         if(!spectateUtils.isSpectator(target)) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_NOTSPECTATING, "TARGET", target.getName()));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_GENERAL_NOTSPECTATING, "TARGET", target.getName()));
             return true;
         }
         spectateUtils.Unspectate(target, oldLocation);
-        target.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
-        sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getName()));
+        target.sendMessage(Messages.getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+        sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getName()));
         return true;
     }
 

@@ -24,23 +24,23 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!(sender instanceof Player player)) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_SENDER));
+            sender.sendMessage(Messages.getMessage(null, Paths.MESSAGE_DEFAULT_SENDER));
             return true;
         }
 
         if(!hasPermission(player, COMMAND_SPECTATE_HERE)) {
-            player.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+            player.sendMessage(Messages.getMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
         }
 
         if(spectateUtils.isSpectator(player)) {
             spectateUtils.Unspectate(player, false);
-            player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+            player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             return true;
         }
 
         spectateUtils.Spectate(player, null);
-        player.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
+        player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
         return true;
     }
 

@@ -21,24 +21,24 @@ public class SpectateList implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!Permissions.hasPermission(sender, Permissions.COMMANDS_SPECTATE_LIST)) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGE_DEFAULT_PERMISSION));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
         }
 
         int spectators = spectateUtils.getSpectators().size();
         if(spectators == 0) {
-            sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_NONE));
+            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_LIST_NONE));
             return true;
         }
 
-        sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_TITLE, "AMOUNT", spectators));
+        sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_LIST_TITLE, "AMOUNT", spectators));
 
         for(Player spectator : spectateUtils.getSpectators()) {
             if(spectator == null || !spectator.isOnline()) continue;
             Player target = spectateUtils.getTargetOf(spectator);
 
             if(target == null || !target.isOnline()) {
-                sender.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", spectator.getName()));
+                sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_LIST_DEFAULT, "SPECTATOR", spectator.getName()));
                 continue;
             }
 
@@ -50,7 +50,7 @@ public class SpectateList implements CommandExecutor, TabCompleter {
             else if(cycling) message = Paths.MESSAGES_COMMANDS_LIST_CYCLING;
             else message = Paths.MESSAGES_COMMANDS_LIST_SPECTATING;
 
-            sender.sendMessage(Messages.getMessage(message, "SPECTATOR", spectator.getName(),
+            sender.sendMessage(Messages.getMessage(sender, message, "SPECTATOR", spectator.getName(),
                     "TARGET", spectateUtils.getTargetOf(spectator).getName()));
         }
         return true;

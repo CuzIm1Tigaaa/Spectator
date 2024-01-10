@@ -3,7 +3,7 @@ version: ${project.version}
 author: CuzIm1Tigaaa
 main: ${project.groupId}.Spectator
 api-version: 1.16
-softdepend: ['Multiverse-Core']
+softdepend: ['Multiverse-Core', 'PlaceholderAPI']
 commands:
   spectate:
     aliases: [ spec ]
@@ -14,8 +14,6 @@ commands:
   spectatehere:
     aliases: [ spechere,spech ]
     usage: /spectatehere
-  spectateinfo:
-    usage: /spectateinfo
   spectatelist:
     aliases: [ speclist ]
     usage: /spectatelist

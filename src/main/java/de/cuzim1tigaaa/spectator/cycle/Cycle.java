@@ -1,9 +1,9 @@
 package de.cuzim1tigaaa.spectator.cycle;
 
+import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Permissions;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -64,18 +64,17 @@ public class Cycle {
 	}
 
 	private void updateLists() {
-		toVisit.addAll(Bukkit.getOnlinePlayers());
+		toVisit.addAll(plugin.getSpectateUtils().getSpectateablePlayers());
 		toVisit.remove(owner);
-		toVisit.removeAll(plugin.getSpectateUtils().getSpectators());
 		toVisit.removeIf(p -> p == null || !p.isOnline());
 
 		if(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL))
 			toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED));
 
-		if(plugin.getMultiverseCore() != null) {
+		if(plugin.getMultiverseCore() != null && plugin.getMultiverseCore().getMVConfig().getEnforceAccess()) {
 			toVisit.removeIf(p -> {
-				String world = plugin.getMultiverseCore().getMVWorldManager().getMVWorld(p.getWorld()).getPermissibleName();
-				return !owner.hasPermission("multiverse.access." + world);
+				MultiverseWorld world = plugin.getMultiverseCore().getMVWorldManager().getMVWorld(p.getWorld());
+				return !owner.hasPermission(world.getAccessPermission());
 			});
 		}
 

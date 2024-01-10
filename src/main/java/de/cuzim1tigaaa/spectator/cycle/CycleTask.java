@@ -35,32 +35,32 @@ public class CycleTask {
 			return;
 
 		Player spectator = cycle.getOwner();
-		if(Bukkit.getOnlinePlayers().size() - plugin.getSpectateUtils().getSpectators().size() == 0) {
+		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
 				plugin.getSpectateUtils().StopCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 				return;
 			}
 			plugin.getSpectateUtils().PauseCycle(spectator);
-			spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			return;
 		}
 
 		if(Config.getShowTargetMode().equalsIgnoreCase("BOSSBAR")) {
 			BossBar bar = getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : getBossBar();
 			bar.setVisible(true);
-			bar.addPlayer(cycle.getOwner());
 			setBossBar(bar);
 
 			selectNextPlayer();
 			Player target = getCycle().getLastPlayer();
 			if(target == null) {
-				bar.setTitle(Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING));
+				bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
 				bar.setColor(BarColor.RED);
 			}else {
-				bar.setTitle(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
+				bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
 				bar.setColor(BarColor.BLUE);
 			}
+			bar.addPlayer(cycle.getOwner());
 
 			setTaskId(new BukkitRunnable() {
 				final int inter = (interval -1);
@@ -73,12 +73,13 @@ public class CycleTask {
 
 						Player target = getCycle().getLastPlayer();
 						if(target == null) {
-							bar.setTitle(Messages.getMessage(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING));
+							bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
 							bar.setColor(BarColor.RED);
 						}else {
-							bar.setTitle(Messages.getMessage(Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
+							bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
 							bar.setColor(BarColor.BLUE);
 						}
+						bar.addPlayer(cycle.getOwner());
 
 						counter = inter;
 						bar.setProgress(counter / inter);
@@ -97,19 +98,19 @@ public class CycleTask {
 	public void selectNextPlayer() {
 		Player spectator = cycle.getOwner();
 
-		if(Bukkit.getOnlinePlayers().size() - plugin.getSpectateUtils().getSpectators().size() == 0) {
+		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
 				plugin.getSpectateUtils().StopCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 				return;
 			}
 			plugin.getSpectateUtils().PauseCycle(spectator);
-			spectator.sendMessage(Messages.getMessage(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			return;
 		}
 
-		Player last = cycle.getLastPlayer();
 		Player next = cycle.getNextTarget();
+		Player last = cycle.getLastPlayer();
 		if(next == null || next.isDead() || !next.isOnline())
 			return;
 

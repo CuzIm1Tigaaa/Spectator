@@ -1,5 +1,6 @@
-package de.cuzim1tigaaa.spectator;
+package de.cuzim1tigaaa.spectator.extensions;
 
+import de.cuzim1tigaaa.spectator.Spectator;
 import org.bstats.charts.SingleLineChart;
 
 public class Metrics {

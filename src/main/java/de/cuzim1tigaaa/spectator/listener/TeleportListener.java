@@ -85,14 +85,14 @@ public class TeleportListener implements Listener {
 		if(!hasPermission(player, COMMAND_SPECTATE_OTHERS)) {
 			event.setCancelled(true);
 			player.setSpectatorTarget(null);
-			player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
 			return;
 		}
 
 		if(hasPermission(target, BYPASS_SPECTATED) && !hasPermission(player, BYPASS_SPECTATEALL)) {
 			event.setCancelled(true);
 			player.setSpectatorTarget(null);
-			player.sendMessage(Messages.getMessage(Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
 			return;
 		}
 

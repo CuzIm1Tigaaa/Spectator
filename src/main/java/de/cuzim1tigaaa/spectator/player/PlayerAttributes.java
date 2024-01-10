@@ -55,7 +55,6 @@ public class PlayerAttributes {
                 remainingAir = pAttributes.getRemainingAir();
                 fireTicks = pAttributes.getFireTicks();
             }
-
             Inventory.restoreInventory(player, pAttributes);
         }
 

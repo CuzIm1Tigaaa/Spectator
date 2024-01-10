@@ -2,6 +2,7 @@ package de.cuzim1tigaaa.spectator;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.commands.*;
+import de.cuzim1tigaaa.spectator.extensions.*;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.listener.SpectatorListener;
 import de.cuzim1tigaaa.spectator.player.Inventory;
@@ -20,6 +21,7 @@ public class Spectator extends JavaPlugin {
     private UpdateChecker updateChecker;
 
     private MultiverseCore multiverseCore;
+    @Getter private static boolean papiInstalled;
 
     @Override
     public void onEnable() {
@@ -52,6 +54,12 @@ public class Spectator extends JavaPlugin {
 
         if((multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
             this.getLogger().info("Multiverse-Core was found!");
+
+        papiInstalled = false;
+        if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new Placeholders(this).register();
+            papiInstalled = true;
+        }
 
         new SpectatorListener(this);
 

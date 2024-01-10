@@ -40,7 +40,6 @@ public final class Paths {
     public static final String MESSAGES_GENERAL_OFFLINEPLAYER =             "Messages.General.OfflinePlayer";
     public static final String MESSAGES_GENERAL_SAMEPLAYER =                "Messages.General.SamePlayer";
     public static final String MESSAGES_GENERAL_YOURSELF =                  "Messages.General.Yourself";
-    public static final String MESSAGES_GENERAL_BOSS_BAR_WAITING =          "Messages.General.BossBarWaiting";
     public static final String MESSAGES_GENERAL_CYCLEONLY =                 "Messages.General.CycleOnly";
     public static final String MESSAGES_GENERAL_NUMBERFORMAT =              "Messages.General.NumberFormat";
 

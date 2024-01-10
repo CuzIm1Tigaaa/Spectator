@@ -1,9 +1,12 @@
 package de.cuzim1tigaaa.spectator.files;
 
 import de.cuzim1tigaaa.spectator.Spectator;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +22,7 @@ public final class Messages {
 
     private static FileConfiguration message;
 
-    public static String getMessage(String path, Object... replace) {
+    public static String getMessage(CommandSender sender, String path, Object... replace) {
         String msg = message.getString(path);
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
         for(int i = 0; i < replace.length; i++) {
@@ -28,9 +31,11 @@ public final class Messages {
                 continue;
             i++;
             String replacement = replace[i] == null ? null : replace[i].toString();
-            if(message != null) msg = replacement == null ? msg.replace("%" + target + "%", "") : msg.replace("%" + target + "%", replacement);
+            if(message != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
         }
-        return ChatColor.translateAlternateColorCodes('&', msg);
+        if(Spectator.isPapiInstalled() && sender instanceof Player player)
+            return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg));
+        return ChatColor.translateAlternateColorCodes('&', msg) ;
     }
 
     public static void loadLanguageFile(Spectator plugin) {
@@ -96,7 +101,9 @@ public final class Messages {
             set(Paths.MESSAGES_GENERAL_YOURSELF,                    "&cYou cannot Spectate yourself!");
             set(Paths.MESSAGES_GENERAL_CYCLEONLY,                   "&cYou can only use &7/SpectateCycle start <Interval>&c!");
             set(Paths.MESSAGES_GENERAL_NUMBERFORMAT,                "&cPlease enter a valid number!");
-            set(Paths.MESSAGES_GENERAL_BOSS_BAR_WAITING,            "&cSearching next Target…");
+
+            set(Paths.MESSAGES_CYCLING_SEARCHING_TARGET,            "&cSearching next Target…");
+            set(Paths.MESSAGES_CYCLING_CURRENT_TARGET,              "&7Currently spectating &6%TARGET%");
 
             set(Paths.MESSAGES_COMMANDS_LIST_NONE,                  "&cThere are no spectators at the moment!");
             set(Paths.MESSAGES_COMMANDS_LIST_TITLE,                 "&7There are currently &e%AMOUNT% &7Spectators:");
@@ -112,7 +119,6 @@ public final class Messages {
             set(Paths.MESSAGES_COMMANDS_CYCLE_STOP,                 "&7Speccycle &cstopped&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE,                "&7Speccycle &epaused&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_RESTART,              "&7Speccycle &brestarted &7with interval &c%INTERVAL%&7.");
-            set(Paths.MESSAGES_CYCLING_CURRENT_TARGET,              "&7Currently spectating &6%TARGET%");
             set(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING,              "&cYou are already in Speccycle-Mode!");
             set(Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING,          "&cYou are not in Speccycle-Mode!");
             set(Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING,   "&e%TARGET% &cis not in Speccycle-Mode!");

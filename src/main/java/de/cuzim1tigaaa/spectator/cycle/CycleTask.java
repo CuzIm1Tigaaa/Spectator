@@ -79,6 +79,7 @@ public class CycleTask {
 							bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
 							bar.setColor(BarColor.BLUE);
 						}
+						bar.removeAll();
 						bar.addPlayer(cycle.getOwner());
 
 						counter = inter;

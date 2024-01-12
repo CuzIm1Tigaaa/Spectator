@@ -34,7 +34,6 @@ public class Spectate implements CommandExecutor, TabCompleter {
 
             if(args.length == 1) {
                 Player target = Bukkit.getPlayer(args[0]);
-
                 if(target == null) {
                     sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
                     return true;
@@ -54,30 +53,27 @@ public class Spectate implements CommandExecutor, TabCompleter {
             }
         }
 
-        if(!(sender instanceof Player player) || player.hasPermission(COMMAND_SPECTATE_CHANGE_OTHERS)) {
-            if(args.length > 1) {
-                Player spectator = Bukkit.getPlayer(args[0]);
-                if(spectator == null) {
-                    sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
-                    return true;
-                }
-
-                Player target = Bukkit.getPlayer(args[0]);
-                if(target == null) {
-                    sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
-                    return true;
-                }
-
-                if(spectateUtils.isSpectator(target)) {
-                    sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
-                    return true;
-                }
-
-                spectateUtils.Spectate(spectator, target);
-                spectator.sendMessage(getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
-                sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", target.getName()));
+        if(!(sender instanceof Player player) || (args.length > 1 && player.hasPermission(COMMAND_SPECTATE_CHANGE_OTHERS))) {
+            Player spectator = Bukkit.getPlayer(args[0]);
+            if(spectator == null) {
+                sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[0]));
                 return true;
             }
+
+            Player target = Bukkit.getPlayer(args[1]);
+            if(target == null) {
+                sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[1]));
+                return true;
+            }
+
+            if(spectateUtils.isSpectator(target)) {
+                sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+                return true;
+            }
+
+            spectateUtils.Spectate(spectator, target);
+            spectator.sendMessage(getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
+            sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", spectator.getName()));
             return true;
         }
 
@@ -130,7 +126,6 @@ public class Spectate implements CommandExecutor, TabCompleter {
                 }
             }
         }
-
         spectateUtils.Spectate(player, target);
         player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
         return true;
@@ -140,6 +135,10 @@ public class Spectate implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
         if(args.length == 1) {
             if(!(sender instanceof Player player) || hasPermission(player, COMMAND_SPECTATE_OTHERS))
+                return plugin.getOnlinePlayerNames();
+        }
+        if(args.length == 2) {
+            if(!(sender instanceof Player player) || hasPermission(player, COMMAND_SPECTATE_CHANGE_OTHERS))
                 return plugin.getOnlinePlayerNames();
         }
         return Collections.emptyList();

@@ -42,6 +42,9 @@ permissions:
   spectator.commands.spectateothers:
     description: Permission for /spectate [player]
     default: false
+  spectator.commands.spectatechangeothers:
+    description: Permission for /spectate [player] [target]
+    default: false
   spectator.commands.spectatehere:
     description: Permission for /spectatehere
     default: false
@@ -67,6 +70,7 @@ permissions:
       spectator.commands.admin: true
       spectator.commands.spectate: true
       spectator.commands.spectateothers: true
+      spectator.commands.spectatechangeothers: true
       spectator.commands.spectatehere: true
       spectator.commands.spectatelist: true
       spectator.commands.spectatecycle.*: true
@@ -75,6 +79,9 @@ permissions:
     default: false
   spectator.bypass.spectated:
     description: Permission to not get spectated by other players
+    default: false
+  spectator.bypass.unspectated:
+    description: Permission to not get unspectated by other players
     default: false
   spectator.bypass.spectateall:
     description: Permission to spectate players even though they have the permission 'spectator.bypass.spectated'
@@ -88,6 +95,7 @@ permissions:
     children:
       spectator.bypass.tablist: true
       spectator.bypass.spectated: true
+      spectator.bypass.unspectated: true
       spectator.bypass.spectateall: true
       spectator.bypass.notify: true
   spectator.utils.openenderchest:

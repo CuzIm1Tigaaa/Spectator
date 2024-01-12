@@ -11,8 +11,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import static de.cuzim1tigaaa.spectator.files.Permissions.COMMAND_UNSPECTATE;
-import static de.cuzim1tigaaa.spectator.files.Permissions.hasPermission;
+import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class UnSpectate implements CommandExecutor, TabCompleter {
 
@@ -39,6 +38,8 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
 
         if(args.length == 0) {
             for(Player spectator : spectateUtils.getSpectators()) {
+                if(spectator.hasPermission(BYPASS_UNSPECTATED))
+                    continue;
                 plugin.getSpectateUtils().Unspectate(spectator, true);
                 if(spectator.equals(sender)) continue;
                 spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
@@ -53,6 +54,8 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
 
         if(args[0].equalsIgnoreCase("*")) {
             for(Player spectator : spectateUtils.getSpectators()) {
+                if(spectator.hasPermission(BYPASS_UNSPECTATED))
+                    continue;
                 plugin.getSpectateUtils().Unspectate(spectator, oldLocation);
                 if(spectator.equals(sender)) continue;
                 spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
@@ -70,6 +73,9 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_GENERAL_NOTSPECTATING, "TARGET", target.getName()));
             return true;
         }
+        if(target.hasPermission(BYPASS_UNSPECTATED))
+            return true;
+
         spectateUtils.Unspectate(target, oldLocation);
         target.sendMessage(Messages.getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
         sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getName()));

@@ -14,7 +14,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Getter
@@ -74,7 +73,7 @@ public class SpectateUtils {
 		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld()))
 			spectator.teleport(target);
 
-		if(info.getState() == SpectateState.SPECTATING)
+		if(info.getState() == SpectateState.SPECTATING && !info.getAttributes().containsKey(spectator.getWorld()))
 			info.saveAttributes();
 
 		changeGameMode(spectator, GameMode.SPECTATOR);

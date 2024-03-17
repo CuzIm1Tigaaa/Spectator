@@ -14,12 +14,6 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class Inventory {
 
-    private static SpectateUtils spectateUtils;
-
-    public static void setPlugin(Spectator plugin) {
-        spectateUtils = plugin.getSpectateUtils();
-    }
-
     private static void clearActivePotionEffects(Player spectator) {
         for(PotionEffect activePotionEffect : spectator.getActivePotionEffects())
             spectator.removePotionEffect(activePotionEffect.getType());
@@ -57,6 +51,7 @@ public class Inventory {
     }
 
     public static void resetInventory(Player spectator) {
+        SpectateUtils spectateUtils = Spectator.getPlugin().getSpectateUtils();
         if(!spectateUtils.isSpectator(spectator))
             return;
 
@@ -75,6 +70,7 @@ public class Inventory {
     }
 
     public static void restoreAll() {
+        SpectateUtils spectateUtils = Spectator.getPlugin().getSpectateUtils();
         Set<Player> players = new HashSet<>(spectateUtils.getSpectators());
 
         for(Player spectator : players)

@@ -4,6 +4,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.listener.ContainerListenerTest;
 import de.cuzim1tigaaa.spectator.spectate.SpectateState;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.Location;
@@ -15,23 +16,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SpectateTest {
 
-	static ServerMock server;
-	static Spectator plugin;
+	ServerMock server = ContainerListenerTest.server;
+	Spectator plugin = ContainerListenerTest.plugin;
 
-	@BeforeAll
-	public static void load() {
-		server = MockBukkit.mock();
-		plugin = MockBukkit.load(Spectator.class);
-
-		File f = new File("./src/test/resources/config.yml");
-		assertTrue(f.exists(), f.getAbsolutePath());
-		Config.loadConfig(plugin, f);
-	}
-
-	@AfterAll
-	public static void unload() {
-		MockBukkit.unmock();
-	}
+//	@BeforeEach
+//	public void load() {
+//		server = MockBukkit.mock();
+//		plugin = MockBukkit.load(Spectator.class);
+//
+//		File f = new File("./src/test/resources/config.yml");
+//		assertTrue(f.exists(), f.getAbsolutePath());
+//		Config.loadConfig(plugin, f);
+//
+//		server.getScheduler().performTicks(100L);
+//	}
+//
+//	@AfterEach
+//	public void unload() {
+//		server.getScheduler().performTicks(100L);
+//		MockBukkit.unmock();
+//	}
 
 
 	@Test

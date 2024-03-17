@@ -4,7 +4,6 @@ import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Permissions;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -12,9 +11,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Cycle {
-
-	@Setter
-	private static Spectator plugin;
 
 	private static final ThreadLocalRandom random = ThreadLocalRandom.current();
 
@@ -37,11 +33,11 @@ public class Cycle {
 		this.toVisit = new ArrayList<>();
 	}
 
-	public Player getNextTarget() {
-		updateLists();
+	public Player getNextTarget(Spectator plugin) {
+		updateLists(plugin);
 		if(toVisit.isEmpty()) {
 			alreadyVisited.clear();
-			updateLists();
+			updateLists(plugin);
 
 			if(toVisit.isEmpty())
 				return null;
@@ -50,11 +46,11 @@ public class Cycle {
 		Player target = alphabetical ? toVisit.stream().sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName())).toList().get(0) :
 				toVisit.get(random.nextInt(toVisit.size()));
 
-		plugin.Debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
+		Spectator.Debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
 				toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
 
 		if(toVisit.size() > 1 && target.equals(lastPlayer))
-			return getNextTarget();
+			return getNextTarget(plugin);
 
 		return visit(target);
 	}
@@ -65,7 +61,7 @@ public class Cycle {
 		return player;
 	}
 
-	private void updateLists() {
+	private void updateLists(Spectator plugin) {
 		toVisit.addAll(plugin.getSpectateUtils().getSpectateablePlayers());
 		toVisit.remove(owner);
 		toVisit.removeIf(p -> p == null || !p.isOnline());

@@ -2,27 +2,30 @@ package de.cuzim1tigaaa.spectator;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.commands.*;
-import de.cuzim1tigaaa.spectator.cycle.CycleTask;
-import de.cuzim1tigaaa.spectator.extensions.*;
+import de.cuzim1tigaaa.spectator.extensions.Placeholders;
+import de.cuzim1tigaaa.spectator.extensions.UpdateChecker;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
+import de.cuzim1tigaaa.spectator.listener.SpectatorListener;
+import de.cuzim1tigaaa.spectator.player.Inventory;
 import de.cuzim1tigaaa.spectator.spectate.Displays;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import de.cuzim1tigaaa.spectator.cycle.Cycle;
-import de.cuzim1tigaaa.spectator.listener.SpectatorListener;
-import de.cuzim1tigaaa.spectator.player.Inventory;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 
+import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 public class Spectator extends JavaPlugin {
 
+    @Getter
+    private static Spectator plugin;
+
     private SpectateUtils spectateUtils;
     private UpdateChecker updateChecker;
+    private Displays displays;
 
     private MultiverseCore multiverseCore;
     @Getter private static boolean papiInstalled;
@@ -32,12 +35,16 @@ public class Spectator extends JavaPlugin {
         this.info();
         this.spectateUtils = new SpectateUtils(this);
         register();
+
+        plugin = this;
     }
 
     @Override
     public void onDisable() {
         Inventory.restoreAll();
         this.spectateUtils.Restore();
+
+        plugin = null;
     }
 
     public void reload() {
@@ -74,12 +81,6 @@ public class Spectator extends JavaPlugin {
         new SpectateReload(this);
         new SpectateList(this);
         new UnSpectate(this);
-
-        Cycle.setPlugin(this);
-        CycleTask.setPlugin(this);
-        CycleTask.setDisplays(new Displays(this));
-        PlayerAttributes.setPlugin(this);
-        Inventory.setPlugin(this);
     }
 
     private void info() {
@@ -99,9 +100,9 @@ public class Spectator extends JavaPlugin {
         return names;
     }
 
-    public void Debug(String message) {
+    public static void Debug(String message) {
         if(!Config.getBoolean(Paths.CONFIG_DEBUG))
             return;
-        getLogger().info(message);
+        getPlugin().getLogger().info(message);
     }
 }

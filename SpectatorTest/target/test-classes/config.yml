@@ -79,7 +79,7 @@ Settings:
   Cycle:
     
     # Allows starting cycling even with no players online
-    # Cycle will then work, when players are online!
+    # Cycle will start, when a player joins the server
     # Might be useful when using the plugin as a "camera"
     StartWhenNoPlayers: true
     
@@ -91,3 +91,6 @@ Settings:
     # Possible values are (without quotation):
     # "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
     ShowCurrentTarget: BOSSBAR
+    
+    # Cycling players cannot be kicked by any other player.
+    KickCyclingPlayers: false

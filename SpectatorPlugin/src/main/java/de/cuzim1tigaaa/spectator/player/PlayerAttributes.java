@@ -4,7 +4,6 @@ import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Config;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -19,15 +18,7 @@ import java.util.Set;
 @Getter
 public class PlayerAttributes {
 
-    private static Spectator plugin;
-    private static SpectateUtils spectateUtils;
-
-    public static void setPlugin(Spectator spectator) {
-        plugin = spectator;
-        spectateUtils = spectator.getSpectateUtils();
-    }
-
-    private final GameMode gameMode;
+    @Setter private GameMode gameMode;
     private final boolean flying;
     @Setter private ItemStack[] inventory;
     private final Set<PotionEffect> effects;
@@ -45,6 +36,7 @@ public class PlayerAttributes {
     }
 
     public static void restorePlayerAttributes(Player player, PlayerAttributes pAttributes) {
+        Spectator plugin = Spectator.getPlugin();
         GameMode gameMode = GameMode.SURVIVAL;
         MultiverseCore core;
         if((core = plugin.getMultiverseCore()) != null)
@@ -64,7 +56,7 @@ public class PlayerAttributes {
             Inventory.restoreInventory(player, pAttributes);
         }
 
-        spectateUtils.changeGameMode(player, gameMode);
+        plugin.getSpectateUtils().changeGameMode(player, gameMode);
         player.setFlying(isFlying && player.getAllowFlight());
         player.setRemainingAir(remainingAir);
         player.setFireTicks(fireTicks);

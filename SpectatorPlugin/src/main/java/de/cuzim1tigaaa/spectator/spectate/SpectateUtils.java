@@ -119,14 +119,14 @@ public class SpectateUtils {
 
 		if(location == null || !oldLocation || !Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION)) {
 			location = spectator.getLocation();
-			plugin.Debug(String.format("Saved Location: %s", location));
-			plugin.Debug("Using current location of player");
+			Spectator.Debug(String.format("Saved Location: %s", location));
+			Spectator.Debug("Using current location of player");
 		}
 
-		plugin.Debug(String.format("Player %-16s unspectated!", spectator.getName()));
+		Spectator.Debug(String.format("Player %-16s unspectated!", spectator.getName()));
 		info.getAttributes().forEach((w, p) -> {
-			plugin.Debug(String.format("\tInventory saved for World [%s]:", w.getName()));
-		plugin.Debug("\t - " + Arrays.stream(p.getInventory()).map(i -> i != null ? i.getType().name() : Material.AIR.name()).
+			Spectator.Debug(String.format("\tInventory saved for World [%s]:", w.getName()));
+		Spectator.Debug("\t - " + Arrays.stream(p.getInventory()).map(i -> i != null ? i.getType().name() : Material.AIR.name()).
 				filter(i -> !i.equals(Material.AIR.name())).collect(Collectors.joining(", ")));
 		});
 
@@ -134,7 +134,8 @@ public class SpectateUtils {
 			info.restoreAttributes();
 
 		final Location finalLocation = location;
-		Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
+//		Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
+		spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 		ToggleTabList(spectator, false);
 		info.restoreAttributes();
@@ -190,7 +191,7 @@ public class SpectateUtils {
 		info.setState(SpectateState.CYCLING);
 		info.setCycleTask(cycle);
 		spectateInfo.replace(spectator.getUniqueId(), info);
-		cycle.startTask();
+		cycle.startTask(this.plugin);
 	}
 
 	public void StopCycle(Player spectator) {
@@ -214,7 +215,7 @@ public class SpectateUtils {
 		info.setTarget(null);
 		info.setState(SpectateState.CYCLING);
 		spectateInfo.replace(spectator.getUniqueId(), info);
-		info.getCycleTask().startTask();
+		info.getCycleTask().startTask(this.plugin);
 	}
 
 	public void PauseCycle(Player spectator) {
@@ -237,7 +238,7 @@ public class SpectateUtils {
 		SpectateInformation info = getSpectateInformation(spectator);
 		if(info.getCycleTask() != null) {
 			info.getCycleTask().stopTask();
-			info.getCycleTask().startTask();
+			info.getCycleTask().startTask(this.plugin);
 //			info.getCycleTask().selectNextPlayer();
 		}
 	}

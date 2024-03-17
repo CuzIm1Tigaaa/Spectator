@@ -17,21 +17,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ContainerListenerTest {
 
-	private static ServerMock server;
-	private static Spectator plugin;
+	public static ServerMock server;
+	public static Spectator plugin;
 
-	@BeforeAll
-	public static void load() {
+	@BeforeEach
+	public void load() {
 		server = MockBukkit.mock();
 		plugin = MockBukkit.load(Spectator.class);
 
 		File f = new File("./src/test/resources/config.yml");
 		assertTrue(f.exists(), f.getAbsolutePath());
 		Config.loadConfig(plugin, f);
+
+		server.getScheduler().performTicks(100L);
 	}
 
-	@AfterAll
-	public static void unload() {
+	@AfterEach
+	public void unload() {
+		server.getScheduler().performTicks(100L);
 		MockBukkit.unmock();
 	}
 

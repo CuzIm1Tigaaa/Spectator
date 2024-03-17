@@ -23,14 +23,13 @@ public class TeleportListener implements Listener {
 		this.spectateUtils = plugin.getSpectateUtils();
 	}
 
-	/**
-	 * When a player teleports through a portal, the spectator does not seem to be teleported with the player
-	 * This handles the change of a world, which will happen, when teleported by a portal
-	 */
 	@EventHandler
-	public void targetSwitchingWorld(PlayerTeleportEvent event) {
-		Player player = event.getPlayer();
+	public void spectatorSwitchingWorld(PlayerTeleportEvent event) {
+		Player spectator = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
+
+		if(!spectateUtils.isSpectator(spectator) || spectateUtils.getTargetOf(spectator) != null)
+			return;
 
 		if(event.isCancelled())
 			return;
@@ -41,23 +40,45 @@ public class TeleportListener implements Listener {
 		if(from.getWorld().equals(to.getWorld()))
 			return;
 
-		if(spectateUtils.isSpectator(player) && spectateUtils.getTargetOf(player) == null) {
-			if(hasAccessToWorld(player, to.getWorld())) {
-				Bukkit.getScheduler().runTask(plugin, () -> spectateUtils.Unspectate(player, true));
-				Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(player, null), 10L);
-			}
+		if(hasAccessToWorld(spectator, to.getWorld())) {
+			spectateUtils.getSpectateInformation(spectator).restoreAttributes();
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, null), 10L);
 		}
+	}
 
-		if(spectateUtils.isNotSpectated(player))
+
+	/**
+	 * When a player teleports through a portal, the spectator does not seem to be teleported with the player
+	 * This handles the change of a world, which will happen, when teleported by a portal
+	 */
+	@EventHandler
+	public void targetSwitchingWorld(PlayerTeleportEvent event) {
+		Player player = event.getPlayer();
+		Location from = event.getFrom(), to = event.getTo();
+
+		if(spectateUtils.isSpectator(player) || !spectateUtils.isNotSpectated(player))
 			return;
 
-		plugin.Debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
+		if(event.isCancelled())
+			return;
+
+		if(from.getWorld() == null || to == null || to.getWorld() == null)
+			return;
+
+		if(from.getWorld().equals(to.getWorld()))
+			return;
+
+		Spectator.Debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
 		spectateUtils.getSpectatorsOf(player).forEach(spectator -> {
 			spectateUtils.Dismount(spectator);
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
 			spectateUtils.getSpectateInformation(spectator).restoreAttributes();
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, player), 5L);
+//			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+//				spectateUtils.Spectate(spectator, player);
+//				spectateUtils.getPlayerAttributes(player).setGameMode(plugin.getMultiverseCore().
+//						getMVWorldManager().getMVWorld(player.getWorld()).getGameMode());
+//			}, 20L);
 		});
 	}
 
@@ -66,7 +87,6 @@ public class TeleportListener implements Listener {
 	 * if the player has the bypass permission and the spectator don't have the equivalent bypass permission
 	 * the spectator cannot join the players view
 	 */
-	@EventHandler
 	public void spectatorEnterTarget(PlayerTeleportEvent event) {
 		if(event.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE) return;
 

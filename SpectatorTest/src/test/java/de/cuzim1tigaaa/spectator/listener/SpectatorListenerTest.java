@@ -17,23 +17,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpectatorListenerTest {
 
-	private static ServerMock server;
-	private static Spectator plugin;
+	ServerMock server = ContainerListenerTest.server;
+	Spectator plugin = ContainerListenerTest.plugin;
 
-	@BeforeAll
-	public static void load() {
-		server = MockBukkit.mock();
-		plugin = MockBukkit.load(Spectator.class);
-
-		File f = new File("./src/test/resources/config.yml");
-		assertTrue(f.exists(), f.getAbsolutePath());
-		Config.loadConfig(plugin, f);
-	}
-
-	@AfterAll
-	public static void unload() {
-		MockBukkit.unmock();
-	}
+//	@BeforeEach
+//	public void load() {
+//		server = MockBukkit.mock();
+//		plugin = MockBukkit.load(Spectator.class);
+//
+//		File f = new File("./src/test/resources/config.yml");
+//		assertTrue(f.exists(), f.getAbsolutePath());
+//		Config.loadConfig(plugin, f);
+//
+//		server.getScheduler().performTicks(100L);
+//	}
+//
+//	@AfterEach
+//	public void unload() {
+//		server.getScheduler().performTicks(100L);
+//		MockBukkit.unmock();
+//	}
 
 	@Test
 	@DisplayName("Test if a spectating player receives an update notification")

@@ -2,7 +2,6 @@ package de.cuzim1tigaaa.spectator.cycle;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.spectate.Displays;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -12,11 +11,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
 public class CycleTask {
-
-	@Setter
-	private static Spectator plugin;
-	@Setter
-	private static Displays displays;
 
 	private final int interval;
 
@@ -32,7 +26,7 @@ public class CycleTask {
 		this.taskId = -1;
 	}
 
-	public void startTask() {
+	public void startTask(Spectator plugin) {
 		if(taskId != -1)
 			return;
 
@@ -53,7 +47,7 @@ public class CycleTask {
 			bar.setVisible(true);
 			setBossBar(bar);
 
-			selectNextPlayer();
+			selectNextPlayer(plugin);
 			Player target = getCycle().getLastPlayer();
 			if(target == null) {
 				bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
@@ -71,7 +65,7 @@ public class CycleTask {
 				@Override
 				public void run() {
 					if(counter == 0) {
-						selectNextPlayer();
+						selectNextPlayer(plugin);
 
 						Player target = getCycle().getLastPlayer();
 						if(target == null) {
@@ -94,12 +88,12 @@ public class CycleTask {
 				}
 			}.runTaskTimer(plugin, 20L, 20L).getTaskId());
 		}else {
-			displays.showCycleDisplay(cycle.getOwner());
-			setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, this::selectNextPlayer, 0, interval * 20L).getTaskId());
+			plugin.getDisplays().showCycleDisplay(cycle.getOwner());
+			setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin), 0, interval * 20L).getTaskId());
 		}
 	}
 
-	public void selectNextPlayer() {
+	public void selectNextPlayer(Spectator plugin) {
 		Player spectator = cycle.getOwner();
 
 		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
@@ -113,7 +107,7 @@ public class CycleTask {
 			return;
 		}
 
-		Player next = cycle.getNextTarget();
+		Player next = cycle.getNextTarget(plugin);
 		Player last = cycle.getLastPlayer();
 		if(next == null || next.isDead() || !next.isOnline())
 			return;

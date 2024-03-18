@@ -47,7 +47,11 @@ public class PlayerAttributes {
 
         if(pAttributes != null) {
             gameMode = pAttributes.getGameMode();
-            isFlying = pAttributes.isFlying() && Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHT_MODE) && Bukkit.getServer().getAllowFlight();
+
+            if(gameMode == GameMode.SPECTATOR || gameMode == GameMode.ADVENTURE)
+                isFlying = pAttributes.isFlying() && Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHT_MODE) && Bukkit.getServer().getAllowFlight();
+            else
+                isFlying = pAttributes.isFlying() && Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_FLIGHT_MODE) && player.getAllowFlight();
 
             if(Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_DATA)) {
                 remainingAir = pAttributes.getRemainingAir();

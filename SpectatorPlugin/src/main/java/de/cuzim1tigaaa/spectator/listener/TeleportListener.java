@@ -23,6 +23,11 @@ public class TeleportListener implements Listener {
 		this.spectateUtils = plugin.getSpectateUtils();
 	}
 
+	/**
+	 * When a spectator switches the world, the spectator will be unspectated and spectated again
+	 * This handles the change of a world, which will happen, when teleported by a portal
+	 * using multiverse
+	 */
 	@EventHandler
 	public void spectatorSwitchingWorld(PlayerTeleportEvent event) {
 		Player spectator = event.getPlayer();
@@ -41,8 +46,8 @@ public class TeleportListener implements Listener {
 			return;
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
-			spectateUtils.getSpectateInformation(spectator).restoreAttributes();
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, null), 10L);
+			spectateUtils.Unspectate(spectator, false);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, null), 5L);
 		}
 	}
 
@@ -50,6 +55,7 @@ public class TeleportListener implements Listener {
 	/**
 	 * When a player teleports through a portal, the spectator does not seem to be teleported with the player
 	 * This handles the change of a world, which will happen, when teleported by a portal
+	 * using multiverse
 	 */
 	@EventHandler
 	public void targetSwitchingWorld(PlayerTeleportEvent event) {
@@ -73,12 +79,9 @@ public class TeleportListener implements Listener {
 			spectateUtils.Dismount(spectator);
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
-			spectateUtils.getSpectateInformation(spectator).restoreAttributes();
-//			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-//				spectateUtils.Spectate(spectator, player);
-//				spectateUtils.getPlayerAttributes(player).setGameMode(plugin.getMultiverseCore().
-//						getMVWorldManager().getMVWorld(player.getWorld()).getGameMode());
-//			}, 20L);
+
+			spectateUtils.Unspectate(spectator, false);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, player), 5L);
 		});
 	}
 
@@ -87,6 +90,7 @@ public class TeleportListener implements Listener {
 	 * if the player has the bypass permission and the spectator don't have the equivalent bypass permission
 	 * the spectator cannot join the players view
 	 */
+	@EventHandler
 	public void spectatorEnterTarget(PlayerTeleportEvent event) {
 		if(event.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE) return;
 

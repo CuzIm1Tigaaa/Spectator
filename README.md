@@ -2,7 +2,7 @@
 ***
 
 ### Spectate other Players.
-#### Without giving players permissions for the <a style="color: red">*/gamemode*</a> command
+#### Without giving players permissions for the `/gamemode` command
 
 ***
 

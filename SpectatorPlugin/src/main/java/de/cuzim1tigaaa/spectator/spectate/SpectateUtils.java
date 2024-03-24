@@ -78,9 +78,21 @@ public class SpectateUtils {
 		}else
 			info = new SpectateInformation(spectator, target);
 
-		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld()))
+		boolean switchWorld = false;
+		ToggleTabList(spectator, true);
+		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld())) {
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
+			switchWorld = true;
+		}
 
+		if(switchWorld) {
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectate(spectator, target, info), 10L);
+			return;
+		}
+		spectate(spectator, target, info);
+	}
+
+	private void spectate(Player spectator, Player target, SpectateInformation info) {
 		if(info.getState() == SpectateState.SPECTATING && !info.getAttributes().containsKey(spectator.getWorld()))
 			info.saveAttributes();
 
@@ -98,8 +110,6 @@ public class SpectateUtils {
 
 		this.spectateInfo.put(spectator.getUniqueId(), info);
 		notifyTarget(target, spectator, true);
-
-		ToggleTabList(spectator, true);
 		Inventory.getInventory(spectator, target);
 	}
 
@@ -123,18 +133,10 @@ public class SpectateUtils {
 			Spectator.Debug("Using current location of player");
 		}
 
-		Spectator.Debug(String.format("Player %-16s unspectated!", spectator.getName()));
-		info.getAttributes().forEach((w, p) -> {
-			Spectator.Debug(String.format("\tInventory saved for World [%s]:", w.getName()));
-		Spectator.Debug("\t - " + Arrays.stream(p.getInventory()).map(i -> i != null ? i.getType().name() : Material.AIR.name()).
-				filter(i -> !i.equals(Material.AIR.name())).collect(Collectors.joining(", ")));
-		});
-
 		if(!Objects.equals(spectator.getWorld(), info.getLocation().getWorld()))
 			info.restoreAttributes();
 
 		final Location finalLocation = location;
-//		Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
 		spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 		ToggleTabList(spectator, false);
@@ -149,6 +151,9 @@ public class SpectateUtils {
 
 		for(Player target : Bukkit.getOnlinePlayers()) {
 			if(target.getUniqueId().equals(spectator.getUniqueId()) || target.hasPermission(Permissions.BYPASS_TABLIST))
+				continue;
+
+			if(Permissions.hasPermission(target, Permissions.BYPASS_TABLIST))
 				continue;
 
 			if(hide) {
@@ -239,7 +244,7 @@ public class SpectateUtils {
 		if(info.getCycleTask() != null) {
 			info.getCycleTask().stopTask();
 			info.getCycleTask().startTask(this.plugin);
-//			info.getCycleTask().selectNextPlayer();
+			//			info.getCycleTask().selectNextPlayer();
 		}
 	}
 
@@ -251,7 +256,6 @@ public class SpectateUtils {
 	public boolean isPaused(Player spectator) {
 		return getPausedSpectators().contains(spectator);
 	}
-
 
 
 	public void changeGameMode(Player spectator, GameMode gamemode) {
@@ -295,6 +299,10 @@ public class SpectateUtils {
 	}
 
 	public PlayerAttributes getPlayerAttributes(Player spectator) {
+		if(getSpectateInformation(spectator) == null)
+			return null;
+		if(getSpectateInformation(spectator).getAttributes().isEmpty())
+			return null;
 		return getSpectateInformation(spectator).getAttributes().get(spectator.getWorld());
 	}
 
@@ -327,18 +335,18 @@ public class SpectateUtils {
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {
 		if(target == null)
 			return;
-        if(spectator.hasPermission(Permissions.BYPASS_NOTIFY))
+		if(spectator.hasPermission(Permissions.BYPASS_NOTIFY))
 			return;
 
-        String message = Messages.getMessage(target, spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE :
-		        Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getName());
+		String message = Messages.getMessage(target, spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE :
+				Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getName());
 
-        switch(Config.getNotifyTargetMode().toLowerCase()) {
-            case "chat" -> target.spigot().sendMessage(ChatMessageType.CHAT, new TextComponent(message));
-            case "actionbar" -> target.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
-            case "title" -> target.sendTitle(message, "", 5, 50, 5);
-            case "subtitle" -> target.sendTitle("", message, 5, 50, 5);
-        }
-    }
+		switch(Config.getNotifyTargetMode().toLowerCase()) {
+			case "chat" -> target.spigot().sendMessage(ChatMessageType.CHAT, new TextComponent(message));
+			case "actionbar" -> target.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+			case "title" -> target.sendTitle(message, "", 5, 50, 5);
+			case "subtitle" -> target.sendTitle("", message, 5, 50, 5);
+		}
+	}
 
 }

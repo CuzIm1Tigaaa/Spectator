@@ -46,7 +46,9 @@ public class TeleportListener implements Listener {
 			return;
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
+			Spectator.Debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
 			spectateUtils.Unspectate(spectator, false);
+			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, null), 5L);
 		}
 	}
@@ -80,8 +82,8 @@ public class TeleportListener implements Listener {
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
 
-			spectateUtils.Unspectate(spectator, false);
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, player), 5L);
+			Spectator.Debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
+			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 		});
 	}
 
@@ -122,8 +124,8 @@ public class TeleportListener implements Listener {
 	private boolean hasAccessToWorld(Player player, World world) {
 		if(player.getWorld().equals(world))
 			return true;
-		if(plugin.getMultiverseCore() != null)
-			return player.hasPermission("multiverse.access." + plugin.getMultiverseCore().getMVWorldManager().getMVWorld(world).getPermissibleName());
-		return true;
+		if(plugin.getMultiverseCore() == null)
+			return true;
+		return player.hasPermission("multiverse.access." + plugin.getMultiverseCore().getMVWorldManager().getMVWorld(world).getPermissibleName());
 	}
 }

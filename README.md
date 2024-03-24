@@ -1,5 +1,4 @@
 ## Spectator
-***
 
 ### Spectate other Players.
 #### Without giving players permissions for the `/gamemode` command

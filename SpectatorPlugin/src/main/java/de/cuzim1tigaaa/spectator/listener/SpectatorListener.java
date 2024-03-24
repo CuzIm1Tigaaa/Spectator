@@ -5,15 +5,20 @@ import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.PluginManager;
 
+import java.util.*;
+
 import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class SpectatorListener implements Listener {
+
+	public static final Set<UUID> gameModeChangeAllowed = new HashSet<>();
 
 	private final Spectator plugin;
 	private final SpectateUtils spectateUtils;
@@ -135,9 +140,10 @@ public class SpectatorListener implements Listener {
 		if(!spectateUtils.isSpectator(player))
 			return;
 
-		if(!spectateUtils.isCycling(player))
+		if(!gameModeChangeAllowed.contains(player.getUniqueId()) && !spectateUtils.isCycling(player))
 			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
 		event.setCancelled(true);
+		gameModeChangeAllowed.remove(player.getUniqueId());
 	}
 
 	/**
@@ -145,12 +151,14 @@ public class SpectatorListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void kickCyclingPlayer(PlayerKickEvent event) {
-		if(spectateUtils.isCycling(event.getPlayer())) {
+		Player spectator = event.getPlayer();
+		if(spectateUtils.isCycling(spectator)) {
+			event.setCancelled(true);
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_KICK_PLAYERS))
-				event.setCancelled(true);
-
-			else
-				spectateUtils.StopCycle(event.getPlayer());
+				return;
+			spectateUtils.StopCycle(spectator);
+			spectateUtils.Unspectate(spectator, true);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.kickPlayer(event.getReason()), 10L);
 		}
 	}
 

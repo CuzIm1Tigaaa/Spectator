@@ -60,7 +60,7 @@ public class PlayerAttributes {
             Inventory.restoreInventory(player, pAttributes);
         }
 
-        plugin.getSpectateUtils().changeGameMode(player, gameMode);
+        player.setGameMode(gameMode);
         player.setFlying(isFlying && player.getAllowFlight());
         player.setRemainingAir(remainingAir);
         player.setFireTicks(fireTicks);

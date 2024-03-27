@@ -96,7 +96,7 @@ public class SpectateUtils {
 		if(info.getState() == SpectateState.SPECTATING && !info.getAttributes().containsKey(spectator.getWorld()))
 			info.saveAttributes();
 
-		changeGameMode(spectator, GameMode.SPECTATOR);
+		spectator.setGameMode(GameMode.SPECTATOR);
 
 		if(target != null) {
 			target.getLocation().getChunk().load();
@@ -255,11 +255,6 @@ public class SpectateUtils {
 
 	public boolean isPaused(Player spectator) {
 		return getPausedSpectators().contains(spectator);
-	}
-
-
-	public void changeGameMode(Player spectator, GameMode gamemode) {
-		spectator.setGameMode(gamemode);
 	}
 
 

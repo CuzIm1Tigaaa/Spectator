@@ -6,7 +6,7 @@
 
     <groupId>de.cuzim1tigaaa.spectator</groupId>
     <artifactId>Spectator</artifactId>
-    <version>3.0-BETA</version>
+    <version>${plugin.version}</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -16,6 +16,7 @@
 
     <properties>
         <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
+        <plugin.version>3.0-BETA</plugin.version>
         <java.version>16</java.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>

@@ -9,9 +9,8 @@
         <version>3.0-BETA</version>
     </parent>
 
-    <name>Spectator</name>
     <artifactId>SpectatorPlugin</artifactId>
-    <version>3.0-BETA</version>
+    <version>${plugin.version}</version>
 
     <repositories>
         <repository>

@@ -47,7 +47,6 @@ public class SpectateInformation {
 				"spectator=" + spectator +
 				", target=" + target +
 				", state=" + state +
-				", cycleTask=" + cycleTask +
 				", location=" + location +
 				", attributes=" + attributes +
 				'}';

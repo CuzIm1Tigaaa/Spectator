@@ -5,6 +5,7 @@ import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
 import de.cuzim1tigaaa.spectator.player.Inventory;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,7 @@ public class TeleportListener implements Listener {
 	private final Spectator plugin;
 	private final SpectateUtils spectateUtils;
 
-	private final Map<UUID, Player> worldChange = new HashMap<>();
+	@Getter private static final Map<UUID, Player> worldChange = new HashMap<>();
 
 	public TeleportListener(Spectator plugin) {
 		this.plugin = plugin;

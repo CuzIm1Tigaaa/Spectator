@@ -12,6 +12,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,10 +22,12 @@ public class SpectateUtils {
 
 	private final Spectator plugin;
 	private final Map<UUID, SpectateInformation> spectateInfo;
+	private final Map<UUID, CycleTask> spectateCycle;
 
 	public SpectateUtils(Spectator plugin) {
 		this.plugin = plugin;
 		this.spectateInfo = new HashMap<>();
+		this.spectateCycle = new HashMap<>();
 
 		this.run();
 	}
@@ -33,8 +36,13 @@ public class SpectateUtils {
 		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			for(Player spectator : getSpectators()) {
 				SpectateInformation info = getSpectateInformation(spectator);
-				if(info == null || info.getTarget() == null)
+				if(info == null || info.getTarget() == null) {
+					spectateCycle.remove(spectator.getUniqueId());
 					continue;
+				}
+
+				if(spectateCycle.containsKey(spectator.getUniqueId()))
+					getSpectateInformation(spectator).setState(SpectateState.CYCLING);
 
 				final Player target = info.getTarget();
 				if(!target.isOnline())
@@ -107,6 +115,9 @@ public class SpectateUtils {
 				}, 1);
 			}
 		}
+
+		if(CycleTask.getStateChange().containsKey(spectator.getUniqueId()))
+			info.setState(CycleTask.getStateChange().remove(spectator.getUniqueId()));
 
 		this.spectateInfo.put(spectator.getUniqueId(), info);
 		notifyTarget(target, spectator, true);
@@ -194,7 +205,7 @@ public class SpectateUtils {
 		SpectateInformation info = getSpectateInformation(spectator);
 		info.setTarget(null);
 		info.setState(SpectateState.CYCLING);
-		info.setCycleTask(cycle);
+		this.spectateCycle.put(spectator.getUniqueId(), cycle);
 		spectateInfo.replace(spectator.getUniqueId(), info);
 		cycle.startTask(this.plugin);
 	}
@@ -204,10 +215,10 @@ public class SpectateUtils {
 			return;
 
 		SpectateInformation info = getSpectateInformation(spectator);
-		info.getCycleTask().stopTask();
+		this.spectateCycle.get(spectator.getUniqueId()).stopTask();
 
 		info.setState(SpectateState.SPECTATING);
-		info.setCycleTask(null);
+		this.spectateCycle.remove(spectator.getUniqueId());
 		spectateInfo.replace(spectator.getUniqueId(), info);
 		Dismount(spectator);
 	}
@@ -220,7 +231,7 @@ public class SpectateUtils {
 		info.setTarget(null);
 		info.setState(SpectateState.CYCLING);
 		spectateInfo.replace(spectator.getUniqueId(), info);
-		info.getCycleTask().startTask(this.plugin);
+		this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
 	}
 
 	public void PauseCycle(Player spectator) {
@@ -228,9 +239,9 @@ public class SpectateUtils {
 			return;
 
 		SpectateInformation info = getSpectateInformation(spectator);
-		CycleTask cycle = info.getCycleTask().stopTask();
+		CycleTask cycle = this.spectateCycle.get(spectator.getUniqueId()).stopTask();
 
-		info.setCycleTask(cycle);
+		this.spectateCycle.put(spectator.getUniqueId(), cycle);
 		info.setState(SpectateState.PAUSED);
 		spectateInfo.replace(spectator.getUniqueId(), info);
 		Dismount(spectator);
@@ -240,11 +251,9 @@ public class SpectateUtils {
 		if(!isCycling(spectator))
 			return;
 
-		SpectateInformation info = getSpectateInformation(spectator);
-		if(info.getCycleTask() != null) {
-			info.getCycleTask().stopTask();
-			info.getCycleTask().startTask(this.plugin);
-			//			info.getCycleTask().selectNextPlayer();
+		if(getCycleTask(spectator) != null) {
+			this.spectateCycle.get(spectator.getUniqueId()).stopTask();
+			this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
 		}
 	}
 
@@ -321,10 +330,7 @@ public class SpectateUtils {
 	}
 
 	public CycleTask getCycleTask(Player spectator) {
-		SpectateInformation specInfo = spectateInfo.values().stream().filter(info -> info.getSpectator().equals(spectator)).findFirst().orElse(null);
-		if(specInfo == null)
-			return null;
-		return specInfo.getCycleTask();
+		return spectateCycle.getOrDefault(spectator.getUniqueId(), null);
 	}
 
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {

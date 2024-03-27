@@ -67,7 +67,7 @@ public class Placeholders extends PlaceholderExpansion {
 			}
 			case "cycle_interval" -> {
 				if(spectateUtils.isCycling(player))
-					return String.valueOf(spectateUtils.getSpectateInformation(player).getCycleTask().getInterval());
+					return String.valueOf(spectateUtils.getSpectateCycle().get(player.getUniqueId()).getInterval());
 				return null;
 			}
 			case "spectators" -> {

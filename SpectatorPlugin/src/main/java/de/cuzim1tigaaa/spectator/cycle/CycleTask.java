@@ -2,15 +2,23 @@ package de.cuzim1tigaaa.spectator.cycle;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.listener.TeleportListener;
+import de.cuzim1tigaaa.spectator.spectate.SpectateState;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.boss.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.*;
 
 @Getter
 public class CycleTask {
+
+	@Getter private static final Map<UUID, SpectateState> stateChange = new HashMap<>();
 
 	private final int interval;
 
@@ -87,7 +95,8 @@ public class CycleTask {
 					bar.setProgress(counter / inter);
 					return;
 				}
-				cycle.getOwner().setSpectatorTarget(cycle.getLastPlayer());
+				if(cycle.getOwner().getGameMode() == GameMode.SPECTATOR)
+					cycle.getOwner().setSpectatorTarget(cycle.getLastPlayer());
 				counter--;
 				bar.setProgress(counter / inter);
 			}
@@ -116,9 +125,17 @@ public class CycleTask {
 		if(last == null || !last.equals(next))
 			plugin.getSpectateUtils().notifyTarget(last, spectator, false);
 
-		if(next.getWorld() != spectator.getWorld())
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(next), 1L);
-		Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getSpectateUtils().Spectate(spectator, next), 5L);
+		if(next.getWorld() != spectator.getWorld()) {
+			plugin.getSpectateUtils().Dismount(spectator);
+			TeleportListener.getWorldChange().put(spectator.getUniqueId(), next);
+
+			PlayerTeleportEvent event = new PlayerTeleportEvent(spectator, spectator.getLocation(), next.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+			Bukkit.getPluginManager().callEvent(event);
+
+			getStateChange().put(spectator.getUniqueId(), SpectateState.CYCLING);
+			return;
+		}
+		plugin.getSpectateUtils().Spectate(spectator, next);
 	}
 
 	public CycleTask stopTask() {

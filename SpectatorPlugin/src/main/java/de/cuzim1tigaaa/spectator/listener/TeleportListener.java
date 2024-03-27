@@ -9,7 +9,10 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import java.util.*;
 
 import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
@@ -17,6 +20,8 @@ public class TeleportListener implements Listener {
 
 	private final Spectator plugin;
 	private final SpectateUtils spectateUtils;
+
+	private final Map<UUID, Player> worldChange = new HashMap<>();
 
 	public TeleportListener(Spectator plugin) {
 		this.plugin = plugin;
@@ -49,8 +54,23 @@ public class TeleportListener implements Listener {
 			Spectator.Debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
 			spectateUtils.Unspectate(spectator, false);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateUtils.Spectate(spectator, null), 5L);
+
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+				Player target = null;
+				if(worldChange.containsKey(spectator.getUniqueId()))
+					target = worldChange.remove(spectator.getUniqueId());
+				spectateUtils.Spectate(spectator, target);
+			}, 5L);
 		}
+	}
+
+	/**
+	 * When a player quits the server, the player will be removed from the worldChange map
+	 */
+	@EventHandler
+	public void playerQuitWorldChange(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		worldChange.remove(player.getUniqueId());
 	}
 
 
@@ -64,7 +84,7 @@ public class TeleportListener implements Listener {
 		Player player = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
 
-		if(spectateUtils.isSpectator(player) || !spectateUtils.isNotSpectated(player))
+		if(spectateUtils.isSpectator(player) || spectateUtils.isNotSpectated(player))
 			return;
 
 		if(event.isCancelled())
@@ -84,6 +104,10 @@ public class TeleportListener implements Listener {
 
 			Spectator.Debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+				worldChange.put(spectator.getUniqueId(), player);
+				spectator.teleport(player, PlayerTeleportEvent.TeleportCause.PLUGIN);
+			}, 5L);
 		});
 	}
 

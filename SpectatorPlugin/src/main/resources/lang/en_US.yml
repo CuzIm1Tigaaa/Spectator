@@ -1,0 +1,55 @@
+Messages:
+  Default:
+    Sender: '&cYou have to be a Player to perform this command!'
+    Permission: '&cYou do not have Permission to execute this command!'
+    Syntax: '&cThere''s a syntax error: %USAGE%'
+    Reload: '&7The plugin was successfully reloaded.'
+  General:
+    BypassTeleport: '&7%TARGET% &ccannot be spectated at the moment!'
+    BypassInventory: '&cYou cannot see the inventory of &7%TARGET% &cat the moment!'
+    Dismount: '&cYou cannot dismount while in Speccycle-Mode! Use &7/spectatecycle stop &cto leave Speccycle-Mode.'
+    GameModeChange: '&cYou cannot change your GameMode while spectating! Use &7/spec
+      &cto leave Spectator-Mode.'
+    NoPlayers: '&cThere are not enough Players online.'
+    OfflinePlayer: '&7%TARGET% &cis not Online!'
+    NotSpectating: '&7%TARGET% &cis currently not spectating!'
+    SamePlayer: '&cYou are already spectating &7%TARGET%&c!'
+    Yourself: '&cYou cannot Spectate yourself!'
+    CycleOnly: '&cYou can only use &7/spectatecycle start <Interval>&c!'
+    NumberFormat: '&cPlease enter a valid number!'
+    Notify:
+      Spectate: '&7You are now being spectated by &e%TARGET%&7.'
+      Unspectate: '&7You are no longer being spectated by &e%TARGET%&7.'
+  Cycling:
+    CurrentTarget: '&7Currently spectating &6%TARGET%'
+    SearchingTarget: '&cSearching next Target…'
+  Commands:
+    List:
+      None: '&cThere are no spectators at the moment!'
+      Title: '&7There are currently &e%AMOUNT% &7Spectators:'
+      Cycling: '&7- &b%SPECTATOR% &8[&e%TARGET%&8]'
+      Default: '&7- %SPECTATOR%'
+      Spectating: '&7- %SPECTATOR% » &e%TARGET%'
+      Paused: '&7- %SPECTATOR% &8[&cPAUSED&8]'
+    UnSpectate:
+      ResendAll: '&7All Spectators have been resend!'
+      ResendPlayer: '&e%TARGET% &7has been resend!'
+    Cycle:
+      Start: '&7Speccycle &astarted &7with interval &c%INTERVAL% &7in %ORDER% order.'
+      Stop: '&7Speccycle &cstopped&7.'
+      Pause: '&7Speccycle &epaused&7.'
+      Restart: '&7Speccycle &brestarted &7with interval &c%INTERVAL% &7in %ORDER% order.'
+      Cycling: '&cYou are already in Speccycle-Mode!'
+      NotCycling: '&cYou are not in Speccycle-Mode!'
+      TargetNotCycling: '&e%TARGET% &cis not in Speccycle-Mode!'
+      IntervalTooSmall: '&cThe interval must at least be &e%MINIMUM% &cseconds!'
+      IntervalTooBig: '&cThe interval cannot be bigger than &e%MAXIMUM% &cseconds!'
+    Spectate:
+      Join:
+        Self: '&7You are now in Spectator-Mode.'
+        Other: '&e%TARGET% &7is now in Spectator-Mode.'
+      Leave:
+        Self: '&7You are no longer in Spectator-Mode.'
+        Other: '&e%TARGET% &7is no longer in Spectator-Mode.'
+      Player: '&7You are now spectating &c%TARGET%&7.'
+      Multiverse: '&cYou do not have permission to spectate &e%TARGET% &cin this world!'

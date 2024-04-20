@@ -1,0 +1,54 @@
+Messages:
+  Default:
+    Sender: '&cDebes ser un jugador para ejecutar este comando.'
+    Permission: '&cNo tienes permiso para usar este comando.'
+    Syntax: '&cUso incorrecto: %USAGE%'
+    Reload: '&7El complemento ha sido recargado.'
+  General:
+    BypassTeleport: '&cNo puedes observar a &7%TARGET%&c.'
+    BypassInventory: '&cNo puedes observar el inventario de &7%TARGET%&c.'
+    Dismount: '&cNo puedes salir de la vista del jugador mientras estás en el ciclo de observación. Usa &7/spectatecycle stop&c para salir.'
+    GameModeChange: '&cNo puedes cambiar tu modo de juego mientras estás en el modo espectador. Usa &7/spec&c para salir.'
+    NoPlayers: '&cNo hay suficientes jugadores en línea.'
+    OfflinePlayer: '&7%TARGET%&c no está en línea.'
+    NotSpectating: '&7%TARGET%&c no está siendo observado.'
+    SamePlayer: '&cYa estás observando a &7%TARGET%&c.'
+    Yourself: '&cNo puedes observarte a ti mismo.'
+    CycleOnly: '&cSolo puedes usar &7/spectatecycle start <Intervalo>&c.'
+    NumberFormat: '&cIngresa un número válido.'
+    Notify:
+      Spectate: '&7Ahora estás siendo observado por &e%TARGET%&7.'
+      Unspectate: '&7Ya no estás siendo observado por &e%TARGET%&7.'
+  Cycling:
+    CurrentTarget: '&7Ahora estás observando a &6%TARGET%'
+    SearchingTarget: '&cBuscando próximo objetivo…'
+  Commands:
+    List:
+      None: '&cNingún jugador está en modo espectador.'
+      Title: '&7Hay &e%AMOUNT% jugadores &7en modo espectador:'
+      Cycling: '&7- &b%SPECTATOR% &8[&e%TARGET%&8]'
+      Default: '&7- %SPECTATOR%'
+      Paused: '&7- %SPECTATOR% &8[&cPAUSADO&8]'
+      Spectating: '&7- %SPECTATOR% » &e%TARGET%'
+    UnSpectate:
+      ResendAll: '&7Todos los espectadores han sido reiniciados.'
+      ResendPlayer: '&e%TARGET% &7ha sido reiniciado.'
+    Cycle:
+      Start: '&7Spectatecycle ha comenzado con un intervalo de &c%INTERVAL%&a. Orden: %ORDER%'
+      Stop: '&7Spectatecycle ha sido &cDetenido&7.'
+      Pause: '&7Spectatecycle ha sido &epausado&7.'
+      Restart: '&7Spectatecycle ha sido reiniciado con un intervalo de &c%INTERVAL%&b. Orden: %ORDER%'
+      Cycling: '&cYa estás en modo Spectatecycle.'
+      NotCycling: '&cNo estás en modo Spectatecycle.'
+      TargetNotCycling: '&e%TARGET% &cno está en modo Spectatecycle.'
+      IntervalTooSmall: '&cEl intervalo debe ser de al menos &e%MINIMUM% &csegundos.'
+      IntervalTooBig: '&cEl intervalo no puede ser mayor a &e%MAXIMUM% &csegundos.'
+    Spectate:
+      Join:
+        Self: '&7Ahora estás en modo espectador.'
+        Other: '&e%TARGET% &7ahora está en modo espectador.'
+      Leave:
+        Self: '&7Has salido del modo espectador.'
+        Other: '&e%TARGET% &7ha salido del modo espectador.'
+      Player: '&7Ahora estás observando a &c%TARGET%&7.'
+      Multiverse: '&cNo puedes observar a &e%TARGET% &cporque no tienes permisos para este mundo.'

@@ -1,0 +1,101 @@
+# This is the configuration file of the plugin. Everything should be self-explanatory
+# If there is anything unclear, first take a look into the GitHub wiki:
+# https://github.com/CuzIm1Tigaaa/Spectator/wiki
+
+# This is the current version of the config, DO NOT CHANGE!
+# If the version changes, the plugin will automatically
+# backup your current config and create a new one
+ConfigVersion: 12
+
+Settings:
+
+  # This prints different debug messages in the server console
+  # Can be useful for reporting problems
+  Debugging: false
+
+  # If the plugin gets updated, players with the following permission
+  # will receive a message when they join.
+  # Permission: spectator.notify.update
+  NotifyOnUpdate: true
+
+  # Specify which language file should be used by the plugin
+  # You can also add new languages! :)
+  Language: en_US
+
+  # Spectators with the first following permission will be hidden in the tablist
+  # Can be bypassed by players with the second permission.
+  # Permission 1: spectator.utils.hidetab
+  # Permission 2: spectator.bypass.tablist
+  HidePlayersInTab: true
+
+  # Shows a message to target players that they are being spectated
+  # Possible values are (without quotation):
+  # "CHAT", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
+  NotifyCurrentTarget: NONE
+
+  Save:
+
+    # The players' location (where he executed /spec) will be saved
+    # Otherwise when the player leaves spectator mode, he will be at
+    # his current location, equals to /spectatehere.
+    PlayerLocation: true
+
+    # The players' flight mode will be saved. Otherwise, when the player
+    # leaves spectator mode, he won't be he won't be flying anymore.
+    # Requires allow-flight to true in server.properties!
+    PlayerFlightMode: true
+
+    # The players' data will be saved. This includes remaining air and the
+    # burning time. Otherwise, when the player leaves spectator mode, all
+    # these values reset to default.
+    PlayerData: true
+
+  Mirror:
+
+    # Get all effects your spectator target currently has
+    # Requires following permission: spectator.utils.mirroreffects
+    TargetEffects: true
+
+    # Adds all inventory content of your spectator target in your inventory
+    # Requires following permission: spectator.utils.mirrorinventory
+    TargetInventory: true
+
+  Inventory:
+
+    # Allows spectators with the following permission to see into containers their target opens
+    # Only available for the following types of containers:
+    # BARREL; BLAST_FURNACE; BREWING_STAND; (TRAPPED-)CHEST; DISPENSER; DROPPER; FURNACE; HOPPER; SMOKER; SHULKER_BOX; LECTERN
+    # Permission: spectator.utils.opencontainers
+    OpenContainers: true
+
+    # Allows spectators with the following permission to see into their target's enderchest
+    # Only when the target opens a physically enderchest!
+    # Permission: spectator.utils.openenderchest
+    OpenEnderChest: false
+
+  Cycle:
+
+    # Cycling players cannot be kicked by any other player.
+    KickCyclingPlayer: false
+
+    # Allows starting cycling even with no players online
+    # Cycle will start, when a player joins the server
+    # Might be useful when using the plugin as a "camera"
+    StartWhenNoPlayers: true
+
+    # The cycle gets paused if there are no longer any players online and will automatically restart
+    # Otherwise the cycle will simply be stopped
+    PauseWhenNoPlayers: false
+
+    # Shows a message to cycling players with the name of the current target
+    # Possible values are (without quotation):
+    # "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
+    ShowCurrentTarget: BOSSBAR
+
+    # Sets the minimum time, that the cycle mode interval has to be
+    # If set to 0, no minimum is set
+    MinimumIntervalTime: 0
+
+    # Sets the maximum time, that the cycle mode interval can be
+    # If set to 0, no maximum is set
+    MaximumIntervalTime: 0

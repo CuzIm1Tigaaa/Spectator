@@ -113,6 +113,9 @@ permissions:
   spectator.utils.mirroreffects:
     description: Permission to see other players Inventory during spectating
     default: false
+  spectator.utils.hidearmorstand:
+    description: Permission to hide invisible ArmorStands during spectating
+    default: false
   spectator.utils.hidetab:
     description: Permission to be hidden in Spigot Tablist
     default: false
@@ -124,6 +127,7 @@ permissions:
       spectator.utils.opencontainer: true
       spectator.utils.mirrorinventory: true
       spectator.utils.mirroreffects: true
+      spectator.utils.hidearmorstand: true
       spectator.utils.hidetab: true
   spectator.notify.update:
     description: Permission to get an alert when an update is available

@@ -6,6 +6,8 @@ import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -55,7 +57,7 @@ public class SpectatorListener implements Listener {
 			return;
 
 		for(Player spectator : spectateUtils.getPausedSpectators()) {
-			spectateUtils.RestartCycle(spectator);
+			spectateUtils.restartCycle(spectator);
 			CycleTask task = spectateUtils.getCycleTask(spectator);
 			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
 					"INTERVAL", task.getInterval(), "ORDER", task.getCycle().isAlphabetical() ? "Alphabetic" : "Random"));
@@ -67,9 +69,34 @@ public class SpectatorListener implements Listener {
 	 */
 	private void sendUpdateNotification(Player player) {
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("""
-			&cSpectator &8| &6&lAn Update is available! &8[&ev%s&8]
-			 &8&l» &ehttps://www.spigotmc.org/resources/spectator.93051/
-			""", this.plugin.getUpdateChecker().getVersion().replace("v", ""))));
+				&cSpectator &8| &6&lAn Update is available! &8[&ev%s&8]
+				 &8&l» &ehttps://www.spigotmc.org/resources/spectator.93051/
+				""", this.plugin.getUpdateChecker().getVersion().replace("v", ""))));
+	}
+
+
+	@EventHandler
+	public void playerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		if(!spectateUtils.isSpectator(player) && !spectateUtils.isCycling(player))
+			return;
+
+		Location from = event.getFrom(),
+				to = event.getTo();
+
+		if(to == null)
+			return;
+
+		if(from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ())
+			return;
+
+		player.getNearbyEntities(3, 3, 3).forEach(entity -> {
+			if(entity instanceof ArmorStand) {
+				player.hideEntity(plugin, entity);
+				spectateUtils.getSpectateInformation(player).
+						getHiddenArmorStands().add((ArmorStand) entity);
+			}
+		});
 	}
 
 
@@ -83,26 +110,26 @@ public class SpectatorListener implements Listener {
 		Player player = event.getPlayer();
 
 		if(spectateUtils.isSpectator(player)) {
-			spectateUtils.Unspectate(player, true);
+			spectateUtils.unspectate(player, true);
 			return;
 		}
 
 		spectateUtils.getSpectators().forEach(spectator -> player.showPlayer(plugin, spectator));
 
 		for(Player spectator : spectateUtils.getSpectatorsOf(player)) {
-			spectateUtils.Dismount(spectator);
+			spectateUtils.dismount(spectator);
 
 			if(!spectateUtils.isCycling(spectator))
 				continue;
 
-			if(player.hasPermission(BYPASS_SPECTATED) || plugin.getSpectateUtils().getSpectateablePlayers().size() -1 > 0)
+			if(player.hasPermission(BYPASS_SPECTATED) || plugin.getSpectateUtils().getSpectateablePlayers().size() - 1 > 0)
 				continue;
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				spectateUtils.StopCycle(spectator);
+				spectateUtils.stopCycle(spectator);
 				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 			}else {
-				spectateUtils.PauseCycle(spectator);
+				spectateUtils.pauseCycle(spectator);
 				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			}
 		}
@@ -128,7 +155,7 @@ public class SpectatorListener implements Listener {
 			return;
 		}
 
-		spectateUtils.Dismount(player);
+		spectateUtils.dismount(player);
 	}
 
 	/**
@@ -156,8 +183,8 @@ public class SpectatorListener implements Listener {
 			event.setCancelled(true);
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_KICK_PLAYERS))
 				return;
-			spectateUtils.StopCycle(spectator);
-			spectateUtils.Unspectate(spectator, true);
+			spectateUtils.stopCycle(spectator);
+			spectateUtils.unspectate(spectator, true);
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.kickPlayer(event.getReason()), 10L);
 		}
 	}
@@ -169,12 +196,12 @@ public class SpectatorListener implements Listener {
 	public void targetDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		if(spectateUtils.isSpectator(player)) {
-			spectateUtils.Unspectate(player, false);
+			spectateUtils.unspectate(player, false);
 			return;
 		}
 
 		for(Player spectator : spectateUtils.getSpectatorsOf(player)) {
-			spectateUtils.Dismount(spectator);
+			spectateUtils.dismount(spectator);
 
 			if(spectateUtils.isCycling(spectator))
 				spectateUtils.teleportNextPlayer(spectator);

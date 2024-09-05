@@ -1,7 +1,7 @@
 Messages:
   Default:
     Sender: '&cYou have to be a Player to perform this command!'
-    Permission: '&cYou do not have Permission to execute this command!'
+    PermissiShow: '&cYou do not have Permission to execute this command!'
     Syntax: '&cThere''s a syntax error: %USAGE%'
     Reload: '&7The plugin was successfully reloaded.'
   General:

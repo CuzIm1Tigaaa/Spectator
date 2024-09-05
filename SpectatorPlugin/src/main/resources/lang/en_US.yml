@@ -1,7 +1,7 @@
 Messages:
   Default:
     Sender: '&cYou have to be a Player to perform this command!'
-    Permission: '&cYou do not have Permission to execute this command!'
+    PermissiShow: '&cYou do not have Permission to execute this command!'
     Syntax: '&cThere''s a syntax error: %USAGE%'
     Reload: '&7The plugin was successfully reloaded.'
   General:
@@ -13,6 +13,7 @@ Messages:
     NoPlayers: '&cThere are not enough Players online.'
     OfflinePlayer: '&7%TARGET% &cis not Online!'
     NotSpectating: '&7%TARGET% &cis currently not spectating!'
+    NotSpectator: '&cYou are currently not spectating!'
     SamePlayer: '&cYou are already spectating &7%TARGET%&c!'
     Yourself: '&cYou cannot Spectate yourself!'
     CycleOnly: '&cYou can only use &7/spectatecycle start <Interval>&c!'
@@ -45,6 +46,9 @@ Messages:
       IntervalTooSmall: '&cThe interval must at least be &e%MINIMUM% &cseconds!'
       IntervalTooBig: '&cThe interval cannot be bigger than &e%MAXIMUM% &cseconds!'
     Spectate:
+      ArmorStands:
+        Hide: '&7ArmorStands are now visible again.'
+        Show: '&7You have hidden all ArmorStands.'
       Join:
         Self: '&7You are now in Spectator-Mode.'
         Other: '&e%TARGET% &7is now in Spectator-Mode.'

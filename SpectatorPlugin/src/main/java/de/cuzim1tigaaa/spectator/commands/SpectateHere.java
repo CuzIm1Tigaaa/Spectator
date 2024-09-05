@@ -34,12 +34,12 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
         }
 
         if(spectateUtils.isSpectator(player)) {
-            spectateUtils.Unspectate(player, false);
+            spectateUtils.unspectate(player, false);
             player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
             return true;
         }
         spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
-        spectateUtils.Spectate(player, null);
+        spectateUtils.spectate(player, null);
         player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
         return true;
     }

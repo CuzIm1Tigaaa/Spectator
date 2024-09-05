@@ -51,12 +51,12 @@ public class SpectateUtils {
 				Inventory.updateInventory(spectator, target);
 
 				if(spectator.getGameMode() != GameMode.SPECTATOR) {
-					Unspectate(spectator, true);
+					unspectate(spectator, true);
 					continue;
 				}
 
 				if(spectator.getSpectatorTarget() == null) {
-					Dismount(spectator);
+					dismount(spectator);
 					Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.setSpectatorTarget(target), 5);
 				}
 
@@ -70,14 +70,14 @@ public class SpectateUtils {
 				}
 
 				if(spectator.getGameMode() != GameMode.SPECTATOR)
-					Unspectate(spectator, true);
+					unspectate(spectator, true);
 			}
 		}, 0, 10);
 	}
 
 
-	public void Spectate(Player spectator, Player target) {
-		getSpectatorsOf(spectator).forEach(this::Dismount);
+	public void spectate(Player spectator, Player target) {
+		getSpectatorsOf(spectator).forEach(this::dismount);
 
 		SpectateInformation info;
 		if(isSpectator(spectator)) {
@@ -87,7 +87,7 @@ public class SpectateUtils {
 			info = new SpectateInformation(spectator, target);
 
 		boolean switchWorld = false;
-		ToggleTabList(spectator, true);
+		toggleTabList(spectator, true);
 		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld())) {
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
 			switchWorld = true;
@@ -124,7 +124,7 @@ public class SpectateUtils {
 		Inventory.getInventory(spectator, target);
 	}
 
-	public void SimulateUnspectate(Player spectator) {
+	public void simulateUnspectate(Player spectator) {
 		if(!isSpectator(spectator))
 			return;
 
@@ -132,15 +132,14 @@ public class SpectateUtils {
 		SpectateInformation info = getSpectateInformation(spectator);
 		this.spectateInfo.remove(spectator.getUniqueId());
 		info.restoreAttributes(false);
-
 	}
 
-	public void Unspectate(Player spectator, boolean oldLocation) {
+	public void unspectate(Player spectator, boolean oldLocation) {
 		if(!isSpectator(spectator))
 			return;
 
 		if(isCycling(spectator))
-			StopCycle(spectator);
+			stopCycle(spectator);
 
 		SpectateInformation info = getSpectateInformation(spectator);
 		Location location = spectateStartLocation.getOrDefault(spectator.getUniqueId(), null);
@@ -161,11 +160,12 @@ public class SpectateUtils {
 		final Location finalLocation = location;
 		spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
-		ToggleTabList(spectator, false);
+		toggleTabList(spectator, false);
 		info.restoreAttributes(true);
+		info.restoreArmorstands();
 	}
 
-	public void ToggleTabList(final Player spectator, final boolean hide) {
+	public void toggleTabList(final Player spectator, final boolean hide) {
 		if(!spectator.hasPermission(Permissions.UTILS_HIDE_IN_TAB)) {
 			spectator.removeMetadata("vanished", this.plugin);
 			return;
@@ -188,7 +188,7 @@ public class SpectateUtils {
 		}
 	}
 
-	public void Dismount(Player spectator) {
+	public void dismount(Player spectator) {
 		if(!isSpectator(spectator) || spectator.getGameMode() != GameMode.SPECTATOR)
 			return;
 		setRelation(spectator, null);
@@ -196,9 +196,9 @@ public class SpectateUtils {
 		Inventory.resetInventory(spectator);
 	}
 
-	public void Restore() {
+	public void restore() {
 		for(Player player : getSpectators())
-			Unspectate(player, false);
+			unspectate(player, false);
 	}
 
 	public void setRelation(Player spectator, Player target) {
@@ -208,11 +208,11 @@ public class SpectateUtils {
 	}
 
 
-	public void StartCycle(Player spectator, CycleTask cycle) {
+	public void startCycle(Player spectator, CycleTask cycle) {
 		if(isCycling(spectator))
 			return;
 
-		Spectate(spectator, null);
+		spectate(spectator, null);
 		SpectateInformation info = getSpectateInformation(spectator);
 		info.setTarget(null);
 		info.setState(SpectateState.CYCLING);
@@ -221,7 +221,7 @@ public class SpectateUtils {
 		cycle.startTask(this.plugin);
 	}
 
-	public void StopCycle(Player spectator) {
+	public void stopCycle(Player spectator) {
 		if(!isCycling(spectator))
 			return;
 
@@ -231,10 +231,10 @@ public class SpectateUtils {
 		info.setState(SpectateState.SPECTATING);
 		this.spectateCycle.remove(spectator.getUniqueId());
 		spectateInfo.replace(spectator.getUniqueId(), info);
-		Dismount(spectator);
+		dismount(spectator);
 	}
 
-	public void RestartCycle(Player spectator) {
+	public void restartCycle(Player spectator) {
 		if(!isPaused(spectator))
 			return;
 
@@ -245,7 +245,7 @@ public class SpectateUtils {
 		this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
 	}
 
-	public void PauseCycle(Player spectator) {
+	public void pauseCycle(Player spectator) {
 		if(!isCycling(spectator))
 			return;
 
@@ -255,7 +255,7 @@ public class SpectateUtils {
 		this.spectateCycle.put(spectator.getUniqueId(), cycle);
 		info.setState(SpectateState.PAUSED);
 		spectateInfo.replace(spectator.getUniqueId(), info);
-		Dismount(spectator);
+		dismount(spectator);
 	}
 
 	public void teleportNextPlayer(Player spectator) {

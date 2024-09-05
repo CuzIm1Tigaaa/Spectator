@@ -8,7 +8,7 @@
 ### Minecraft Versions:
 
 Tested Version(s): **1.19.x**, **1.20.x**<br/>
-Should also work with: **1.16.x**, **1.17.x**, **1.18.x**, **1.21.x**
+Should also work with: **1.16.x**, **1.17.x**, **1.18.x**
 
 ***
 

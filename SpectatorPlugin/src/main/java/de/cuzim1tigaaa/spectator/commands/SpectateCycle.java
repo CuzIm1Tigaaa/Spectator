@@ -78,7 +78,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
 
             case "stop" -> {
                 if(!hasPermissions(sender, COMMAND_SPECTATE_GENERAL, COMMAND_SPECTATE_OTHERS, COMMAND_SPECTATE_HERE)) {
-                    spectateUtils.Unspectate(player, true);
+                    spectateUtils.unspectate(player, true);
                     return true;
                 }
 
@@ -87,7 +87,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                         player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
                         return true;
                     }
-                    spectateUtils.StopCycle(player);
+                    spectateUtils.stopCycle(player);
                     player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
                     return true;
                 }
@@ -105,7 +105,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    spectateUtils.StopCycle(target);
+                    spectateUtils.stopCycle(target);
                     target.sendMessage(Messages.getMessage(target, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
                     return true;
                 }
@@ -128,7 +128,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
 
         spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_START,
                 "INTERVAL", seconds, "ORDER", alphabetical ? "Alphabetic" : "Random"));
-        spectateUtils.StartCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
+        spectateUtils.startCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
     }
 
     @Override

@@ -24,7 +24,9 @@ public final class Permissions {
     public static final String UTILS_OPEN_ENDERCHEST =          "spectator.utils.openenderchest";
     public static final String UTILS_MIRROR_INVENTORY =         "spectator.utils.mirrorinventory";
     public static final String UTILS_MIRROR_EFFECTS =           "spectator.utils.mirroreffects";
+    public static final String UTILS_HIDE_ARMORSTAND =          "spectator.utils.hidearmorstand";
     public static final String UTILS_HIDE_IN_TAB =              "spectator.utils.hidetab";
+
     public static final String NOTIFY_UPDATE_ON_JOIN =          "spectator.notify.update";
 
     public static boolean hasPermission(CommandSender sender, String permission) {
@@ -38,5 +40,4 @@ public final class Permissions {
         }
         return true;
     }
-
 }

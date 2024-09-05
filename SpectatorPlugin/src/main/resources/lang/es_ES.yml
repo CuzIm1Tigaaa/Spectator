@@ -1,7 +1,7 @@
 Messages:
   Default:
     Sender: '&cDebes ser un jugador para ejecutar este comando.'
-    Permission: '&cNo tienes permiso para usar este comando.'
+    PermissiShow: '&cNo tienes permiso para usar este comando.'
     Syntax: '&cUso incorrecto: %USAGE%'
     Reload: '&7El complemento ha sido recargado.'
   General:
@@ -12,6 +12,7 @@ Messages:
     NoPlayers: '&cNo hay suficientes jugadores en línea.'
     OfflinePlayer: '&7%TARGET%&c no está en línea.'
     NotSpectating: '&7%TARGET%&c no está siendo observado.'
+    NotSpectator: '&cActualmente no es espectador.'
     SamePlayer: '&cYa estás observando a &7%TARGET%&c.'
     Yourself: '&cNo puedes observarte a ti mismo.'
     CycleOnly: '&cSolo puedes usar &7/spectatecycle start <Intervalo>&c.'
@@ -44,6 +45,9 @@ Messages:
       IntervalTooSmall: '&cEl intervalo debe ser de al menos &e%MINIMUM% &csegundos.'
       IntervalTooBig: '&cEl intervalo no puede ser mayor a &e%MAXIMUM% &csegundos.'
     Spectate:
+      ArmorStands:
+        Hide: '&7Los soportes de armadura son visibles de nuevo.'
+        Show: '&7Has ocultado todos los soportes de armadura.'
       Join:
         Self: '&7Ahora estás en modo espectador.'
         Other: '&e%TARGET% &7ahora está en modo espectador.'

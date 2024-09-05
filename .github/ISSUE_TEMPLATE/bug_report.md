@@ -29,4 +29,5 @@ If applicable, add screenshots to help explain your problem.
  - Plugin Version [e.g. v3.0]
 
 **Additional context**
+What Plugins are added on the server [e.g. Multiverse, MultiversePortals...]
 Add any other context about the problem here.

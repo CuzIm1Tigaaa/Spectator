@@ -98,11 +98,19 @@ public class Spectate implements CommandExecutor, TabCompleter {
 
         if(args[0].equalsIgnoreCase("-armorstand") && hasPermission(player, UTILS_HIDE_ARMORSTAND)) {
             SpectateInformation info = spectateUtils.getSpectateInformation(player);
+            if(info == null) {
+                player.sendMessage(getMessage(player, Paths.MESSAGES_GENERAL_NOTSPECTATOR));
+                return true;
+            }
+
             info.setHideArmorStands(!info.isHideArmorStands());
-            if(info.isHideArmorStands())
+            if(info.isHideArmorStands()) {
+                info.hideArmorstands();
                 player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF));
-            else
+            }else {
+                info.restoreArmorstands();
                 player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON));
+            }
             return true;
         }
 
@@ -147,12 +155,12 @@ public class Spectate implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
         if(args.length == 1) {
+            if(args[0].startsWith("-"))
+                return List.of("-armorstand");
             if(!(sender instanceof Player player) || hasPermission(player, COMMAND_SPECTATE_OTHERS))
                 return plugin.getOnlinePlayerNames();
         }
         if(args.length == 2) {
-            if(args[0].startsWith("-"))
-                return List.of("-armorstand");
             if(!(sender instanceof Player player) || hasPermission(player, COMMAND_SPECTATE_CHANGE_OTHERS))
                 return plugin.getOnlinePlayerNames();
         }

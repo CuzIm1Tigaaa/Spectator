@@ -40,6 +40,7 @@ public final class Paths {
     public static final String MESSAGES_GENERAL_GAMEMODE_CHANGE =           "Messages.General.GameModeChange";
     public static final String MESSAGES_GENERAL_NOPLAYERS =                 "Messages.General.NoPlayers";
     public static final String MESSAGES_GENERAL_NOTSPECTATING =             "Messages.General.NotSpectating";
+    public static final String MESSAGES_GENERAL_NOTSPECTATOR =              "Messages.General.NotSpectator";
     public static final String MESSAGES_GENERAL_OFFLINEPLAYER =             "Messages.General.OfflinePlayer";
     public static final String MESSAGES_GENERAL_SAMEPLAYER =                "Messages.General.SamePlayer";
     public static final String MESSAGES_GENERAL_YOURSELF =                  "Messages.General.Yourself";
@@ -71,12 +72,12 @@ public final class Paths {
     public static final String MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_SMALL = "Messages.Commands.Cycle.IntervalTooSmall";
     public static final String MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_BIG =   "Messages.Commands.Cycle.IntervalTooBig";
 
+    public static final String MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF = "Messages.Commands.Spectate.ArmorStands.Hide";
+    public static final String MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON =  "Messages.Commands.Spectate.ArmorStands.Show";
     public static final String MESSAGES_COMMANDS_SPECTATE_JOIN_OWN =        "Messages.Commands.Spectate.Join.Self";
     public static final String MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER =      "Messages.Commands.Spectate.Join.Other";
     public static final String MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN =       "Messages.Commands.Spectate.Leave.Self";
     public static final String MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER =     "Messages.Commands.Spectate.Leave.Other";
     public static final String MESSAGES_COMMANDS_SPECTATE_PLAYER =          "Messages.Commands.Spectate.Player";
     public static final String MESSAGES_COMMANDS_SPECTATE_MULTIVERSE =      "Messages.Commands.Spectate.Multiverse";
-    public static final String MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON =  "Messages.Commands.Spectate.ArmorStands.On";
-    public static final String MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF = "Messages.Commands.Spectate.ArmorStands.Off";
 }

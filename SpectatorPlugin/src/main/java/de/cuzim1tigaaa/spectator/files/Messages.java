@@ -99,6 +99,7 @@ public final class Messages {
             set(Paths.MESSAGES_GENERAL_NOPLAYERS,                   "&cThere are not enough Players online.");
             set(Paths.MESSAGES_GENERAL_OFFLINEPLAYER,               "&7%TARGET% &cis not Online!");
             set(Paths.MESSAGES_GENERAL_NOTSPECTATING,               "&7%TARGET% &cis currently not spectating!");
+            set(Paths.MESSAGES_GENERAL_NOTSPECTATOR,                "&cYou re currently not spectating!");
             set(Paths.MESSAGES_GENERAL_SAMEPLAYER,                  "&cYou are already spectating &7%TARGET%&c!");
             set(Paths.MESSAGES_GENERAL_YOURSELF,                    "&cYou cannot Spectate yourself!");
             set(Paths.MESSAGES_GENERAL_CYCLEONLY,                   "&cYou can only use &7/SpectateCycle start <Interval>&c!");

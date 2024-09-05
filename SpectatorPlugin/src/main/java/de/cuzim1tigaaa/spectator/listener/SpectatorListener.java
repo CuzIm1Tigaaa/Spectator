@@ -6,6 +6,8 @@ import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -67,9 +69,34 @@ public class SpectatorListener implements Listener {
 	 */
 	private void sendUpdateNotification(Player player) {
 		player.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format("""
-			&cSpectator &8| &6&lAn Update is available! &8[&ev%s&8]
-			 &8&l» &ehttps://www.spigotmc.org/resources/spectator.93051/
-			""", this.plugin.getUpdateChecker().getVersion().replace("v", ""))));
+				&cSpectator &8| &6&lAn Update is available! &8[&ev%s&8]
+				 &8&l» &ehttps://www.spigotmc.org/resources/spectator.93051/
+				""", this.plugin.getUpdateChecker().getVersion().replace("v", ""))));
+	}
+
+
+	@EventHandler
+	public void playerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		if(!spectateUtils.isSpectator(player) && !spectateUtils.isCycling(player))
+			return;
+
+		Location from = event.getFrom(),
+				to = event.getTo();
+
+		if(to == null)
+			return;
+
+		if(from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ())
+			return;
+
+		player.getNearbyEntities(3, 3, 3).forEach(entity -> {
+			if(entity instanceof ArmorStand) {
+				player.hideEntity(plugin, entity);
+				spectateUtils.getSpectateInformation(player).
+						getHiddenArmorStands().add((ArmorStand) entity);
+			}
+		});
 	}
 
 
@@ -95,7 +122,7 @@ public class SpectatorListener implements Listener {
 			if(!spectateUtils.isCycling(spectator))
 				continue;
 
-			if(player.hasPermission(BYPASS_SPECTATED) || plugin.getSpectateUtils().getSpectateablePlayers().size() -1 > 0)
+			if(player.hasPermission(BYPASS_SPECTATED) || plugin.getSpectateUtils().getSpectateablePlayers().size() - 1 > 0)
 				continue;
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {

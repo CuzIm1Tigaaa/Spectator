@@ -1,7 +1,7 @@
 Messages:
   Default:
     Sender: '&cDebes ser un jugador para ejecutar este comando.'
-    Permission: '&cNo tienes permiso para usar este comando.'
+    PermissiShow: '&cNo tienes permiso para usar este comando.'
     Syntax: '&cUso incorrecto: %USAGE%'
     Reload: '&7El complemento ha sido recargado.'
   General:

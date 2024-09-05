@@ -132,7 +132,6 @@ public class SpectateUtils {
 		SpectateInformation info = getSpectateInformation(spectator);
 		this.spectateInfo.remove(spectator.getUniqueId());
 		info.restoreAttributes(false);
-
 	}
 
 	public void unspectate(Player spectator, boolean oldLocation) {
@@ -163,6 +162,7 @@ public class SpectateUtils {
 
 		toggleTabList(spectator, false);
 		info.restoreAttributes(true);
+		info.restoreArmorstands();
 	}
 
 	public void toggleTabList(final Player spectator, final boolean hide) {

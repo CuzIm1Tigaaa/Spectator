@@ -41,11 +41,11 @@ public class CycleTask {
 		Player spectator = cycle.getOwner();
 		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				plugin.getSpectateUtils().StopCycle(spectator);
+				plugin.getSpectateUtils().stopCycle(spectator);
 				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 				return;
 			}
-			plugin.getSpectateUtils().PauseCycle(spectator);
+			plugin.getSpectateUtils().pauseCycle(spectator);
 			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			return;
 		}
@@ -108,11 +108,11 @@ public class CycleTask {
 
 		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				plugin.getSpectateUtils().StopCycle(spectator);
+				plugin.getSpectateUtils().stopCycle(spectator);
 				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 				return;
 			}
-			plugin.getSpectateUtils().PauseCycle(spectator);
+			plugin.getSpectateUtils().pauseCycle(spectator);
 			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			return;
 		}
@@ -126,7 +126,7 @@ public class CycleTask {
 			plugin.getSpectateUtils().notifyTarget(last, spectator, false);
 
 		if(next.getWorld() != spectator.getWorld()) {
-			plugin.getSpectateUtils().Dismount(spectator);
+			plugin.getSpectateUtils().dismount(spectator);
 			TeleportListener.getWorldChange().put(spectator.getUniqueId(), next);
 
 			PlayerTeleportEvent event = new PlayerTeleportEvent(spectator, spectator.getLocation(), next.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
@@ -135,7 +135,7 @@ public class CycleTask {
 			getStateChange().put(spectator.getUniqueId(), SpectateState.CYCLING);
 			return;
 		}
-		plugin.getSpectateUtils().Spectate(spectator, next);
+		plugin.getSpectateUtils().spectate(spectator, next);
 	}
 
 	public CycleTask stopTask() {

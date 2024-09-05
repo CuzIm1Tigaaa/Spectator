@@ -40,7 +40,7 @@ public class Spectator extends JavaPlugin {
     @Override
     public void onDisable() {
         Inventory.restoreAll();
-        this.spectateUtils.Restore();
+        this.spectateUtils.restore();
 
         plugin = null;
     }

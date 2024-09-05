@@ -19,6 +19,7 @@ public class SpectateInformation {
 	@Setter private Player target;
 	@Setter private SpectateState state;
 	@Setter private CycleTask cycleTask;
+	@Setter private boolean hideArmorStands;
 	private final Map<World, PlayerAttributes> attributes;
 
 	public SpectateInformation(Player spectator, Player target) {
@@ -26,6 +27,7 @@ public class SpectateInformation {
 		this.target = target;
 		this.state = SpectateState.SPECTATING;
 		this.attributes = new HashMap<>();
+		this.hideArmorStands = false;
 	}
 
 	public void saveAttributes() {

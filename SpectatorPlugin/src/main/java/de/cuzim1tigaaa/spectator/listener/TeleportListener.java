@@ -53,15 +53,15 @@ public class TeleportListener implements Listener {
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
 			Spectator.Debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
-			spectateUtils.SimulateUnspectate(spectator);
-			spectateUtils.ToggleTabList(spectator, true);
+			spectateUtils.simulateUnspectate(spectator);
+			spectateUtils.toggleTabList(spectator, true);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 
 			Bukkit.getScheduler().runTaskLater(plugin, () -> {
 				Player target = null;
 				if(worldChange.containsKey(spectator.getUniqueId()))
 					target = worldChange.remove(spectator.getUniqueId());
-				spectateUtils.Spectate(spectator, target);
+				spectateUtils.spectate(spectator, target);
 			}, 5L);
 		}
 	}
@@ -100,7 +100,7 @@ public class TeleportListener implements Listener {
 
 		Spectator.Debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
 		spectateUtils.getSpectatorsOf(player).forEach(spectator -> {
-			spectateUtils.Dismount(spectator);
+			spectateUtils.dismount(spectator);
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
 

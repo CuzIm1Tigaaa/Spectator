@@ -80,6 +80,12 @@ public final class Config {
                     "\"CHAT\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\""), "NONE");
             notifyTargetMode = getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET);
 
+            set(Paths.CONFIG_HIDE_ARMOR_STANDS, comments(true,
+                    "Hides all invisible armor stands for spectators",
+                    "Can be toggled with the following command",
+                    "/spectate -armorstand"), false);
+
+
             set("Settings.Save", comments(true), null);
 
             set(Paths.CONFIG_SAVE_PLAYERS_LOCATION, comments(true,

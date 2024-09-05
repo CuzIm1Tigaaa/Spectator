@@ -2,6 +2,7 @@ package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Paths;
+import de.cuzim1tigaaa.spectator.spectate.SpectateInformation;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -40,14 +41,14 @@ public class Spectate implements CommandExecutor, TabCompleter {
                 }
 
                 if(spectateUtils.isSpectator(target)) {
-                    spectateUtils.Unspectate(target, true);
+                    spectateUtils.unspectate(target, true);
                     target.sendMessage(getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
                     sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", target.getName()));
                     return true;
                 }
 
                 spectateUtils.getSpectateStartLocation().put(target.getUniqueId(), target.getLocation());
-                spectateUtils.Spectate(target, null);
+                spectateUtils.spectate(target, null);
                 target.sendMessage(getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
                 sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", target.getName()));
                 return true;
@@ -72,7 +73,7 @@ public class Spectate implements CommandExecutor, TabCompleter {
                 return true;
             }
             spectateUtils.getSpectateStartLocation().put(spectator.getUniqueId(), spectator.getLocation());
-            spectateUtils.Spectate(spectator, target);
+            spectateUtils.spectate(spectator, target);
             spectator.sendMessage(getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
             sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", spectator.getName()));
             return true;
@@ -85,13 +86,20 @@ public class Spectate implements CommandExecutor, TabCompleter {
 
         if(args.length == 0 || !hasPermission(player, COMMAND_SPECTATE_OTHERS)) {
             if(spectateUtils.isSpectator(player)) {
-                spectateUtils.Unspectate(player, true);
+                spectateUtils.unspectate(player, true);
                 player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
                 return true;
             }
             spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
-            spectateUtils.Spectate(player, null);
+            spectateUtils.spectate(player, null);
             player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
+            return true;
+        }
+
+        if(args[0].equalsIgnoreCase("-armorstand") && hasPermission(player, UTILS_HIDE_ARMORSTAND)) {
+            SpectateInformation info = spectateUtils.getSpectateInformation(player);
+            info.setHideArmorStands(!info.isHideArmorStands());
+            sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS));
             return true;
         }
 
@@ -128,7 +136,7 @@ public class Spectate implements CommandExecutor, TabCompleter {
             }
         }
         spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
-        spectateUtils.Spectate(player, target);
+        spectateUtils.spectate(player, target);
         player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
         return true;
     }
@@ -140,6 +148,8 @@ public class Spectate implements CommandExecutor, TabCompleter {
                 return plugin.getOnlinePlayerNames();
         }
         if(args.length == 2) {
+            if(args[0].startsWith("-"))
+                return List.of("-armorstand");
             if(!(sender instanceof Player player) || hasPermission(player, COMMAND_SPECTATE_CHANGE_OTHERS))
                 return plugin.getOnlinePlayerNames();
         }

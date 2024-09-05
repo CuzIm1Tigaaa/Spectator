@@ -55,7 +55,7 @@ public class SpectatorListener implements Listener {
 			return;
 
 		for(Player spectator : spectateUtils.getPausedSpectators()) {
-			spectateUtils.RestartCycle(spectator);
+			spectateUtils.restartCycle(spectator);
 			CycleTask task = spectateUtils.getCycleTask(spectator);
 			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
 					"INTERVAL", task.getInterval(), "ORDER", task.getCycle().isAlphabetical() ? "Alphabetic" : "Random"));
@@ -83,14 +83,14 @@ public class SpectatorListener implements Listener {
 		Player player = event.getPlayer();
 
 		if(spectateUtils.isSpectator(player)) {
-			spectateUtils.Unspectate(player, true);
+			spectateUtils.unspectate(player, true);
 			return;
 		}
 
 		spectateUtils.getSpectators().forEach(spectator -> player.showPlayer(plugin, spectator));
 
 		for(Player spectator : spectateUtils.getSpectatorsOf(player)) {
-			spectateUtils.Dismount(spectator);
+			spectateUtils.dismount(spectator);
 
 			if(!spectateUtils.isCycling(spectator))
 				continue;
@@ -99,10 +99,10 @@ public class SpectatorListener implements Listener {
 				continue;
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				spectateUtils.StopCycle(spectator);
+				spectateUtils.stopCycle(spectator);
 				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
 			}else {
-				spectateUtils.PauseCycle(spectator);
+				spectateUtils.pauseCycle(spectator);
 				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
 			}
 		}
@@ -128,7 +128,7 @@ public class SpectatorListener implements Listener {
 			return;
 		}
 
-		spectateUtils.Dismount(player);
+		spectateUtils.dismount(player);
 	}
 
 	/**
@@ -156,8 +156,8 @@ public class SpectatorListener implements Listener {
 			event.setCancelled(true);
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_KICK_PLAYERS))
 				return;
-			spectateUtils.StopCycle(spectator);
-			spectateUtils.Unspectate(spectator, true);
+			spectateUtils.stopCycle(spectator);
+			spectateUtils.unspectate(spectator, true);
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.kickPlayer(event.getReason()), 10L);
 		}
 	}
@@ -169,12 +169,12 @@ public class SpectatorListener implements Listener {
 	public void targetDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
 		if(spectateUtils.isSpectator(player)) {
-			spectateUtils.Unspectate(player, false);
+			spectateUtils.unspectate(player, false);
 			return;
 		}
 
 		for(Player spectator : spectateUtils.getSpectatorsOf(player)) {
-			spectateUtils.Dismount(spectator);
+			spectateUtils.dismount(spectator);
 
 			if(spectateUtils.isCycling(spectator))
 				spectateUtils.teleportNextPlayer(spectator);

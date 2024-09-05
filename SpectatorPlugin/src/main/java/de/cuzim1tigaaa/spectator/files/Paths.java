@@ -9,6 +9,7 @@ public final class Paths {
     public static final String CONFIG_NOTIFY_UPDATE =                       "Settings.NotifyOnUpdate";
     public static final String CONFIG_HIDE_PLAYERS_TAB =                    "Settings.HidePlayersInTab";
     public static final String CONFIG_NOTIFY_CURRENT_TARGET =               "Settings.NotifyCurrentTarget";
+    public static final String CONFIG_HIDE_ARMOR_STANDS =                   "Settings.HideArmorStands";
 
     public static final String CONFIG_SAVE_PLAYERS_LOCATION =               "Settings.Save.PlayerLocation";
     public static final String CONFIG_SAVE_PLAYERS_FLIGHT_MODE =            "Settings.Save.PlayerFlightMode";
@@ -76,4 +77,6 @@ public final class Paths {
     public static final String MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER =     "Messages.Commands.Spectate.Leave.Other";
     public static final String MESSAGES_COMMANDS_SPECTATE_PLAYER =          "Messages.Commands.Spectate.Player";
     public static final String MESSAGES_COMMANDS_SPECTATE_MULTIVERSE =      "Messages.Commands.Spectate.Multiverse";
+    public static final String MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON =  "Messages.Commands.Spectate.ArmorStands.On";
+    public static final String MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF = "Messages.Commands.Spectate.ArmorStands.Off";
 }

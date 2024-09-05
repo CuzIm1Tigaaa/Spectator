@@ -99,7 +99,10 @@ public class Spectate implements CommandExecutor, TabCompleter {
         if(args[0].equalsIgnoreCase("-armorstand") && hasPermission(player, UTILS_HIDE_ARMORSTAND)) {
             SpectateInformation info = spectateUtils.getSpectateInformation(player);
             info.setHideArmorStands(!info.isHideArmorStands());
-            sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS));
+            if(info.isHideArmorStands())
+                player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF));
+            else
+                player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON));
             return true;
         }
 

@@ -78,6 +78,9 @@ public class SpectatorListener implements Listener {
 	@EventHandler
 	public void playerMove(PlayerMoveEvent event) {
 		Player player = event.getPlayer();
+		if(!Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS) || !hasPermission(player, UTILS_HIDE_ARMORSTAND))
+			return;
+
 		if(!spectateUtils.isSpectator(player) && !spectateUtils.isCycling(player))
 			return;
 

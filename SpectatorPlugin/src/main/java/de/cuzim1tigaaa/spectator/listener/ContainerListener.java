@@ -18,7 +18,7 @@ public class ContainerListener implements Listener {
 	private final SpectateUtils spectateUtils;
 
 	private final ImmutableSet<InventoryType> container = Sets.immutableEnumSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
-			InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
+			InventoryType.BREWING, InventoryType.CHEST, InventoryType.CRAFTER, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
 			InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
 
 	public ContainerListener(Spectator plugin) {

@@ -7,7 +7,6 @@ import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 import static de.cuzim1tigaaa.spectator.files.Permissions.*;
@@ -22,7 +21,7 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player player)) {
             sender.sendMessage(Messages.getMessage(null, Paths.MESSAGE_DEFAULT_SENDER));
             return true;
@@ -45,7 +44,7 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         return Collections.emptyList();
     }
 }

@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 import static de.cuzim1tigaaa.spectator.files.Permissions.*;
@@ -26,7 +25,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player player)) {
             sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_SENDER));
             return true;
@@ -132,7 +131,7 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         return switch(args.length) {
             case 1 -> List.of("start", "stop");
             case 2 -> (args[0].equalsIgnoreCase("stop") && hasPermission(sender, COMMANDS_CYCLE_STOP_OTHERS)) ? plugin.getOnlinePlayerNames() : Collections.emptyList();

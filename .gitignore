@@ -1,9 +1,6 @@
 .idea
 
 SpectatorPlugin/src/main/java/de/cuzim1tigaaa/spectator/commands/SpectateInfo.java
-SpectatorPlugin/target
-SpectatorTest/target
 
-Spectator.iml
-SpectatorPlugin/SpectatorPlugin.iml
-SpectatorTest/SpectatorTest.iml
+*/target/
+*.iml

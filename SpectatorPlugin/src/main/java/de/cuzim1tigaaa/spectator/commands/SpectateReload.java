@@ -4,7 +4,6 @@ import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
 import org.bukkit.command.*;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 public class SpectateReload implements CommandExecutor, TabCompleter {
@@ -17,7 +16,7 @@ public class SpectateReload implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!Permissions.hasPermission(sender, Permissions.COMMANDS_SPECTATE_RELOAD)) {
             sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_PERMISSION));
             return true;
@@ -29,7 +28,7 @@ public class SpectateReload implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         return Collections.emptyList();
     }
 }

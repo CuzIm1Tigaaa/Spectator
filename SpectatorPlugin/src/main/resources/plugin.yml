@@ -1,4 +1,4 @@
-name: Spectator
+name: ${project.name}
 version: ${project.version}
 author: CuzIm1Tigaaa
 main: ${project.groupId}.Spectator

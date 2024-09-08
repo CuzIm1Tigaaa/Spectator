@@ -1,6 +1,8 @@
 package de.cuzim1tigaaa.spectator;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import de.cuzim1tigaaa.spectator.armorstand.Armorstand;
+import de.cuzim1tigaaa.spectator.armorstand.VersionMatcher;
 import de.cuzim1tigaaa.spectator.commands.*;
 import de.cuzim1tigaaa.spectator.extensions.*;
 import de.cuzim1tigaaa.spectator.files.*;
@@ -14,12 +16,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 @Getter
 public class Spectator extends JavaPlugin {
 
     @Getter
     private static Spectator plugin;
+
+    private Armorstand armorstand;
 
     private SpectateUtils spectateUtils;
     private UpdateChecker updateChecker;
@@ -33,6 +38,8 @@ public class Spectator extends JavaPlugin {
         this.info();
         this.spectateUtils = new SpectateUtils(this);
         register();
+
+        armorstand = new VersionMatcher().match();
 
         plugin = this;
     }

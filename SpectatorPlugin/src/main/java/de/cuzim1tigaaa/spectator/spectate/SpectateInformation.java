@@ -5,7 +5,6 @@ import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -46,14 +45,14 @@ public class SpectateInformation {
 	public void hideArmorstands() {
 		this.getSpectator().getNearbyEntities(3, 3, 3).forEach(entity -> {
 			if (entity instanceof ArmorStand armorStand) {
-				spectator.hideEntity(Spectator.getPlugin(), armorStand);
+				Spectator.getPlugin().getArmorstand().hideArmorstand(spectator, armorStand);
 				hiddenArmorStands.add(armorStand);
 			}
 		});
 	}
 
 	public void restoreArmorstands() {
-		hiddenArmorStands.forEach(armorStand -> armorStand.addPassenger(spectator));
+		hiddenArmorStands.forEach(armorStand -> Spectator.getPlugin().getArmorstand().showArmorstand(spectator, armorStand));
 		hiddenArmorStands.clear();
 	}
 

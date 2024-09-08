@@ -22,16 +22,6 @@ public class ContainerListener implements Listener {
 
 	public ContainerListener(Spectator plugin) {
 		this.spectateUtils = plugin.getSpectateUtils();
-
-		String version = plugin.getServer().getBukkitVersion();
-		int mayor = Integer.parseInt(version.split("\\.")[1]);
-		if(mayor >= 20) {
-			int minor = 0;
-			if(version.split("\\.").length > 2)
-				minor = Integer.parseInt(version.split("\\.")[2].split("-")[0]);
-			if(minor >= 3)
-				container.add(InventoryType.CRAFTER);
-		}
 	}
 
 	/**

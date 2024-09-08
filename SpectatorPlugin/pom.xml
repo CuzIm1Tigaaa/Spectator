@@ -6,11 +6,11 @@
     <parent>
         <groupId>de.cuzim1tigaaa.spectator</groupId>
         <artifactId>Spectator</artifactId>
-        <version>3.2</version>
+        <version>3.2-Java16</version>
     </parent>
 
+    <name>Spectator</name>
     <artifactId>SpectatorPlugin</artifactId>
-    <version>3.2</version>
 
     <repositories>
         <repository>
@@ -30,6 +30,20 @@
             <artifactId>spigot-api</artifactId>
             <version>${api.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -37,6 +51,72 @@
             <artifactId>paper-api</artifactId>
             <version>${api.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cuzim1tigaaa.spectator</groupId>
+            <artifactId>abstract</artifactId>
+            <version>3.2-Java16</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cuzim1tigaaa.spectator</groupId>
+            <artifactId>1_16_R1</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cuzim1tigaaa.spectator</groupId>
+            <artifactId>1_16_R2</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cuzim1tigaaa.spectator</groupId>
+            <artifactId>1_16_R3</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.cuzim1tigaaa.spectator</groupId>
+            <artifactId>1_17_R1</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.2.1-jre</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -92,7 +172,7 @@
                                 </filter>
                             </filters>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <minimizeJar>true</minimizeJar>
+                            <minimizeJar>false</minimizeJar>
                         </configuration>
                     </execution>
                 </executions>

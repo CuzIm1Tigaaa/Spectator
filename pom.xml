@@ -6,17 +6,22 @@
 
     <groupId>de.cuzim1tigaaa.spectator</groupId>
     <artifactId>Spectator</artifactId>
-    <version>3.2</version>
+    <version>3.2-Java16</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>SpectatorPlugin</module>
-        <module>SpectatorTest</module>
+        <module>abstract</module>
+        <module>1_16_R1</module>
+        <module>1_16_R2</module>
+        <module>1_16_R3</module>
+        <module>1_17_R1</module>
     </modules>
 
     <properties>
-        <api.version>1.20.4-R0.1-SNAPSHOT</api.version>
-        <java.version>18</java.version>
+        <api.version>1.17.1-R0.1-SNAPSHOT</api.version>
+        <java.version>16</java.version>
+
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

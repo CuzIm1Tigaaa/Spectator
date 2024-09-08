@@ -9,7 +9,6 @@
         <version>3.2</version>
     </parent>
 
-    <name>Spectator</name>
     <artifactId>SpectatorPlugin</artifactId>
     <version>3.2</version>
 
@@ -29,14 +28,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -67,7 +66,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.0</version>
                 <configuration>
                     <relocations>
                         <relocation>

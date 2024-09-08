@@ -16,7 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 @Getter
 public class Spectator extends JavaPlugin {
@@ -64,7 +63,7 @@ public class Spectator extends JavaPlugin {
 
     private void register() {
         this.reload();
-        new Metrics(this);
+        new MetricsClass(this);
 
         this.getLogger().info("Register Events & Commands…");
 

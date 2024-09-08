@@ -5,7 +5,7 @@
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
 # backup your current config and create a new one
-ConfigVersion: 12
+ConfigVersion: 13
 
 Settings:
 
@@ -32,6 +32,11 @@ Settings:
   # Possible values are (without quotation):
   # "CHAT", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
   NotifyCurrentTarget: NONE
+
+  # Hides all invisible armor stands for spectators
+  # Can be toggled with the following command
+  # /spectate -armorstand
+  HideArmorStands: false
 
   Save:
 

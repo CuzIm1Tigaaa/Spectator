@@ -15,7 +15,7 @@ public final class Config {
     private static FileConfiguration config;
     @Getter private static File configFile;
 
-    private static final int configVersion = 12;
+    private static final int configVersion = 13;
     @Getter private static String showTargetMode, notifyTargetMode;
 
     public static void loadConfig(Spectator plugin) {

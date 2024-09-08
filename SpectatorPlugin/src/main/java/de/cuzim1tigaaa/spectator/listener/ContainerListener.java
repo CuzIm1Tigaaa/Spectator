@@ -1,6 +1,5 @@
 package de.cuzim1tigaaa.spectator.listener;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
@@ -17,12 +16,22 @@ public class ContainerListener implements Listener {
 
 	private final SpectateUtils spectateUtils;
 
-	private final ImmutableSet<InventoryType> container = Sets.immutableEnumSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
+	private final Set<InventoryType> container = Sets.immutableEnumSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
 			InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
 			InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
 
 	public ContainerListener(Spectator plugin) {
 		this.spectateUtils = plugin.getSpectateUtils();
+
+		String version = plugin.getServer().getBukkitVersion();
+		int mayor = Integer.parseInt(version.split("\\.")[1]);
+		if(mayor >= 20) {
+			int minor = 0;
+			if(version.split("\\.").length > 2)
+				minor = Integer.parseInt(version.split("\\.")[2].split("-")[0]);
+			if(minor >= 3)
+				container.add(InventoryType.CRAFTER);
+		}
 	}
 
 	/**

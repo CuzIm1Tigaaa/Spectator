@@ -1,93 +1,62 @@
 package de.cuzim1tigaaa.spectator.spectate;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
-import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Messages;
+import de.cuzim1tigaaa.spectator.files.Paths;
+import de.cuzim1tigaaa.spectator.files.Permissions;
 import de.cuzim1tigaaa.spectator.player.Inventory;
-import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 public class SpectateUtils {
 
 	private final Spectator plugin;
+	private final SpectateAPI spectateAPI;
 
 	private final Map<UUID, Location> spectateStartLocation = new HashMap<>();
-	private final Map<UUID, SpectateInformation> spectateInfo;
 	private final Map<UUID, CycleTask> spectateCycle;
 
 	public SpectateUtils(Spectator plugin) {
 		this.plugin = plugin;
-		this.spectateInfo = new HashMap<>();
+		this.spectateAPI = plugin.getSpectateAPI();
+
 		this.spectateCycle = new HashMap<>();
 
 		this.run();
 	}
 
 	private void run() {
-		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-			for(Player spectator : getSpectators()) {
-				SpectateInformation info = getSpectateInformation(spectator);
-
-				if(info == null || info.getTarget() == null)
-					continue;
-
-				if(spectateCycle.containsKey(spectator.getUniqueId()))
-					getSpectateInformation(spectator).setState(SpectateState.CYCLING);
-
-				final Player target = info.getTarget();
-				if(!target.isOnline())
-					continue;
-
-				Inventory.updateInventory(spectator, target);
-
-				if(spectator.getGameMode() != GameMode.SPECTATOR) {
-					unspectate(spectator, true);
-					continue;
-				}
-
-				if(spectator.getSpectatorTarget() == null) {
-					dismount(spectator);
-					Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.setSpectatorTarget(target), 5);
-				}
-
-				Location spLoc = spectator.getLocation(), taLoc = target.getLocation();
-				if(!Objects.equals(spLoc.getWorld(), taLoc.getWorld()) || spLoc.distanceSquared(taLoc) > 3) {
-					spectator.setSpectatorTarget(null);
-					Bukkit.getScheduler().runTaskLater(plugin, () -> {
-						spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
-						spectator.setSpectatorTarget(target);
-					}, 1);
-				}
-
-				if(spectator.getGameMode() != GameMode.SPECTATOR)
-					unspectate(spectator, true);
-			}
-		}, 0, 10);
+		Bukkit.getScheduler().runTaskTimer(plugin, () -> {}, 0, 10);
 	}
 
 
 	public void spectate(Player spectator, Player target) {
-		getSpectatorsOf(spectator).forEach(this::dismount);
+		spectateAPI.getSpectatorsOf(spectator).forEach(this::dismount);
 
 		SpectateInformation info;
-		if(isSpectator(spectator)) {
-			info = getSpectateInformation(spectator);
+		if(spectateAPI.isSpectator(spectator)) {
+			info = spectateAPI.getSpectateInfo(spectator);
 			info.setTarget(target);
 		}else
 			info = new SpectateInformation(spectator, target);
 
 		boolean switchWorld = false;
-		toggleTabList(spectator, true);
+		spectateAPI.toggleTabList(spectator, true);
 		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld())) {
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
 			switchWorld = true;
@@ -150,8 +119,8 @@ public class SpectateUtils {
 
 		if(location == null || spectateStartLocation.getOrDefault(spectator.getUniqueId(), null) == null || !oldLocation || !Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION)) {
 			location = spectator.getLocation();
-			Spectator.Debug(String.format("Saved Location: %s", location));
-			Spectator.Debug("Using current location of player");
+			Spectator.debug(String.format("Saved Location: %s", location));
+			Spectator.debug("Using current location of player");
 		}
 
 		if(!Objects.equals(spectator.getWorld(), location.getWorld()))
@@ -165,47 +134,21 @@ public class SpectateUtils {
 		info.restoreArmorstands();
 	}
 
-	public void toggleTabList(final Player spectator, final boolean hide) {
-		if(!spectator.hasPermission(Permissions.UTILS_HIDE_IN_TAB)) {
-			spectator.removeMetadata("vanished", this.plugin);
-			return;
-		}
-
-		for(Player target : Bukkit.getOnlinePlayers()) {
-			if(target.getUniqueId().equals(spectator.getUniqueId()) || target.hasPermission(Permissions.BYPASS_TABLIST))
-				continue;
-
-			if(Permissions.hasPermission(target, Permissions.BYPASS_TABLIST))
-				continue;
-
-			if(hide) {
-				target.hidePlayer(this.plugin, spectator);
-				spectator.setMetadata("vanished", new FixedMetadataValue(this.plugin, true));
-				continue;
-			}
-			target.showPlayer(this.plugin, spectator);
-			spectator.removeMetadata("vanished", this.plugin);
-		}
-	}
 
 	public void dismount(Player spectator) {
-		if(!isSpectator(spectator) || spectator.getGameMode() != GameMode.SPECTATOR)
+		if(!spectateAPI.isSpectator(spectator) || spectator.getGameMode() != GameMode.SPECTATOR)
 			return;
-		setRelation(spectator, null);
+		spectateAPI.setRelation(spectator, null);
 		spectator.setSpectatorTarget(null);
 		Inventory.resetInventory(spectator);
 	}
 
 	public void restore() {
-		for(Player player : getSpectators())
-			unspectate(player, false);
+		spectateAPI.getSpectators().forEach(p ->
+				unspectate(p, false));
 	}
 
-	public void setRelation(Player spectator, Player target) {
-		if(!isSpectator(spectator))
-			return;
-		getSpectateInformation(spectator).setTarget(target);
-	}
+
 
 
 	public void startCycle(Player spectator, CycleTask cycle) {
@@ -269,80 +212,10 @@ public class SpectateUtils {
 	}
 
 
-	public boolean isCycling(Player spectator) {
-		return getCyclingSpectators().contains(spectator);
-	}
-
-	public boolean isPaused(Player spectator) {
-		return getPausedSpectators().contains(spectator);
-	}
 
 
-	public Set<Player> getSpectators() {
-		return spectateInfo.values().stream().map(SpectateInformation::getSpectator).collect(Collectors.toSet());
-	}
-
-	public Set<Player> getSpectateablePlayers() {
-		Set<Player> spectateable = new HashSet<>(Bukkit.getOnlinePlayers());
-		spectateable.removeAll(getSpectators());
-		spectateable.removeIf(player -> player.hasPermission(Permissions.BYPASS_SPECTATED));
-		return spectateable;
-	}
-
-	public Set<Player> getSpectatorsOf(Player target) {
-		return spectateInfo.values().stream().filter(info -> info.getTarget() != null && info.getTarget().equals(target)).
-				map(SpectateInformation::getSpectator).collect(Collectors.toSet());
-	}
-
-	public Set<Player> getCyclingSpectators() {
-		return spectateInfo.values().stream().filter(info -> info.getState() == SpectateState.CYCLING).
-				map(SpectateInformation::getSpectator).collect(Collectors.toSet());
-	}
-
-	public Set<Player> getPausedSpectators() {
-		return spectateInfo.values().stream().filter(info -> info.getState() == SpectateState.PAUSED).
-				map(SpectateInformation::getSpectator).collect(Collectors.toSet());
-	}
 
 
-	public boolean isSpectator(Player spectator) {
-		return spectateInfo.values().stream().anyMatch(info -> info.getSpectator().equals(spectator));
-	}
-
-	public SpectateInformation getSpectateInformation(Player spectator) {
-		return spectateInfo.values().stream().filter(info -> info.getSpectator().equals(spectator)).findFirst().orElse(null);
-	}
-
-	public PlayerAttributes getPlayerAttributes(Player spectator) {
-		if(getSpectateInformation(spectator) == null)
-			return null;
-		if(getSpectateInformation(spectator).getAttributes().isEmpty())
-			return null;
-		return getSpectateInformation(spectator).getAttributes().get(spectator.getWorld());
-	}
-
-	public boolean isNotSpectated(Player target) {
-		return spectateInfo.values().stream().noneMatch(i -> i.getTarget() != null && i.getTarget().equals(target));
-	}
-
-	public boolean isSpectating(Player spectator, Player target) {
-		return spectateInfo.values().stream().anyMatch(info -> info.getSpectator().equals(spectator) && info.getTarget() != null && info.getTarget().equals(target));
-	}
-
-	public Player getTargetOf(Player spectator) {
-		SpectateInformation specInfo = spectateInfo.values().stream().filter(info -> info.getSpectator().equals(spectator)).findFirst().orElse(null);
-		if(specInfo == null)
-			return null;
-
-		if(specInfo.getState() == SpectateState.CYCLING)
-			return (Player) spectator.getSpectatorTarget();
-
-		return specInfo.getTarget();
-	}
-
-	public CycleTask getCycleTask(Player spectator) {
-		return spectateCycle.getOrDefault(spectator.getUniqueId(), null);
-	}
 
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {
 		if(target == null)

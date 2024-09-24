@@ -1,9 +1,9 @@
 package de.cuzim1tigaaa.spectator.listener;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.player.Inventory;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import org.bukkit.*;
@@ -20,13 +20,13 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class TeleportListener implements Listener {
 
 	private final Spectator plugin;
-	private final SpectateUtils spectateUtils;
+	private final SpectateAPI spectateAPI;
 
 	@Getter private static final Map<UUID, Player> worldChange = new HashMap<>();
 
 	public TeleportListener(Spectator plugin) {
 		this.plugin = plugin;
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateAPI = plugin.getSpectateAPI();
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class TeleportListener implements Listener {
 		Player spectator = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
 
-		if(!spectateUtils.isSpectator(spectator) || spectateUtils.getTargetOf(spectator) != null)
+		if(!spectateAPI.isSpectator(spectator) || spectateAPI.getTargetOf(spectator) != null)
 			return;
 
 		if(event.isCancelled())
@@ -52,16 +52,16 @@ public class TeleportListener implements Listener {
 			return;
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
-			Spectator.Debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
-			spectateUtils.simulateUnspectate(spectator);
-			spectateUtils.toggleTabList(spectator, true);
+			plugin.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
+			plugin.getSpectateUtils().simulateUnspectate(spectator);
+			spectateAPI.toggleTabList(spectator, true);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 
 			Bukkit.getScheduler().runTaskLater(plugin, () -> {
 				Player target = null;
 				if(worldChange.containsKey(spectator.getUniqueId()))
 					target = worldChange.remove(spectator.getUniqueId());
-				spectateUtils.spectate(spectator, target);
+				plugin.getSpectateUtils().spectate(spectator, target);
 			}, 5L);
 		}
 	}
@@ -86,7 +86,7 @@ public class TeleportListener implements Listener {
 		Player player = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
 
-		if(spectateUtils.isSpectator(player) || spectateUtils.isNotSpectated(player))
+		if(spectateAPI.isSpectator(player) || spectateAPI.isNotSpectated(player))
 			return;
 
 		if(event.isCancelled())
@@ -98,13 +98,13 @@ public class TeleportListener implements Listener {
 		if(from.getWorld().equals(to.getWorld()))
 			return;
 
-		Spectator.Debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
-		spectateUtils.getSpectatorsOf(player).forEach(spectator -> {
-			spectateUtils.dismount(spectator);
+		plugin.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
+		spectateAPI.getSpectatorsOf(player).forEach(spectator -> {
+			plugin.getSpectateUtils().dismount(spectator);
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
 
-			Spectator.Debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
+			plugin.debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(plugin, () -> {
 				worldChange.put(spectator.getUniqueId(), player);
@@ -123,7 +123,7 @@ public class TeleportListener implements Listener {
 		if(event.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE) return;
 
 		Player player = event.getPlayer();
-		if(!spectateUtils.isSpectator(player))
+		if(!spectateAPI.isSpectator(player))
 			return;
 
 		if(player.getSpectatorTarget() == null || !(player.getSpectatorTarget() instanceof Player target))
@@ -143,8 +143,8 @@ public class TeleportListener implements Listener {
 			return;
 		}
 
-		spectateUtils.setRelation(player, target);
-		Inventory.getInventory(player, target);
+		spectateAPI.setRelation(player, target);
+		plugin.getInventory().getInventory(player, target);
 	}
 
 	private boolean hasAccessToWorld(Player player, World world) {

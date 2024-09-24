@@ -46,7 +46,7 @@ public class Cycle {
 		Player target = alphabetical ? toVisit.stream().sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName())).toList().get(0) :
 				toVisit.get(random.nextInt(toVisit.size()));
 
-		Spectator.Debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
+		plugin.debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
 				toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
 
 		if(toVisit.size() > 1 && target.equals(lastPlayer))
@@ -62,7 +62,7 @@ public class Cycle {
 	}
 
 	private void updateLists(Spectator plugin) {
-		toVisit.addAll(plugin.getSpectateUtils().getSpectateablePlayers());
+		toVisit.addAll(plugin.getSpectateAPI().getSpectateablePlayers());
 		toVisit.remove(owner);
 		toVisit.removeIf(p -> p == null || !p.isOnline());
 

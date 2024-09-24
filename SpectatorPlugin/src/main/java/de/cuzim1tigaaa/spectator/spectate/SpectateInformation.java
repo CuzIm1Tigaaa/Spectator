@@ -5,7 +5,6 @@ import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -32,12 +31,10 @@ public class SpectateInformation {
 	}
 
 	public void saveAttributes() {
-		Spectator.Debug(String.format("Saving attributes of %s in world %s", spectator.getName(), spectator.getWorld().getName()));
 		this.attributes.put(spectator.getWorld(), new PlayerAttributes(spectator));
 	}
 
 	public void restoreAttributes(boolean gameModeChange) {
-		Spectator.Debug(String.format("Restoring attributes of %s in world %s", spectator.getName(), spectator.getWorld().getName()));
 		PlayerAttributes.restorePlayerAttributes(spectator,
 				this.attributes.remove(spectator.getWorld()), gameModeChange);
 	}

@@ -2,11 +2,14 @@ package de.cuzim1tigaaa.spectator;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.commands.*;
-import de.cuzim1tigaaa.spectator.extensions.*;
-import de.cuzim1tigaaa.spectator.files.*;
+import de.cuzim1tigaaa.spectator.extensions.Metrics;
+import de.cuzim1tigaaa.spectator.extensions.Placeholders;
+import de.cuzim1tigaaa.spectator.extensions.UpdateChecker;
+import de.cuzim1tigaaa.spectator.files.Config;
+import de.cuzim1tigaaa.spectator.files.Messages;
+import de.cuzim1tigaaa.spectator.files.Paths;
 import de.cuzim1tigaaa.spectator.listener.SpectatorListener;
 import de.cuzim1tigaaa.spectator.player.Inventory;
-import de.cuzim1tigaaa.spectator.spectate.Displays;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -21,17 +24,25 @@ public class Spectator extends JavaPlugin {
     @Getter
     private static Spectator plugin;
 
+    private SpectateAPI spectateAPI;
     private SpectateUtils spectateUtils;
     private UpdateChecker updateChecker;
-    private Displays displays;
 
     private MultiverseCore multiverseCore;
-    @Getter private static boolean papiInstalled;
+    private boolean papiInstalled;
+
+    private Config spectatorConfig;
+    private Inventory inventory;
+    private Messages messages;
 
     @Override
     public void onEnable() {
         this.info();
+
+        this.spectateAPI = new SpectateAPI(this);
         this.spectateUtils = new SpectateUtils(this);
+        this.updateChecker = new UpdateChecker(this);
+
         register();
 
         plugin = this;
@@ -39,26 +50,28 @@ public class Spectator extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Inventory.restoreAll();
         this.spectateUtils.restore();
+        this.inventory.restoreAll();
 
         plugin = null;
     }
 
+
     public void reload() {
         this.getLogger().info("Loading config settings…");
-        Config.loadConfig(this);
+        spectatorConfig = new Config(this);
+        spectatorConfig.loadConfig();
+
         this.getLogger().info("Loading plugin messages…");
-        Messages.loadLanguageFile(this);
-
-        this.updateChecker = new UpdateChecker(this);
+        messages = new Messages(this);
+        messages.loadLanguageFile();
     }
-
 
     private void register() {
         this.reload();
         new Metrics(this);
 
+        this.inventory = new Inventory(this);
         this.getLogger().info("Register Events & Commands…");
 
         if((multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
@@ -100,8 +113,8 @@ public class Spectator extends JavaPlugin {
         return names;
     }
 
-    public static void Debug(String message) {
-        if(!Config.getBoolean(Paths.CONFIG_DEBUG))
+    public void debug(String message) {
+        if(!spectatorConfig.getBoolean(Paths.CONFIG_DEBUG))
             return;
         getPlugin().getLogger().info(message);
     }

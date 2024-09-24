@@ -18,11 +18,16 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
-public final class Messages {
+public class Messages {
 
-    private static FileConfiguration message;
+    private final Spectator plugin;
+    private FileConfiguration message;
 
-    public static String getMessage(CommandSender sender, String path, Object... replace) {
+    public Messages(Spectator plugin) {
+        this.plugin = plugin;
+    }
+
+    public void sendMessage(CommandSender sender, String path, Object... replace) {
         String msg = message.getString(path);
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
         for(int i = 0; i < replace.length; i++) {
@@ -33,14 +38,18 @@ public final class Messages {
             String replacement = replace[i] == null ? null : replace[i].toString();
             if(message != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
         }
-        if(Spectator.isPapiInstalled() && sender instanceof Player player)
-            return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg));
-        return ChatColor.translateAlternateColorCodes('&', msg) ;
+        if(plugin.isPapiInstalled() && sender instanceof Player player)
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg)));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',msg));
     }
 
-    public static void loadLanguageFile(Spectator plugin) {
+    public static String getMessage(CommandSender sender, String path, Object... replace) {
+        return path;
+    }
+
+    public void loadLanguageFile() {
         createLangFiles(plugin);
-        File messageFile = new File(plugin.getDataFolder() + "/lang", Config.getString(Paths.CONFIG_LANGUAGE) + ".yml");
+        File messageFile = new File(plugin.getDataFolder() + "/lang", plugin.getConfig().getString(Paths.CONFIG_LANGUAGE) + ".yml");
         try {
             if(!messageFile.exists()) {
                 loadDefaultMessages(plugin);
@@ -53,7 +62,7 @@ public final class Messages {
         }
     }
 
-    private static void createLangFiles(Spectator plugin) {
+    private void createLangFiles(Spectator plugin) {
         URL dirURL = Spectator.class.getClassLoader().getResource("lang");
         if(dirURL == null) return;
 
@@ -79,7 +88,7 @@ public final class Messages {
 
     }
 
-    private static void loadDefaultMessages(Spectator plugin) {
+    private void loadDefaultMessages(Spectator plugin) {
         File messageFile = new File(plugin.getDataFolder() + "/lang", "en_US.yml");
         try {
             if(!messageFile.exists()) {
@@ -144,7 +153,7 @@ public final class Messages {
         }
     }
 
-    private static void set(String path, String value) {
+    private void set(String path, String value) {
         message.set(path, message.get(path, value));
     }
 }

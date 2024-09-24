@@ -4,7 +4,6 @@ import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;

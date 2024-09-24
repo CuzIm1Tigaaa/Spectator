@@ -52,7 +52,6 @@ public class Inventory {
 
     public void updateInventory(Player spectator, Player target) {
         clearActivePotionEffects(spectator);
-
         if(target != null) {
             spectator.getInventory().setContents(target.getInventory().getContents());
             addPotionEffectsOfTarget(spectator, target);
@@ -78,9 +77,7 @@ public class Inventory {
     }
 
     public void restoreAll() {
-        SpectateUtils spectateUtils = Spectator.getPlugin().getSpectateUtils();
         Set<Player> players = new HashSet<>(spectateAPI.getSpectators());
-
         for(Player spectator : players)
             if(spectator.isOnline()) restoreInventory(spectator, spectateAPI.getPlayerAttributes(spectator));
     }

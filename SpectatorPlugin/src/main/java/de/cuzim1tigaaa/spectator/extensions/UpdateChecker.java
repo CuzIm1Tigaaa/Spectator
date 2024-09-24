@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public final class UpdateChecker {
+public class UpdateChecker {
 
     private final Spectator plugin;
 
@@ -20,9 +20,10 @@ public final class UpdateChecker {
     public UpdateChecker(Spectator plugin) {
         this.plugin = plugin;
 
-        this.checkUpdate().thenAcceptAsync(result -> {
-            this.update = result;
-            if(result) this.updateAvailable();
+        this.checkUpdate().thenAcceptAsync(isUpdateAvailable -> {
+            //noinspection AssignmentUsedAsCondition
+            if(this.update = isUpdateAvailable)
+                this.updateAvailable();
         });
     }
 

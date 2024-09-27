@@ -4,7 +4,7 @@ import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.Cycle;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class SpectateCycle implements CommandExecutor, TabCompleter {
 
     private final Spectator plugin;
-    private final SpectateUtils spectateUtils;
+    private final SpectateUtilsGeneral spectateUtils;
 
     public SpectateCycle(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatecycle")).setExecutor(this);

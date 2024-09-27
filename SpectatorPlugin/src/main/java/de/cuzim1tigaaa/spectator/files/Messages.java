@@ -21,14 +21,17 @@ import java.util.logging.Level;
 public class Messages {
 
     private final Spectator plugin;
-    private FileConfiguration message;
+
+    private static boolean PAPI_INSTALLED;
+    private static FileConfiguration MESSAGE_FILE_CONFIG;
 
     public Messages(Spectator plugin) {
         this.plugin = plugin;
+        PAPI_INSTALLED = plugin.isPapiInstalled();
     }
 
-    public void sendMessage(CommandSender sender, String path, Object... replace) {
-        String msg = message.getString(path);
+    public static void sendMessage(CommandSender sender, String path, Object... replace) {
+        String msg = MESSAGE_FILE_CONFIG.getString(path);
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
         for(int i = 0; i < replace.length; i++) {
             String target = replace[i] == null ? null : (String) replace[i];
@@ -36,9 +39,9 @@ public class Messages {
                 continue;
             i++;
             String replacement = replace[i] == null ? null : replace[i].toString();
-            if(message != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
+            if(MESSAGE_FILE_CONFIG != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
         }
-        if(plugin.isPapiInstalled() && sender instanceof Player player)
+        if(PAPI_INSTALLED && sender instanceof Player player)
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg)));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',msg));
     }
@@ -55,8 +58,8 @@ public class Messages {
                 loadDefaultMessages(plugin);
                 return;
             }
-            message = YamlConfiguration.loadConfiguration(messageFile);
-            message.save(messageFile);
+            MESSAGE_FILE_CONFIG = YamlConfiguration.loadConfiguration(messageFile);
+            MESSAGE_FILE_CONFIG.save(messageFile);
         }catch(IOException exception) {
             plugin.getLogger().log(Level.SEVERE, "An error occurred while loading language files", exception);
         }
@@ -92,10 +95,10 @@ public class Messages {
         File messageFile = new File(plugin.getDataFolder() + "/lang", "en_US.yml");
         try {
             if(!messageFile.exists()) {
-                message = new YamlConfiguration();
-                message.save(messageFile);
+                MESSAGE_FILE_CONFIG = new YamlConfiguration();
+                MESSAGE_FILE_CONFIG.save(messageFile);
             }
-            message = YamlConfiguration.loadConfiguration(messageFile);
+            MESSAGE_FILE_CONFIG = YamlConfiguration.loadConfiguration(messageFile);
             set(Paths.MESSAGE_DEFAULT_SENDER,                       "&cYou have to be a Player to perform this command!");
             set(Paths.MESSAGE_DEFAULT_PERMISSION,                   "&cYou do not have Permission to execute this command!");
             set(Paths.MESSAGE_DEFAULT_SYNTAX,                       "&cThere's a syntax error: %USAGE%");
@@ -147,13 +150,13 @@ public class Messages {
             set(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER,       "&e%TARGET% &7is no longer in Spectator-Mode.");
             set(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER,            "&7You are now spectating &c%TARGET%&7.");
             set(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE,        "&cYou do not have permission to spectate &e%TARGET% &cin this world!");
-            message.save(messageFile);
+            MESSAGE_FILE_CONFIG.save(messageFile);
         }catch (IOException exception) {
             plugin.getLogger().log(Level.SEVERE, "An error occurred while loading default messages", exception);
         }
     }
 
     private void set(String path, String value) {
-        message.set(path, message.get(path, value));
+        MESSAGE_FILE_CONFIG.set(path, MESSAGE_FILE_CONFIG.get(path, value));
     }
 }

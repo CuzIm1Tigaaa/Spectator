@@ -2,7 +2,7 @@ package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
@@ -11,7 +11,7 @@ import java.util.*;
 
 public class SpectateList implements CommandExecutor, TabCompleter {
 
-	private final SpectateUtils spectateUtils;
+	private final SpectateUtilsGeneral spectateUtils;
 
     public SpectateList(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatelist")).setExecutor(this);

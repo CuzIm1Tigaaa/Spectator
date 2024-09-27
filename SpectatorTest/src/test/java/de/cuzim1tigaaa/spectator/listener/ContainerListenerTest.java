@@ -6,8 +6,7 @@ import be.seeseemelk.mockbukkit.block.state.ChestMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import de.cuzim1tigaaa.spectator.Constants;
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.Config;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.Material;
 import org.junit.jupiter.api.*;
 
@@ -53,7 +52,7 @@ public class ContainerListenerTest {
 
 		assertTrue(player.performCommand("spectate " + Constants.Target));
 
-		final SpectateUtils utils = plugin.getSpectateUtils();
+		final SpectateUtilsGeneral utils = plugin.getSpectateUtils();
 		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
 		assertTrue(utils.isSpectating(player, target), String.format("%s should be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
 

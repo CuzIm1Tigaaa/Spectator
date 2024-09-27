@@ -5,8 +5,11 @@ import de.cuzim1tigaaa.spectator.files.Permissions;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import de.cuzim1tigaaa.spectator.spectate.SpectateInformation;
 import de.cuzim1tigaaa.spectator.spectate.SpectateState;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsCycle;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
@@ -20,9 +23,15 @@ public class SpectateAPI {
     private final Spectator plugin;
     private final Set<SpectateInformation> spectateInfo;
 
+    private final SpectateUtilsGeneral spectateGeneral;
+    private final SpectateUtilsCycle spectateCycle;
+
     public SpectateAPI(Spectator plugin) {
         this.plugin = plugin;
         this.spectateInfo = new HashSet<>();
+
+        this.spectateGeneral = new SpectateUtilsGeneral(this);
+        this.spectateCycle = new SpectateUtilsCycle(plugin);
     }
 
     public Set<Player> getSpectators() {
@@ -82,6 +91,30 @@ public class SpectateAPI {
         if(!isSpectator(spectator))
             return;
         getSpectateInfo(spectator).setTarget(target);
+    }
+
+    public void dismount(Player spectator) {
+        if(!isSpectator(spectator) || spectator.getGameMode() != GameMode.SPECTATOR)
+            return;
+        setRelation(spectator, null);
+        spectator.setSpectatorTarget(null);
+        plugin.getInventory().resetInventory(spectator);
+    }
+
+    public void hideArmorstands(Player spectator) {
+        SpectateInformation info = getSpectateInfo(spectator);
+        if(info == null)
+            return;
+
+        info.hideArmorstands();
+    }
+
+    public void showArmorstands(Player spectator) {
+        SpectateInformation info = getSpectateInfo(spectator);
+        if(info == null)
+            return;
+
+        info.restoreArmorstands();
     }
 
 

@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -17,7 +16,7 @@ public class Config {
     private final Spectator plugin;
     private final int configVersion;
 
-    private FileConfiguration config;
+    private static FileConfiguration CONFIG_FILE_CONFIG;
     @Getter
     private File configFile;
 
@@ -35,7 +34,7 @@ public class Config {
 
         if(serverVersion < 18) {
             saveDefaultConfig(plugin);
-            if(config.getInt("ConfigVersion") < configVersion) replaceConfig(true);
+            if(CONFIG_FILE_CONFIG.getInt("ConfigVersion") < configVersion) replaceConfig(true);
             showTargetMode = getString(Paths.CONFIG_CYCLE_SHOW_TARGET);
             notifyTargetMode = getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET);
             return;
@@ -44,157 +43,140 @@ public class Config {
         try {
             configFile = new File(plugin.getDataFolder(), "config.yml");
             if(!configFile.exists()) {
-                config = new YamlConfiguration();
-                config.save(configFile);
+                CONFIG_FILE_CONFIG = new YamlConfiguration();
+                CONFIG_FILE_CONFIG.save(configFile);
             }
-            config = YamlConfiguration.loadConfiguration(configFile);
+            CONFIG_FILE_CONFIG = YamlConfiguration.loadConfiguration(configFile);
 
-            config.options().setHeader(comments(false,
-                    "This is the configuration file of the plugin. Everything should be self-explanatory",
+            CONFIG_FILE_CONFIG.options().setHeader(List.of("This is the configuration file of the plugin. Everything should be self-explanatory",
                     "If there is anything unclear, first take a look into the GitHub wiki:",
                     "https://github.com/CuzIm1Tigaaa/Spectator/wiki"));
 
-            set(Paths.CONFIG_VERSION, comments(false,
+            set(Paths.CONFIG_VERSION, configVersion, "",
                     "This is the current version of the config, DO NOT CHANGE!",
                     "If the version changes, the plugin will automatically",
-                    "backup your current config and create a new one"), configVersion);
+                    "backup your current config and create a new one");
 
-            set("Settings", comments(true), null);
+            set("Settings", null, "");
 
-            set(Paths.CONFIG_DEBUG, comments(true,
+            set(Paths.CONFIG_DEBUG, false, "",
                     "This prints different debug messages in the server console",
-                    "Can be useful for reporting problems"), false);
+                    "Can be useful for reporting problems");
 
-            set(Paths.CONFIG_NOTIFY_UPDATE, comments(true,
+            set(Paths.CONFIG_NOTIFY_UPDATE, true, "",
                     "If the plugin gets updated, players with the following permission",
                     "will receive a message when they join",
-                    "Permission: spectator.notify.update"), true);
+                    "Permission: spectator.notify.update");
 
-            set(Paths.CONFIG_LANGUAGE, comments(true,
+            set(Paths.CONFIG_LANGUAGE, "en_US", "",
                     "Specify which language file should be used by the plugin",
-                    "You can also add new languages! :)"), "en_US");
+                    "You can also add new languages! :)");
 
-            set(Paths.CONFIG_HIDE_PLAYERS_TAB, comments(true,
+            set(Paths.CONFIG_HIDE_PLAYERS_TAB, true, "",
                     "Spectators with the first following permission will be hidden in the tablist",
                     "Can be bypassed by players with the second permission.",
                     "Permission 1: spectator.utils.hidetab",
-                    "Permission 2: spectator.bypass.tablist"), true);
+                    "Permission 2: spectator.bypass.tablist");
 
-            set(Paths.CONFIG_CYCLE_KICK_PLAYERS, comments(true,
-                    "Cycling players cannot be kicked by any other player."), false);
+            set(Paths.CONFIG_CYCLE_KICK_PLAYERS, false, "",
+                    "Cycling players cannot be kicked by any other player.");
 
-            set(Paths.CONFIG_NOTIFY_CURRENT_TARGET, comments(true,
+            set(Paths.CONFIG_NOTIFY_CURRENT_TARGET, "NONE", "",
                     "Shows a message to target players that they are being spectated",
                     "Possible values are (without quotation):",
-                    "\"CHAT\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\""), "NONE");
+                    "\"CHAT\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\"");
             notifyTargetMode = getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET);
 
-            set(Paths.CONFIG_HIDE_ARMOR_STANDS, comments(true,
+            set(Paths.CONFIG_HIDE_ARMOR_STANDS, false, "",
                     "Hides all invisible armor stands for spectators",
                     "Can be toggled with the following command",
-                    "/spectate -armorstand"), false);
+                    "/spectate -armorstand");
 
 
-            set("Settings.Save", comments(true), null);
+            set("Settings.Save", null, "");
 
-            set(Paths.CONFIG_SAVE_PLAYERS_LOCATION, comments(true,
+            set(Paths.CONFIG_SAVE_PLAYERS_LOCATION, true, "",
                     "The players' location (where he executed /spec) will be saved",
                     "Otherwise when the player leaves spectator mode, he will be at",
-                    "his current location, equals to /spectatehere."), true);
+                    "his current location, equals to /spectatehere.");
 
-            set(Paths.CONFIG_SAVE_PLAYERS_FLIGHT_MODE, comments(true,
+            set(Paths.CONFIG_SAVE_PLAYERS_FLIGHT_MODE, true, "",
                     "The players' flight mode will be saved. Otherwise, when the player",
                     "leaves spectator mode, he won't be he won't be flying anymore.",
-                    "Requires allow-flight to true in server.properties!"), true);
+                    "Requires allow-flight to true in server.properties!");
 
-            set(Paths.CONFIG_SAVE_PLAYERS_DATA, comments(true,
+            set(Paths.CONFIG_SAVE_PLAYERS_DATA, true, "",
                     "The players' data will be saved. This includes remaining air and the",
                     "burning time. Otherwise, when the player leaves spectator mode, all",
-                    "these values reset to default."), true);
+                    "these values reset to default.");
 
-            set("Settings.Mirror", comments(true), null);
+            set("Settings.Mirror", null, "");
 
-            set(Paths.CONFIG_MIRROR_TARGET_EFFECTS, comments(true,
+            set(Paths.CONFIG_MIRROR_TARGET_EFFECTS, true, "",
                     "Get all effects a spectator target currently has",
-                    "Requires following permission: spectator.utils.mirroreffects"), true);
+                    "Requires following permission: spectator.utils.mirroreffects");
 
-            set(Paths.CONFIG_MIRROR_TARGETS_INVENTORY, comments(true,
+            set(Paths.CONFIG_MIRROR_TARGETS_INVENTORY, true, "",
                     "Adds all inventory content of your spectator target in your inventory",
-                    "Requires following permission: spectator.utils.mirrorinventory"), true);
+                    "Requires following permission: spectator.utils.mirrorinventory");
 
-            set("Settings.Inventory", comments(true), null);
+            set("Settings.Inventory", null, "");
 
-            set(Paths.CONFIG_INVENTORY_CONTAINERS, comments(true,
+            set(Paths.CONFIG_INVENTORY_CONTAINERS, true, "",
                     "Allows spectators with the following permission to see into containers their target opens",
                     "Only available for the following types of containers:",
                     "BARREL; BLAST_FURNACE; BREWING_STAND; (TRAPPED-)CHEST; DISPENSER; DROPPER; FURNACE; HOPPER; SMOKER; SHULKER_BOX; LECTERN",
-                    "Permission: spectator.utils.opencontainers"), true);
+                    "Permission: spectator.utils.opencontainers");
 
-            set(Paths.CONFIG_INVENTORY_ENDER_CHEST, comments(true,
+            set(Paths.CONFIG_INVENTORY_ENDER_CHEST, false, "",
                     "Allows spectators with the following permission to see into their target's enderchest",
                     "Only when the target opens a physically enderchest!",
-                    "Permission: spectator.utils.openenderchest"), false);
+                    "Permission: spectator.utils.openenderchest");
 
-            set("Settings.Cycle", comments(true), null);
+            set("Settings.Cycle", null, "");
 
-            set(Paths.CONFIG_CYCLE_NO_PLAYERS, comments(true,
+            set(Paths.CONFIG_CYCLE_NO_PLAYERS, true, "",
                     "Allows starting cycling even with no players online",
                     "Cycle will then work, when players are online!",
-                    "Might be useful when using the plugin as a \"camera\""), true);
+                    "Might be useful when using the plugin as a \"camera\"");
 
-            set(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS, comments(true,
+            set(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS, false, "",
                     "The cycle gets paused if there are no longer any players online and will automatically restart",
-                    "Otherwise the cycle will simply be stopped"), false);
+                    "Otherwise the cycle will simply be stopped");
 
-            set(Paths.CONFIG_CYCLE_SHOW_TARGET, comments(true,
+            set(Paths.CONFIG_CYCLE_SHOW_TARGET, "BOSSBAR", "",
                     "Shows a message to cycling players with the name of the current target",
                     "Possible values are (without quotation):",
-                    "\"BOSSBAR\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\""), "BOSSBAR");
+                    "\"BOSSBAR\", \"ACTIONBAR\", \"TITLE\", \"SUBTITLE\", \"NONE\"");
             showTargetMode = getString(Paths.CONFIG_CYCLE_SHOW_TARGET);
 
-            set(Paths.CONFIG_CYCLE_MIN_INTERVAL, comments(true,
+            set(Paths.CONFIG_CYCLE_MIN_INTERVAL, 0, "",
                     "Sets the minimum time, that the cycle mode interval has to be",
-                    "If set to 0, no minimum is set"), 0);
+                    "If set to 0, no minimum is set");
 
-            set(Paths.CONFIG_CYCLE_MAX_INTERVAL, comments(true,
+            set(Paths.CONFIG_CYCLE_MAX_INTERVAL, 0, "",
                     "Sets the maximum time, that the cycle mode interval can be",
-                    "If set to 0, no maximum is set"), 0);
-            config.save(configFile);
+                    "If set to 0, no maximum is set");
+            CONFIG_FILE_CONFIG.save(configFile);
         }catch(IOException exception) {
             plugin.getLogger().log(Level.SEVERE, "An error occurred while loading config", exception);
         }
-        if(config.getInt(Paths.CONFIG_VERSION) < configVersion) replaceConfig(false);
+        if(CONFIG_FILE_CONFIG.getInt(Paths.CONFIG_VERSION) < configVersion) replaceConfig(false);
     }
 
-    private void set(String path, List<String> comment, Object value) {
-        if(value == null && config.getConfigurationSection(path) == null) config.createSection(path);
-        else config.set(path, config.get(path, value));
-        if(comment != null && !comment.isEmpty()) config.setComments(path, comment);
-    }
-
-    private List<String> comments(boolean empty, String... comment) {
-        List<String> comments = new ArrayList<>();
-        if(empty) comments.add(null);
-        if(comment != null && comment.length > 0) comments.addAll(List.of(comment));
-        return comments;
-    }
-
-    public boolean getBoolean(String path) {
-        return config.getBoolean(path);
-    }
-
-    public String getString(String path) {
-        return config.getString(path);
-    }
-
-    public int getInt(String path) {
-        return config.getInt(path);
+    private void set(String path, Object value, String... comment) {
+        if(value == null && CONFIG_FILE_CONFIG.getConfigurationSection(path) == null)
+            CONFIG_FILE_CONFIG.createSection(path);
+        CONFIG_FILE_CONFIG.set(path, CONFIG_FILE_CONFIG.get(path, value));
+        if(comment != null && comment.length > 0)
+            CONFIG_FILE_CONFIG.setComments(path, List.of(comment));
     }
 
     private void replaceConfig(boolean old) {
         int i = 1;
         File backUp = new File(plugin.getDataFolder(), "configBackUp_" + i + ".yml");
-        while(backUp.exists()) backUp = new File(plugin.getDataFolder(), "configBackUp_" + (i++) + ".yml");
+        while(backUp.exists())
+            backUp = new File(plugin.getDataFolder(), "configBackUp_" + (i++) + ".yml");
 
         try {
             Files.copy(configFile.toPath(), backUp.toPath());
@@ -209,8 +191,23 @@ public class Config {
     }
 
     public void saveDefaultConfig(Spectator plugin) {
-        if (configFile == null) configFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!configFile.exists()) plugin.saveResource("config.yml", false);
-        config = YamlConfiguration.loadConfiguration(configFile);
+        if (configFile == null)
+            configFile = new File(plugin.getDataFolder(), "config.yml");
+        if (!configFile.exists())
+            plugin.saveResource("config.yml", false);
+        CONFIG_FILE_CONFIG = YamlConfiguration.loadConfiguration(configFile);
+    }
+
+
+    public static boolean getBoolean(String path) {
+        return CONFIG_FILE_CONFIG.getBoolean(path);
+    }
+
+    public static String getString(String path) {
+        return CONFIG_FILE_CONFIG.getString(path);
+    }
+
+    public static int getInt(String path) {
+        return CONFIG_FILE_CONFIG.getInt(path);
     }
 }

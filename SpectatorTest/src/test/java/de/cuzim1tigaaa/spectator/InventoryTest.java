@@ -1,18 +1,14 @@
 package de.cuzim1tigaaa.spectator;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import de.cuzim1tigaaa.spectator.files.Config;
 import de.cuzim1tigaaa.spectator.listener.ContainerListenerTest;
 import org.bukkit.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.InvalidPluginException;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 

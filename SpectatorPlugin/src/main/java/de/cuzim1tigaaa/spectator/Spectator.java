@@ -10,7 +10,7 @@ import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
 import de.cuzim1tigaaa.spectator.listener.SpectatorListener;
 import de.cuzim1tigaaa.spectator.player.Inventory;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,22 +25,19 @@ public class Spectator extends JavaPlugin {
     private static Spectator plugin;
 
     private SpectateAPI spectateAPI;
-    private SpectateUtils spectateUtils;
+    private SpectateUtilsGeneral spectateUtils;
     private UpdateChecker updateChecker;
 
     private MultiverseCore multiverseCore;
     private boolean papiInstalled;
-
-    private Config spectatorConfig;
     private Inventory inventory;
-    private Messages messages;
 
     @Override
     public void onEnable() {
         this.info();
 
         this.spectateAPI = new SpectateAPI(this);
-        this.spectateUtils = new SpectateUtils(this);
+        this.spectateUtils = new SpectateUtilsGeneral(this);
         this.updateChecker = new UpdateChecker(this);
 
         register();
@@ -54,17 +51,6 @@ public class Spectator extends JavaPlugin {
         this.inventory.restoreAll();
 
         plugin = null;
-    }
-
-
-    public void reload() {
-        this.getLogger().info("Loading config settings…");
-        spectatorConfig = new Config(this);
-        spectatorConfig.loadConfig();
-
-        this.getLogger().info("Loading plugin messages…");
-        messages = new Messages(this);
-        messages.loadLanguageFile();
     }
 
     private void register() {
@@ -96,15 +82,26 @@ public class Spectator extends JavaPlugin {
         new UnSpectate(this);
     }
 
+    public void reload() {
+        this.getLogger().info("Loading config settings…");
+        new Config(this).loadConfig();
+
+        this.getLogger().info("Loading plugin messages…");
+        new Messages(this).loadLanguageFile();
+    }
+
     private void info() {
-        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        this.getLogger().info("Plugin: " + getDescription().getName() + ", " +
-                "v" + getDescription().getVersion() + " by " + getDescription().getAuthors().get(0));
-        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        this.getLogger().info("This Plugin is a modified Version");
-        this.getLogger().info("of kosakriszi's spectator Plugin!");
-        this.getLogger().info("spigotmc.org/resources/spectator.16745/");
-        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        this.getLogger().info(String.format("""
+                -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+                Plugin %s, v%s by %s
+                -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+                This Plugin is a modified Version
+                of kosakriszi's spectator Plugin!
+                spigotmc.org/resources/spectator.16745/
+                -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+                """, this.getDescription().getName(),
+                this.getDescription().getVersion(),
+                this.getDescription().getAuthors().get(0)));
     }
 
     public List<String> getOnlinePlayerNames() {
@@ -113,9 +110,8 @@ public class Spectator extends JavaPlugin {
         return names;
     }
 
-    public void debug(String message) {
-        if(!spectatorConfig.getBoolean(Paths.CONFIG_DEBUG))
-            return;
-        getPlugin().getLogger().info(message);
+    public static void debug(String message) {
+        if (Config.getBoolean(Paths.CONFIG_DEBUG))
+            getPlugin().getLogger().info(message);
     }
 }

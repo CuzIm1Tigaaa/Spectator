@@ -3,7 +3,7 @@ package de.cuzim1tigaaa.spectator.commands;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
@@ -14,7 +14,7 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class SpectateHere implements CommandExecutor, TabCompleter {
 
-	private final SpectateUtils spectateUtils;
+	private final SpectateUtilsGeneral spectateUtils;
 
     public SpectateHere(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatehere")).setExecutor(this);

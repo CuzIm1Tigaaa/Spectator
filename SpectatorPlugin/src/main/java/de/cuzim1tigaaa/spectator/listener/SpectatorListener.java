@@ -3,7 +3,7 @@ package de.cuzim1tigaaa.spectator.listener;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,7 +23,7 @@ public class SpectatorListener implements Listener {
 	public static final Set<UUID> gameModeChangeAllowed = new HashSet<>();
 
 	private final Spectator plugin;
-	private final SpectateUtils spectateUtils;
+	private final SpectateUtilsGeneral spectateUtils;
 
 	public SpectatorListener(Spectator plugin) {
 		this.plugin = plugin;

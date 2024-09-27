@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Getter
-public class SpectateUtils {
+public class SpectateUtilsGeneral {
 
 	private final Spectator plugin;
 	private final SpectateAPI spectateAPI;
@@ -31,9 +31,9 @@ public class SpectateUtils {
 	private final Map<UUID, Location> spectateStartLocation = new HashMap<>();
 	private final Map<UUID, CycleTask> spectateCycle;
 
-	public SpectateUtils(Spectator plugin) {
-		this.plugin = plugin;
-		this.spectateAPI = plugin.getSpectateAPI();
+	public SpectateUtilsGeneral(SpectateAPI spectateAPI) {
+		this.plugin = spectateAPI.getPlugin();
+		this.spectateAPI = spectateAPI;
 
 		this.spectateCycle = new HashMap<>();
 
@@ -41,12 +41,25 @@ public class SpectateUtils {
 	}
 
 	private void run() {
-		Bukkit.getScheduler().runTaskTimer(plugin, () -> {}, 0, 10);
+		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+			spectateAPI.getSpectators().forEach(spectator -> {
+				SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
+				if(info == null) {
+					unspectate(spectator, false);
+					return;
+				}
+
+				if(info.getTarget() == null)
+					return;
+
+				plugin.getInventory().getTargetInventory(spectator, info.getTarget());
+			});
+		}, 0, 15);
 	}
 
 
 	public void spectate(Player spectator, Player target) {
-		spectateAPI.getSpectatorsOf(spectator).forEach(this::dismount);
+		spectateAPI.getSpectatorsOf(spectator).forEach(spectateAPI::dismount);
 
 		SpectateInformation info;
 		if(spectateAPI.isSpectator(spectator)) {
@@ -55,19 +68,50 @@ public class SpectateUtils {
 		}else
 			info = new SpectateInformation(spectator, target);
 
-		boolean switchWorld = false;
 		spectateAPI.toggleTabList(spectator, true);
-		if(target != null && !Objects.equals(spectator.getWorld(), target.getWorld())) {
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN), 1);
-			switchWorld = true;
+
+		spectator.setGameMode(GameMode.SPECTATOR);
+
+		if(target != null) {
+			Bukkit.getScheduler().runTask(plugin, () -> {
+				spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
+				spectator.setSpectatorTarget(target);
+			});
 		}
 
-		if(switchWorld) {
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectate(spectator, target, info), 10L);
-			return;
-		}
-		spectate(spectator, target, info);
+		info.hideArmorstands();
+		info.saveAttributes();
+		notifyTarget(target, spectator, true);
 	}
+
+	public void spectateNext(Player spectator, Player target) {
+
+
+	}
+
+	public void unspectate(Player spectator, boolean oldLocation) {
+		SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
+		if(info == null)
+			return;
+
+		spectateAPI.dismount(spectator);
+		info.restoreArmorstands();
+
+		Location location = spectateStartLocation.getOrDefault(spectator.getUniqueId(), spectator.getLocation());
+		if(!oldLocation || !Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION)) {
+			Spectator.debug(String.format("Saved Location: %s", location));
+			Spectator.debug("Using current location of player");
+		}
+
+		if(!Objects.equals(spectator.getWorld(), location.getWorld()))
+			info.restoreAttributes(true);
+
+		Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN));
+		spectateAPI.toggleTabList(spectator, false);
+		info.restoreAttributes(true);
+	}
+
+
 
 	private void spectate(Player spectator, Player target, SpectateInformation info) {
 		if(info.getState() == SpectateState.SPECTATING && !info.getAttributes().containsKey(spectator.getWorld()))
@@ -103,7 +147,7 @@ public class SpectateUtils {
 		info.restoreAttributes(false);
 	}
 
-	public void unspectate(Player spectator, boolean oldLocation) {
+	public void unspectate(Player spectator) {
 		if(!isSpectator(spectator))
 			return;
 
@@ -135,87 +179,12 @@ public class SpectateUtils {
 	}
 
 
-	public void dismount(Player spectator) {
-		if(!spectateAPI.isSpectator(spectator) || spectator.getGameMode() != GameMode.SPECTATOR)
-			return;
-		spectateAPI.setRelation(spectator, null);
-		spectator.setSpectatorTarget(null);
-		Inventory.resetInventory(spectator);
-	}
+
 
 	public void restore() {
 		spectateAPI.getSpectators().forEach(p ->
 				unspectate(p, false));
 	}
-
-
-
-
-	public void startCycle(Player spectator, CycleTask cycle) {
-		if(isCycling(spectator))
-			return;
-
-		spectate(spectator, null);
-		SpectateInformation info = getSpectateInformation(spectator);
-		info.setTarget(null);
-		info.setState(SpectateState.CYCLING);
-		this.spectateCycle.put(spectator.getUniqueId(), cycle);
-		spectateInfo.replace(spectator.getUniqueId(), info);
-		cycle.startTask(this.plugin);
-	}
-
-	public void stopCycle(Player spectator) {
-		if(!isCycling(spectator))
-			return;
-
-		SpectateInformation info = getSpectateInformation(spectator);
-		this.spectateCycle.get(spectator.getUniqueId()).stopTask();
-
-		info.setState(SpectateState.SPECTATING);
-		this.spectateCycle.remove(spectator.getUniqueId());
-		spectateInfo.replace(spectator.getUniqueId(), info);
-		dismount(spectator);
-	}
-
-	public void restartCycle(Player spectator) {
-		if(!isPaused(spectator))
-			return;
-
-		SpectateInformation info = getSpectateInformation(spectator);
-		info.setTarget(null);
-		info.setState(SpectateState.CYCLING);
-		spectateInfo.replace(spectator.getUniqueId(), info);
-		this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
-	}
-
-	public void pauseCycle(Player spectator) {
-		if(!isCycling(spectator))
-			return;
-
-		SpectateInformation info = getSpectateInformation(spectator);
-		CycleTask cycle = this.spectateCycle.get(spectator.getUniqueId()).stopTask();
-
-		this.spectateCycle.put(spectator.getUniqueId(), cycle);
-		info.setState(SpectateState.PAUSED);
-		spectateInfo.replace(spectator.getUniqueId(), info);
-		dismount(spectator);
-	}
-
-	public void teleportNextPlayer(Player spectator) {
-		if(!isCycling(spectator))
-			return;
-
-		if(getCycleTask(spectator) != null) {
-			this.spectateCycle.get(spectator.getUniqueId()).stopTask();
-			this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
-		}
-	}
-
-
-
-
-
-
 
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {
 		if(target == null)

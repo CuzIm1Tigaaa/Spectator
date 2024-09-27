@@ -1,7 +1,7 @@
 package de.cuzim1tigaaa.spectator.extensions;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 public class Placeholders extends PlaceholderExpansion {
 
 	private final Spectator plugin;
-	private final SpectateUtils spectateUtils;
+	private final SpectateAPI spectateAPI;
 
 	public Placeholders(Spectator plugin) {
 		this.plugin = plugin;
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateAPI = plugin.getSpectateAPI();
 	}
 
 	@Override
@@ -46,34 +46,34 @@ public class Placeholders extends PlaceholderExpansion {
 
 		switch(params.toLowerCase()) {
 			case "target" -> {
-				if(spectateUtils.getTargetOf(player) == null)
+				if(spectateAPI.getTargetOf(player) == null)
 					return null;
-				return spectateUtils.getTargetOf(player).getName();
+				return spectateAPI.getTargetOf(player).getName();
 			}
 			case "target_displayname" -> {
-				if(spectateUtils.getTargetOf(player) == null)
+				if(spectateAPI.getTargetOf(player) == null)
 					return null;
-				return spectateUtils.getTargetOf(player).getDisplayName();
+				return spectateAPI.getTargetOf(player).getDisplayName();
 			}
 			case "target_spectators" -> {
-				if(spectateUtils.getSpectators().isEmpty())
+				if(spectateAPI.getSpectators().isEmpty())
 					return null;
-				return spectateUtils.getSpectatorsOf(player).stream().map(Player::getName).collect(Collectors.joining(", "));
+				return spectateAPI.getSpectatorsOf(player).stream().map(Player::getName).collect(Collectors.joining(", "));
 			}
 			case "state" -> {
-				if(spectateUtils.getSpectateInformation(player) == null)
+				if(spectateAPI.getSpectateInfo(player) == null)
 					return "NONE";
-				return spectateUtils.getSpectateInformation(player).getState().name();
+				return spectateAPI.getSpectateInfo(player).getState().name();
 			}
 			case "cycle_interval" -> {
-				if(spectateUtils.isCycling(player))
-					return String.valueOf(spectateUtils.getSpectateCycle().get(player.getUniqueId()).getInterval());
+				if(spectateAPI.isCyclingSpectator(player))
+					return String.valueOf(spectateAPI.getCycleTask(player).getInterval());
 				return null;
 			}
 			case "spectators" -> {
-				if(spectateUtils.getSpectators().isEmpty())
+				if(spectateAPI.getSpectators().isEmpty())
 					return null;
-				return spectateUtils.getSpectators().stream().map(Player::getName).collect(Collectors.joining(", "));
+				return spectateAPI.getSpectators().stream().map(Player::getName).collect(Collectors.joining(", "));
 			}
 			default -> {
 				return null;

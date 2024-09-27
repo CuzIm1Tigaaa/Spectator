@@ -4,13 +4,10 @@ import be.seeseemelk.mockbukkit.*;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import de.cuzim1tigaaa.spectator.Constants;
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.Config;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.junit.jupiter.api.*;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -62,7 +59,7 @@ public class SpectatorListenerTest {
 		assert target.getPlayer() != null;
 
 		assertTrue(player.performCommand("spectate " + target.getName()));
-		final SpectateUtils utils = plugin.getSpectateUtils();
+		final SpectateUtilsGeneral utils = plugin.getSpectateUtils();
 		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
 		assertTrue(utils.isSpectating(player, target), String.format("%s should be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
 

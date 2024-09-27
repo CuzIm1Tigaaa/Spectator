@@ -1,10 +1,11 @@
 package de.cuzim1tigaaa.spectator.commands;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Config;
 import de.cuzim1tigaaa.spectator.files.Paths;
 import de.cuzim1tigaaa.spectator.spectate.SpectateInformation;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -18,12 +19,12 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class Spectate implements CommandExecutor, TabCompleter {
 
 	private final Spectator plugin;
-	private final SpectateUtils spectateUtils;
+	private final SpectateAPI spectateAPI;
 
 	public Spectate(Spectator plugin) {
 		Objects.requireNonNull(plugin.getCommand("spectate")).setExecutor(this);
 		this.plugin = plugin;
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateAPI = plugin.getSpectateAPI();
 	}
 
 	@Override
@@ -41,15 +42,15 @@ public class Spectate implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-				if(spectateUtils.isSpectator(target)) {
-					spectateUtils.unspectate(target, true);
+				if(spectateAPI.isSpectator(target)) {
+					spectateAPI.unspectate(target, true);
 					target.sendMessage(getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
 					sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER, "TARGET", target.getName()));
 					return true;
 				}
 
-				spectateUtils.getSpectateStartLocation().put(target.getUniqueId(), target.getLocation());
-				spectateUtils.spectate(target, null);
+				spectateAPI.getSpectateStartLocation().put(target.getUniqueId(), target.getLocation());
+				spectateAPI.spectate(target, null);
 				target.sendMessage(getMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
 				sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", target.getName()));
 				return true;
@@ -69,12 +70,12 @@ public class Spectate implements CommandExecutor, TabCompleter {
 				return true;
 			}
 
-			if(spectateUtils.isSpectator(target)) {
+			if(spectateAPI.isSpectator(target)) {
 				sender.sendMessage(getMessage(sender, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
 				return true;
 			}
-			spectateUtils.getSpectateStartLocation().put(spectator.getUniqueId(), spectator.getLocation());
-			spectateUtils.spectate(spectator, target);
+			spectateAPI.getSpectateStartLocation().put(spectator.getUniqueId(), spectator.getLocation());
+			spectateAPI.spectate(spectator, target);
 			spectator.sendMessage(getMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
 			sender.sendMessage(getMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", spectator.getName()));
 			return true;
@@ -86,31 +87,30 @@ public class Spectate implements CommandExecutor, TabCompleter {
 		}
 
 		if(args.length == 0 || !hasPermission(player, COMMAND_SPECTATE_OTHERS)) {
-			if(spectateUtils.isSpectator(player)) {
-				spectateUtils.unspectate(player, true);
+			if(spectateAPI.isSpectator(player)) {
+				spectateAPI.unspectate(player, true);
 				player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
 				return true;
 			}
-			spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
-			spectateUtils.spectate(player, null);
+			spectateAPI.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
+			spectateAPI.spectate(player, null);
 			player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
 			return true;
 		}
 
 		if(hasPermission(player, UTILS_HIDE_ARMORSTAND)) {
 			if(args[0].equalsIgnoreCase("-armorstand") && Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS)) {
-				SpectateInformation info = spectateUtils.getSpectateInformation(player);
-				if(info == null) {
+				if(!spectateAPI.isSpectator(player)) {
 					player.sendMessage(getMessage(player, Paths.MESSAGES_GENERAL_NOTSPECTATOR));
 					return true;
 				}
-
+				SpectateInformation info = spectateAPI.getSpectateInfo(player);
 				info.setHideArmorStands(!info.isHideArmorStands());
 				if(info.isHideArmorStands()) {
-					info.hideArmorstands();
+					spectateAPI.hideArmorstands(player);
 					player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF));
 				}else {
-					info.restoreArmorstands();
+					spectateAPI.showArmorstands(player);
 					player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON));
 				}
 				return true;
@@ -128,12 +128,12 @@ public class Spectate implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
-		if(spectateUtils.isSpectating(player, target)) {
+		if(spectateAPI.isSpectating(player, target)) {
 			player.sendMessage(getMessage(player, Paths.MESSAGES_GENERAL_SAMEPLAYER, "TARGET", target.getName()));
 			return true;
 		}
 
-		if(spectateUtils.isSpectating(target, player) || hasPermission(target, BYPASS_SPECTATED)) {
+		if(spectateAPI.isSpectating(target, player) || hasPermission(target, BYPASS_SPECTATED)) {
 			if(!hasPermission(player, BYPASS_SPECTATEALL)) {
 				player.sendMessage(getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
 				return true;
@@ -149,8 +149,8 @@ public class Spectate implements CommandExecutor, TabCompleter {
 				}
 			}
 		}
-		spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
-		spectateUtils.spectate(player, target);
+		spectateAPI.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
+		spectateAPI.getSpectateGeneral().spectate(player, target);
 		player.sendMessage(getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName()));
 		return true;
 	}

@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class Displays {
 
 	private final Spectator plugin;
-	private final SpectateUtils spectateUtils;
+	private final SpectateUtilsGeneral spectateUtils;
 
 	public Displays(Spectator plugin) {
 		this.plugin = plugin;

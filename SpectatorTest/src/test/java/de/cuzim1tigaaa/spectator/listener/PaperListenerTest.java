@@ -1,17 +1,13 @@
 package de.cuzim1tigaaa.spectator.listener;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import de.cuzim1tigaaa.spectator.Constants;
 import de.cuzim1tigaaa.spectator.Spectator;
-import de.cuzim1tigaaa.spectator.files.Config;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.*;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,7 +45,7 @@ public class PaperListenerTest {
 		assert target.getPlayer() != null;
 
 		assertTrue(player.performCommand("spectate " + Constants.Target));
-		final SpectateUtils utils = plugin.getSpectateUtils();
+		final SpectateUtilsGeneral utils = plugin.getSpectateUtils();
 		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
 		assertTrue(utils.isSpectating(player, target), String.format("%s should be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
 

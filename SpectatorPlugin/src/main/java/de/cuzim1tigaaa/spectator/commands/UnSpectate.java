@@ -3,7 +3,7 @@ package de.cuzim1tigaaa.spectator.commands;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class UnSpectate implements CommandExecutor, TabCompleter {
 
     private final Spectator plugin;
-    private final SpectateUtils spectateUtils;
+    private final SpectateUtilsGeneral spectateUtils;
 
     public UnSpectate(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("unspectate")).setExecutor(this);

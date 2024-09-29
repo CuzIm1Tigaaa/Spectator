@@ -1,6 +1,5 @@
 package de.cuzim1tigaaa.spectator.cycle;
 
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Permissions;
 import lombok.Getter;
@@ -21,7 +20,7 @@ public class Cycle {
 	@Getter
 	private Player lastPlayer;
 
-	private final List<Player> alreadyVisited;
+	private final Set<Player> alreadyVisited;
 	private List<Player> toVisit;
 
 	public Cycle(Player owner, Player last, boolean alphabetical) {
@@ -29,28 +28,33 @@ public class Cycle {
 		this.lastPlayer = last;
 		this.alphabetical = alphabetical;
 
-		this.alreadyVisited = new ArrayList<>();
-		this.toVisit = new ArrayList<>();
+		this.alreadyVisited = new HashSet<>();
+		this.toVisit = Collections.emptyList();
 	}
 
 	public Player getNextTarget(Spectator plugin) {
-		updateLists(plugin);
-		if(toVisit.isEmpty()) {
+		if(toVisit.isEmpty())
 			alreadyVisited.clear();
-			updateLists(plugin);
 
-			if(toVisit.isEmpty())
-				return null;
+		updateLists(plugin);
+
+		if(toVisit.isEmpty())
+			return null;
+
+		Player target;
+		if(alphabetical) {
+			target = toVisit.stream()
+					.sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()))
+					.filter(p -> !p.equals(lastPlayer))
+					.findFirst().orElse(toVisit.get(0));
+		}else {
+			do {
+				target = toVisit.get(random.nextInt(toVisit.size()));
+			}while(toVisit.size() > 1 && target.equals(lastPlayer));
 		}
 
-		Player target = alphabetical ? toVisit.stream().sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName())).toList().get(0) :
-				toVisit.get(random.nextInt(toVisit.size()));
-
-		plugin.debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
+		Spectator.debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
 				toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
-
-		if(toVisit.size() > 1 && target.equals(lastPlayer))
-			return getNextTarget(plugin);
 
 		return visit(target);
 	}
@@ -62,22 +66,16 @@ public class Cycle {
 	}
 
 	private void updateLists(Spectator plugin) {
-		toVisit.addAll(plugin.getSpectateAPI().getSpectateablePlayers());
-		toVisit.remove(owner);
-		toVisit.removeIf(p -> p == null || !p.isOnline());
-
-		if(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL))
-			toVisit.removeIf(p -> p.hasPermission(Permissions.BYPASS_SPECTATED));
-
-		if(plugin.getMultiverseCore() != null && plugin.getMultiverseCore().getMVConfig().getEnforceAccess()) {
-			toVisit.removeIf(p -> {
-				MultiverseWorld world = plugin.getMultiverseCore().getMVWorldManager().getMVWorld(p.getWorld());
-				return !owner.hasPermission(world.getAccessPermission());
-			});
-		}
+		Set<Player> updatedToVisit = new HashSet<>(plugin.getSpectateAPI().getSpectateablePlayers());
+		updatedToVisit.remove(owner);
+		updatedToVisit.removeIf(p -> p == null || !p.isOnline() ||
+				(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL) && p.hasPermission(Permissions.BYPASS_SPECTATED)) ||
+				(plugin.getMultiverseCore() != null && plugin.getMultiverseCore().getMVConfig().getEnforceAccess() &&
+						!owner.hasPermission(plugin.getMultiverseCore().getMVWorldManager().getMVWorld(p.getWorld()).getAccessPermission())));
 
 		alreadyVisited.removeIf(p -> !p.isOnline());
-		toVisit.removeAll(alreadyVisited);
-		toVisit = new ArrayList<>(new HashSet<>(toVisit));
+		updatedToVisit.removeAll(alreadyVisited);
+
+		toVisit = new ArrayList<>(updatedToVisit);
 	}
 }

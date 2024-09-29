@@ -37,7 +37,7 @@ public class Spectator extends JavaPlugin {
         this.info();
 
         this.spectateAPI = new SpectateAPI(this);
-        this.spectateUtils = new SpectateUtilsGeneral(this);
+        this.spectateUtils = new SpectateUtilsGeneral(spectateAPI);
         this.updateChecker = new UpdateChecker(this);
 
         register();
@@ -48,7 +48,6 @@ public class Spectator extends JavaPlugin {
     @Override
     public void onDisable() {
         this.spectateUtils.restore();
-        this.inventory.restoreAll();
 
         plugin = null;
     }
@@ -91,17 +90,16 @@ public class Spectator extends JavaPlugin {
     }
 
     private void info() {
-        this.getLogger().info(String.format("""
-                -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-                Plugin %s, v%s by %s
-                -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-                This Plugin is a modified Version
-                of kosakriszi's spectator Plugin!
-                spigotmc.org/resources/spectator.16745/
-                -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-                """, this.getDescription().getName(),
+        getServer().getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        getServer().getLogger().info(String.format("Plugin %s, v%s by %s",
+                this.getDescription().getName(),
                 this.getDescription().getVersion(),
                 this.getDescription().getAuthors().get(0)));
+        getServer().getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+        getServer().getLogger().info("This Plugin is a modified Version");
+        getServer().getLogger().info("of kosakriszi's spectator Plugin!");
+        getServer().getLogger().info("spigotmc.org/resources/spectator.16745/");
+        getServer().getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
     }
 
     public List<String> getOnlinePlayerNames() {

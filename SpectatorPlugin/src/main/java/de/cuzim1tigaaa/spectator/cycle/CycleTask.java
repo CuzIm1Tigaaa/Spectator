@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.cycle;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.listener.TeleportListener;
@@ -38,20 +39,21 @@ public class CycleTask {
 		if(taskId != -1)
 			return;
 
+		final SpectateAPI spectateAPI = plugin.getSpectateAPI();
 		Player spectator = cycle.getOwner();
-		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
+		if(spectateAPI.getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				plugin.getSpectateUtils().stopCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				spectateAPI.getSpectateCycle().stopCycle(spectator);
+				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
 				return;
 			}
-			plugin.getSpectateUtils().pauseCycle(spectator);
-			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+			spectateAPI.getSpectateCycle().pauseCycle(spectator);
+			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE);
 			return;
 		}
 
-		if(!Config.getShowTargetMode().equalsIgnoreCase("BOSSBAR")) {
-			plugin.getDisplays().showCycleDisplay(cycle.getOwner());
+		if(!Config.getString(Paths.CONFIG_CYCLE_SHOW_TARGET).equalsIgnoreCase("BOSSBAR")) {
+//			plugin.getDisplays().showCycleDisplay(cycle.getOwner());
 			setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin), 0, interval * 20L).getTaskId());
 			return;
 		}
@@ -104,15 +106,16 @@ public class CycleTask {
 	}
 
 	public void selectNextPlayer(Spectator plugin) {
+		final SpectateAPI spectateAPI = plugin.getSpectateAPI();
 		Player spectator = cycle.getOwner();
 
-		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
+		if(spectateAPI.getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				plugin.getSpectateUtils().stopCycle(spectator);
+				spectateAPI.getSpectateCycle().stopCycle(spectator);
 				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
 				return;
 			}
-			plugin.getSpectateUtils().pauseCycle(spectator);
+			spectateAPI.getSpectateCycle().pauseCycle(spectator);
 			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE);
 			return;
 		}
@@ -123,10 +126,10 @@ public class CycleTask {
 			return;
 
 		if(last == null || !last.equals(next))
-			plugin.getSpectateUtils().notifyTarget(last, spectator, false);
+			spectateAPI.getSpectateGeneral().notifyTarget(last, spectator, false);
 
 		if(next.getWorld() != spectator.getWorld()) {
-			plugin.getSpectateUtils().dismount(spectator);
+			plugin.getSpectateAPI().dismount(spectator);
 			TeleportListener.getWorldChange().put(spectator.getUniqueId(), next);
 
 			PlayerTeleportEvent event = new PlayerTeleportEvent(spectator, spectator.getLocation(), next.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
@@ -135,7 +138,7 @@ public class CycleTask {
 			getStateChange().put(spectator.getUniqueId(), SpectateState.CYCLING);
 			return;
 		}
-		plugin.getSpectateUtils().spectate(spectator, next);
+		spectateAPI.getSpectateGeneral().spectate(spectator, next);
 	}
 
 	public CycleTask stopTask() {

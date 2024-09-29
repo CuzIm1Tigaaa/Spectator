@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.commands;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
@@ -14,11 +15,13 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class SpectateHere implements CommandExecutor, TabCompleter {
 
+    private final SpectateAPI spectateAPI;
 	private final SpectateUtilsGeneral spectateUtils;
 
     public SpectateHere(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatehere")).setExecutor(this);
-	    this.spectateUtils = plugin.getSpectateUtils();
+        this.spectateAPI = plugin.getSpectateAPI();
+	    this.spectateUtils = spectateAPI.getSpectateGeneral();
     }
 
     @Override
@@ -33,7 +36,7 @@ public class SpectateHere implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if(spectateUtils.isSpectator(player)) {
+        if(spectateAPI.isSpectator(player)) {
             spectateUtils.unspectate(player, false);
             Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);
             return true;

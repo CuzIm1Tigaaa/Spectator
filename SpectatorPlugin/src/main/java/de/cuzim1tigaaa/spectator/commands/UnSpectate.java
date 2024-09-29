@@ -1,9 +1,9 @@
 package de.cuzim1tigaaa.spectator.commands;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -16,12 +16,12 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class UnSpectate implements CommandExecutor, TabCompleter {
 
     private final Spectator plugin;
-    private final SpectateUtilsGeneral spectateUtils;
+    private final SpectateAPI spectateAPI;
 
     public UnSpectate(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("unspectate")).setExecutor(this);
         this.plugin = plugin;
-        this.spectateUtils = plugin.getSpectateUtils();
+        this.spectateAPI = plugin.getSpectateAPI();
     }
 
     @Override
@@ -31,13 +31,13 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if(spectateUtils.getSpectators().isEmpty()) {
+        if(spectateAPI.getSpectators().isEmpty()) {
             Messages.sendMessage(sender, Paths.MESSAGES_COMMANDS_LIST_NONE);
             return true;
         }
 
         if(args.length == 0) {
-            for(Player spectator : spectateUtils.getSpectators()) {
+            for(Player spectator : spectateAPI.getSpectators()) {
                 if(spectator.hasPermission(BYPASS_UNSPECTATED))
                     continue;
                 plugin.getSpectateUtils().unspectate(spectator, true);
@@ -53,7 +53,7 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             oldLocation = Boolean.parseBoolean(args[1]);
 
         if(args[0].equalsIgnoreCase("*")) {
-            for(Player spectator : spectateUtils.getSpectators()) {
+            for(Player spectator : spectateAPI.getSpectators()) {
                 if(spectator.hasPermission(BYPASS_UNSPECTATED))
                     continue;
                 plugin.getSpectateUtils().unspectate(spectator, oldLocation);
@@ -69,14 +69,14 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if(!spectateUtils.isSpectator(target)) {
+        if(!spectateAPI.isSpectator(target)) {
             Messages.sendMessage(sender, Paths.MESSAGES_GENERAL_NOTSPECTATING, "TARGET", target.getName());
             return true;
         }
         if(target.hasPermission(BYPASS_UNSPECTATED))
             return true;
 
-        spectateUtils.unspectate(target, oldLocation);
+        spectateAPI.getSpectateGeneral().unspectate(target, oldLocation);
         Messages.sendMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);
         Messages.sendMessage(sender, Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER, "TARGET", target.getName());
         return true;

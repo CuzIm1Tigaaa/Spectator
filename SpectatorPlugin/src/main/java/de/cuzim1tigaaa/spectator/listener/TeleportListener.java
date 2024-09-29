@@ -99,7 +99,7 @@ public class TeleportListener implements Listener {
 
 		Spectator.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
 		spectateAPI.getSpectatorsOf(player).forEach(spectator -> {
-			plugin.getSpectateUtils().dismount(spectator);
+			spectateAPI.dismount(spectator);
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
 
@@ -143,7 +143,7 @@ public class TeleportListener implements Listener {
 		}
 
 		spectateAPI.setRelation(player, target);
-		plugin.getInventory().getInventory(player, target);
+		plugin.getInventory().getTargetInventory(player, target);
 	}
 
 	private boolean hasAccessToWorld(Player player, World world) {

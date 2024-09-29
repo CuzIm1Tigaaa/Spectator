@@ -9,70 +9,64 @@ public class SpectateUtilsCycle {
 
     private final Spectator plugin;
     private final SpectateAPI spectateAPI;
+    private final SpectateUtilsGeneral spectateUtils;
 
     public SpectateUtilsCycle(Spectator plugin) {
         this.plugin = plugin;
         this.spectateAPI = plugin.getSpectateAPI();
+        this.spectateUtils = plugin.getSpectateUtils();
     }
 
     public void startCycle(Player spectator, CycleTask cycle) {
         if(spectateAPI.isCyclingSpectator(spectator))
             return;
 
-        spectate(spectator, null);
+        spectateUtils.spectate(spectator, null);
         SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
         info.setTarget(null);
         info.setState(SpectateState.CYCLING);
-        this.spectateCycle.put(spectator.getUniqueId(), cycle);
-        spectateInfo.replace(spectator.getUniqueId(), info);
+        info.setCycleTask(cycle);
         cycle.startTask(this.plugin);
     }
 
     public void stopCycle(Player spectator) {
-        if(!isCycling(spectator))
+        if(!spectateAPI.isCyclingSpectator(spectator))
             return;
 
-        SpectateInformation info = getSpectateInformation(spectator);
-        this.spectateCycle.get(spectator.getUniqueId()).stopTask();
-
+        SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
         info.setState(SpectateState.SPECTATING);
-        this.spectateCycle.remove(spectator.getUniqueId());
-        spectateInfo.replace(spectator.getUniqueId(), info);
-        dismount(spectator);
+        info.setCycleTask(null);
+        spectateAPI.dismount(spectator);
     }
 
     public void restartCycle(Player spectator) {
-        if(!isPaused(spectator))
+        if(!spectateAPI.isPausedSpectator(spectator))
             return;
 
-        SpectateInformation info = getSpectateInformation(spectator);
+        SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
         info.setTarget(null);
         info.setState(SpectateState.CYCLING);
-        spectateInfo.replace(spectator.getUniqueId(), info);
-        this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
+        info.getCycleTask().startTask(this.plugin);
     }
 
     public void pauseCycle(Player spectator) {
-        if(!isCycling(spectator))
+        if(!spectateAPI.isCyclingSpectator(spectator))
             return;
 
-        SpectateInformation info = getSpectateInformation(spectator);
-        CycleTask cycle = this.spectateCycle.get(spectator.getUniqueId()).stopTask();
-
-        this.spectateCycle.put(spectator.getUniqueId(), cycle);
+        SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
+        CycleTask cycle = info.getCycleTask().stopTask();
         info.setState(SpectateState.PAUSED);
-        spectateInfo.replace(spectator.getUniqueId(), info);
-        dismount(spectator);
+        spectateAPI.dismount(spectator);
     }
 
     public void teleportNextPlayer(Player spectator) {
-        if(!isCycling(spectator))
+        if(!spectateAPI.isCyclingSpectator(spectator))
             return;
 
-        if(getCycleTask(spectator) != null) {
-            this.spectateCycle.get(spectator.getUniqueId()).stopTask();
-            this.spectateCycle.get(spectator.getUniqueId()).startTask(this.plugin);
+        SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
+        if(spectateAPI.getCycleTask(spectator) != null) {
+            info.getCycleTask().stopTask();
+            info.getCycleTask().startTask(this.plugin);
         }
     }
-
 }

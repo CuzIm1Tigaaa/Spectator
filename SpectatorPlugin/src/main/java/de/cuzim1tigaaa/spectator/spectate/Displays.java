@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.spectate;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
@@ -11,22 +12,22 @@ import org.bukkit.entity.Player;
 public class Displays {
 
 	private final Spectator plugin;
-	private final SpectateUtilsGeneral spectateUtils;
+	private final SpectateAPI spectateAPI;
 
 	public Displays(Spectator plugin) {
 		this.plugin = plugin;
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateAPI = plugin.getSpectateAPI();
 	}
 
 	public void showCycleDisplay(Player spectator) {
-		if(!spectateUtils.isCycling(spectator))
+		if(!spectateAPI.isCyclingSpectator(spectator))
 			return;
 
-		CycleTask task = spectateUtils.getCycleTask(spectator);
+		CycleTask task = spectateAPI.getCycleTask(spectator);
 		if(task == null)
 			return;
 
-		switch(Config.getShowTargetMode().toUpperCase()) {
+		switch(Config.getString(Paths.CONFIG_CYCLE_SHOW_TARGET).toUpperCase()) {
 			case "ACTIONBAR" -> {
 				if(task.getShowTargetTask() != null)
 					Bukkit.getScheduler().cancelTask(task.getShowTargetTask());

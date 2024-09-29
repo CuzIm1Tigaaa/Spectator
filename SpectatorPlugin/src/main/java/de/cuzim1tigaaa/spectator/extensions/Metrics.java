@@ -10,6 +10,7 @@ public class Metrics {
 			return;
 
 		org.bstats.bukkit.Metrics metrics = new org.bstats.bukkit.Metrics(plugin, 12235);
-		metrics.addCustomChart(new SingleLineChart("spectating_players", () -> plugin.getSpectateUtils().getSpectators().size()));
+		metrics.addCustomChart(new SingleLineChart("spectating_players", () ->
+				plugin.getSpectateAPI().getSpectators().size()));
 	}
 }

@@ -4,6 +4,7 @@ import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Config;
 import de.cuzim1tigaaa.spectator.files.Paths;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
@@ -15,7 +16,7 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class Inventory {
 
     private final SpectateAPI spectateAPI;
-    private final Set<PlayerInventory> playerInventories;
+    @Getter private final Set<PlayerInventory> playerInventories;
 
     public Inventory(Spectator plugin) {
         this.spectateAPI = plugin.getSpectateAPI();
@@ -31,7 +32,9 @@ public class Inventory {
         if(hasPermission(target, BYPASS_SPECTATED))
             return;
 
-        playerInventories.add(new PlayerInventory(spectator));
+        if(playerInventories.stream().noneMatch(p -> p.getPlayer().equals(spectator)))
+            playerInventories.add(new PlayerInventory(spectator));
+
         if(hasPermission(spectator, UTILS_MIRROR_INVENTORY) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGETS_INVENTORY))
             spectator.getInventory().setContents(target.getInventory().getContents());
 
@@ -51,7 +54,6 @@ public class Inventory {
 
         spectator.getInventory().setContents(playerInventory.getContents());
         spectator.addPotionEffects(playerInventory.getEffects());
-        playerInventories.remove(playerInventory);
     }
 
     private void clearActivePotionEffects(Player spectator) {
@@ -64,46 +66,16 @@ public class Inventory {
             spectator.addPotionEffects(new HashSet<>(target.getActivePotionEffects()));
     }
 
-
-
-    public void getInventory(Player spectator, Player target) {
-        spectator.getInventory().clear();
-        clearActivePotionEffects(spectator);
-
-        if(target == null)
-            return;
-
-        if(hasPermission(target, BYPASS_SPECTATED))
-            return;
-
-        if(hasPermission(spectator, UTILS_MIRROR_INVENTORY) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGETS_INVENTORY))
-            spectator.getInventory().setContents(target.getInventory().getContents());
-
-        if(hasPermission(spectator, UTILS_MIRROR_EFFECTS) && Config.getBoolean(Paths.CONFIG_MIRROR_TARGET_EFFECTS))
-            addPotionEffectsOfTarget(spectator, target);
-    }
-
     public void resetInventory(Player spectator) {
         if(!spectateAPI.isSpectator(spectator))
             return;
 
-        spectator.getInventory().clear();
-        clearActivePotionEffects(spectator);
-    }
-
-    public void restoreInventory(Player spectator, PlayerAttributes pAttributes) {
-        if(pAttributes == null)
+        if(playerInventories.stream().noneMatch(p -> p.getPlayer().equals(spectator)))
             return;
 
-        if(pAttributes.getInventory() != null)
-            spectator.getInventory().setContents(pAttributes.getInventory());
-        if(pAttributes.getEffects() != null)
-            spectator.addPotionEffects(pAttributes.getEffects());
-    }
-
-    public void restoreAll() {
-        Set<Player> players = new HashSet<>(spectateAPI.getSpectators());
-        for(Player spectator : players)
-            if(spectator.isOnline()) restoreInventory(spectator, spectateAPI.getPlayerAttributes(spectator));
+        spectator.getInventory().clear();
+        clearActivePotionEffects(spectator);
+        restorePlayerInventory(spectator);
+        playerInventories.removeIf(p -> p.getPlayer().equals(spectator));
     }
 }

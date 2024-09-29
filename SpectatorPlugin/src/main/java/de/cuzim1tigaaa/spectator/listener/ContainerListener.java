@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.listener;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
@@ -16,12 +17,14 @@ public class ContainerListener implements Listener {
 
 	private final SpectateAPI spectateAPI;
 
-	private final Set<InventoryType> container = Sets.immutableEnumSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
-			InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
-			InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
+	private final ImmutableSet<InventoryType> containers;
 
 	public ContainerListener(Spectator plugin) {
 		this.spectateAPI = plugin.getSpectateAPI();
+
+		Set<InventoryType> containerSet = Sets.newHashSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
+				InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
+				InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
 
 		String version = plugin.getServer().getBukkitVersion();
 		int mayor = Integer.parseInt(version.split("\\.")[1]);
@@ -31,8 +34,10 @@ public class ContainerListener implements Listener {
 				minor = Integer.parseInt(version.split("\\.")[2].split("-")[0]);
 			if(mayor > 20 || minor >= 3)
                 //noinspection UnstableApiUsage
-                container.add(InventoryType.CRAFTER);
+                containerSet.add(InventoryType.CRAFTER);
 		}
+
+		this.containers = ImmutableSet.copyOf(containerSet);
 	}
 
 	/**
@@ -72,7 +77,7 @@ public class ContainerListener implements Listener {
 			spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_ENDERCHEST));
 			if(Config.getBoolean(Paths.CONFIG_INVENTORY_ENDER_CHEST)) inventory = player.getEnderChest();
 		}
-		if(this.container.contains(openedInventory.getType())) {
+		if(this.containers.contains(openedInventory.getType())) {
 			spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_CONTAINER));
 			if(Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))
 				inventory = openedInventory;
@@ -98,7 +103,7 @@ public class ContainerListener implements Listener {
 				return;
 		}
 
-		if(!this.container.contains(openedInventory.getType()))
+		if(!this.containers.contains(openedInventory.getType()))
 			return;
 
 		if(!Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))

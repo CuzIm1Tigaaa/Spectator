@@ -1,5 +1,6 @@
 package de.cuzim1tigaaa.spectator.listener;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
@@ -23,10 +24,12 @@ public class SpectatorListener implements Listener {
 	public static final Set<UUID> gameModeChangeAllowed = new HashSet<>();
 
 	private final Spectator plugin;
+	private final SpectateAPI spectateAPI;
 	private final SpectateUtilsGeneral spectateUtils;
 
 	public SpectatorListener(Spectator plugin) {
 		this.plugin = plugin;
+		this.spectateAPI = plugin.getSpectateAPI();
 		this.spectateUtils = plugin.getSpectateUtils();
 
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
@@ -51,14 +54,14 @@ public class SpectatorListener implements Listener {
 		}
 
 		if(Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB) && !hasPermission(player, BYPASS_TABLIST))
-			spectateUtils.getSpectators().forEach(spectator -> player.hidePlayer(plugin, spectator));
+			spectateAPI.getSpectators().forEach(spectator -> player.hidePlayer(plugin, spectator));
 
 		if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS))
 			return;
 
-		for(Player spectator : spectateUtils.getPausedSpectators()) {
-			spectateUtils.restartCycle(spectator);
-			CycleTask task = spectateUtils.getCycleTask(spectator);
+		for(Player spectator : spectateAPI.getPausedSpectators()) {
+			spectateAPI.getSpectateCycle().restartCycle(spectator);
+			CycleTask task = spectateAPI.getCycleTask(spectator);
 			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
 					"INTERVAL", task.getInterval(), "ORDER", task.getCycle().isAlphabetical() ? "Alphabetic" : "Random");
 		}
@@ -81,7 +84,7 @@ public class SpectatorListener implements Listener {
 		if(!Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS) || !hasPermission(player, UTILS_HIDE_ARMORSTAND))
 			return;
 
-		if(!spectateUtils.isSpectator(player) && !spectateUtils.isCycling(player))
+		if(!spectateAPI.isSpectator(player) && !spectateAPI.isCyclingSpectator(player))
 			return;
 
 		Location from = event.getFrom(),
@@ -96,7 +99,7 @@ public class SpectatorListener implements Listener {
 		player.getNearbyEntities(3, 3, 3).forEach(entity -> {
 			if(entity instanceof ArmorStand) {
 				player.hideEntity(plugin, entity);
-				spectateUtils.getSpectateInformation(player).
+				spectateAPI.getSpectateInfo(player).
 						getHiddenArmorStands().add((ArmorStand) entity);
 			}
 		});
@@ -112,27 +115,27 @@ public class SpectatorListener implements Listener {
 	public void playerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 
-		if(spectateUtils.isSpectator(player)) {
+		if(spectateAPI.isSpectator(player)) {
 			spectateUtils.unspectate(player, true);
 			return;
 		}
 
-		spectateUtils.getSpectators().forEach(spectator -> player.showPlayer(plugin, spectator));
+		spectateAPI.getSpectators().forEach(spectator -> player.showPlayer(plugin, spectator));
 
-		for(Player spectator : spectateUtils.getSpectatorsOf(player)) {
-			spectateUtils.dismount(spectator);
+		for(Player spectator : spectateAPI.getSpectatorsOf(player)) {
+			spectateAPI.dismount(spectator);
 
-			if(!spectateUtils.isCycling(spectator))
+			if(!spectateAPI.isCyclingSpectator(spectator))
 				continue;
 
-			if(player.hasPermission(BYPASS_SPECTATED) || plugin.getSpectateUtils().getSpectateablePlayers().size() - 1 > 0)
+			if(player.hasPermission(BYPASS_SPECTATED) || spectateAPI.getSpectateablePlayers().size() - 1 > 0)
 				continue;
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				spectateUtils.stopCycle(spectator);
+				spectateAPI.getSpectateCycle().stopCycle(spectator);
 				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
 			}else {
-				spectateUtils.pauseCycle(spectator);
+				spectateAPI.getSpectateCycle().pauseCycle(spectator);
 				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE);
 			}
 		}
@@ -149,16 +152,16 @@ public class SpectatorListener implements Listener {
 
 		Player player = event.getPlayer();
 
-		if(!spectateUtils.isSpectator(player))
+		if(!spectateAPI.isSpectator(player))
 			return;
 
-		if(spectateUtils.isCycling(player)) {
+		if(spectateAPI.isCyclingSpectator(player)) {
 			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_DISMOUNT);
 			event.setCancelled(true);
 			return;
 		}
 
-		spectateUtils.dismount(player);
+		spectateAPI.dismount(player);
 	}
 
 	/**
@@ -167,10 +170,10 @@ public class SpectatorListener implements Listener {
 	@EventHandler
 	public void spectatorChangesGameMode(PlayerGameModeChangeEvent event) {
 		Player player = event.getPlayer();
-		if(!spectateUtils.isSpectator(player))
+		if(!spectateAPI.isSpectator(player))
 			return;
 
-		if(!gameModeChangeAllowed.contains(player.getUniqueId()) && !spectateUtils.isCycling(player))
+		if(!gameModeChangeAllowed.contains(player.getUniqueId()) && !spectateAPI.isCyclingSpectator(player))
 			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE);
 		event.setCancelled(true);
 		gameModeChangeAllowed.remove(player.getUniqueId());
@@ -182,11 +185,11 @@ public class SpectatorListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void kickCyclingPlayer(PlayerKickEvent event) {
 		Player spectator = event.getPlayer();
-		if(spectateUtils.isCycling(spectator)) {
+		if(spectateAPI.isCyclingSpectator(spectator)) {
 			event.setCancelled(true);
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_KICK_PLAYERS))
 				return;
-			spectateUtils.stopCycle(spectator);
+			spectateAPI.isCyclingSpectator(spectator);
 			spectateUtils.unspectate(spectator, true);
 			Bukkit.getScheduler().runTaskLater(plugin, () -> spectator.kickPlayer(event.getReason()), 10L);
 		}
@@ -198,16 +201,16 @@ public class SpectatorListener implements Listener {
 	@EventHandler
 	public void targetDeathEvent(PlayerDeathEvent event) {
 		Player player = event.getEntity();
-		if(spectateUtils.isSpectator(player)) {
+		if(spectateAPI.isSpectator(player)) {
 			spectateUtils.unspectate(player, false);
 			return;
 		}
 
-		for(Player spectator : spectateUtils.getSpectatorsOf(player)) {
-			spectateUtils.dismount(spectator);
+		for(Player spectator : spectateAPI.getSpectatorsOf(player)) {
+			spectateAPI.dismount(spectator);
 
-			if(spectateUtils.isCycling(spectator))
-				spectateUtils.teleportNextPlayer(spectator);
+			if(spectateAPI.isCyclingSpectator(spectator))
+				spectateAPI.getSpectateCycle().teleportNextPlayer(spectator);
 		}
 	}
 }

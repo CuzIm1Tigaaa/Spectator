@@ -1,10 +1,11 @@
 package de.cuzim1tigaaa.spectator.commands;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.Cycle;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsCycle;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -17,12 +18,14 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class SpectateCycle implements CommandExecutor, TabCompleter {
 
     private final Spectator plugin;
-    private final SpectateUtilsGeneral spectateUtils;
+    private final SpectateAPI spectateAPI;
+    private final SpectateUtilsCycle spectateCycle;
 
     public SpectateCycle(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatecycle")).setExecutor(this);
         this.plugin = plugin;
-        this.spectateUtils = plugin.getSpectateUtils();
+        this.spectateAPI = plugin.getSpectateAPI();
+        this.spectateCycle = spectateAPI.getSpectateCycle();
     }
 
     @Override
@@ -71,23 +74,23 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
+                spectateAPI.getSpectateGeneral().getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
                 startSpectateCycle(player, seconds, alphabetical);
                 return true;
             }
 
             case "stop" -> {
                 if(!hasPermissions(sender, COMMAND_SPECTATE_GENERAL, COMMAND_SPECTATE_OTHERS, COMMAND_SPECTATE_HERE)) {
-                    spectateUtils.unspectate(player, true);
+                    spectateAPI.getSpectateGeneral().unspectate(player, true);
                     return true;
                 }
 
                 if(args.length == 1) {
-                    if(!spectateUtils.isCycling(player)) {
+                    if(!spectateAPI.isCyclingSpectator(player)) {
                         Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING);
                         return true;
                     }
-                    spectateUtils.stopCycle(player);
+                    spectateCycle.stopCycle(player);
                     Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
                     return true;
                 }
@@ -100,12 +103,12 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                         return true;
                     }
 
-                    if(!spectateUtils.isCycling(target)) {
+                    if(!spectateAPI.isCyclingSpectator(target)) {
                         Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING, "TARGET", target.getName());
                         return true;
                     }
 
-                    spectateUtils.stopCycle(target);
+                    spectateCycle.stopCycle(target);
                     Messages.sendMessage(target, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
                     return true;
                 }
@@ -117,18 +120,18 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
 
     private void startSpectateCycle(Player spectator, int seconds, boolean alphabetical) {
         if(!Config.getBoolean(Paths.CONFIG_CYCLE_NO_PLAYERS) && Bukkit.getOnlinePlayers().size() <= 1) {
-            spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_GENERAL_NOPLAYERS));
+            Messages.sendMessage(spectator, Paths.MESSAGES_GENERAL_NOPLAYERS);
             return;
         }
 
-        if(spectateUtils.isCycling(spectator)) {
-            spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_CYCLING));
+        if(spectateAPI.isCyclingSpectator(spectator)) {
+            Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_CYCLING);
             return;
         }
 
-        spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_START,
-                "INTERVAL", seconds, "ORDER", alphabetical ? "Alphabetic" : "Random"));
-        spectateUtils.startCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
+        Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_START,
+                "INTERVAL", seconds, "ORDER", alphabetical ? "Alphabetic" : "Random");
+        spectateCycle.startCycle(spectator, new CycleTask(seconds, new Cycle(spectator, null, alphabetical)));
     }
 
     @Override

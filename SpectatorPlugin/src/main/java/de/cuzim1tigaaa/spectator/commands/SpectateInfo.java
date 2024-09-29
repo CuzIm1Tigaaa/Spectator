@@ -3,29 +3,26 @@ package de.cuzim1tigaaa.spectator.commands;
 import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
+import de.cuzim1tigaaa.spectator.player.PlayerInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class SpectateInfo implements CommandExecutor, TabCompleter {
 
+    private final Spectator plugin;
     private final SpectateAPI spectateAPI;
 
     public SpectateInfo(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectateinfo")).setExecutor(this);
+        this.plugin = plugin;
         this.spectateAPI = plugin.getSpectateAPI();
     }
 
@@ -56,9 +53,16 @@ public class SpectateInfo implements CommandExecutor, TabCompleter {
 			                String.format("%-20s: %s", "Remaining Air", attributes.getRemainingAir()) + "\n" +
 			                String.format("%-20s: %s", "Fire Ticks", attributes.getFireTicks()) + "\n";
 
+                    PlayerInventory inventory = plugin.getInventory().getPlayerInventories()
+                            .stream().filter(i -> i.getPlayer().equals(player)).findFirst().orElse(null);
+                    if(inventory == null) {
+                        player.sendMessage("No inventory found");
+                        return true;
+                    }
+
                     Inventory inv = Bukkit.createInventory(null, 45, "Inventory of " + player.getName());
                     int index = 0;
-                    for(ItemStack item : attributes.getInventory()) {
+                    for(ItemStack item : inventory.getContents()) {
                         if(item != null)
                             inv.setItem(index, item);
                         index++;
@@ -86,7 +90,7 @@ public class SpectateInfo implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
         if(args.length == 1)
-            return Arrays.asList("list", "attributes", "inv", "location");
+            return Arrays.asList("list", "attributes", "location");
         return Collections.emptyList();
     }
 }

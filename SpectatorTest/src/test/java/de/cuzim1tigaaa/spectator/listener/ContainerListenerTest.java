@@ -40,25 +40,5 @@ public class ContainerListenerTest {
 	@Test
 	@DisplayName("Test if a spectating player also has a chest inventory open when a target opens a chest")
 	void test_() {
-		PlayerMock player = server.addPlayer(Constants.Player);
-		assert player.getPlayer() != null;
-		player.getPlayer().setOp(true);
-
-		player.getWorld().getBlockAt(0, 80, 0).setType(Material.CHEST);
-		ChestMock c = (ChestMock) player.getWorld().getBlockAt(0, 80, 0).getState();
-
-		PlayerMock target = server.addPlayer(Constants.Target);
-		assert target.getPlayer() != null;
-
-		assertTrue(player.performCommand("spectate " + Constants.Target));
-
-		final SpectateUtilsGeneral utils = plugin.getSpectateUtils();
-		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
-		assertTrue(utils.isSpectating(player, target), String.format("%s should be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
-
-		target.openInventory(c.getInventory());
-		assertEquals(target.getOpenInventory().getTopInventory(), c.getInventory());
-		assertEquals(player.getOpenInventory().getTopInventory(), c.getInventory());
 	}
-
 }

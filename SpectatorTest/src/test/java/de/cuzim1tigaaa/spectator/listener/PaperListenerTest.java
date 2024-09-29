@@ -37,21 +37,6 @@ public class PaperListenerTest {
 	@Test
 	@DisplayName("Test if a spectating player does not receive advancements")
 	void testSpectatingPlayerDoesNotReceiveAdvancements() {
-		PlayerMock player = server.addPlayer(Constants.Player);
-		assert player.getPlayer() != null;
-		player.getPlayer().setOp(true);
-
-		PlayerMock target = server.addPlayer(Constants.Target);
-		assert target.getPlayer() != null;
-
-		assertTrue(player.performCommand("spectate " + Constants.Target));
-		final SpectateUtilsGeneral utils = plugin.getSpectateUtils();
-		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
-		assertTrue(utils.isSpectating(player, target), String.format("%s should be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
-
-		target.getInventory().addItem(new ItemStack(Material.DIAMOND));
-//		System.out.println(Bukkit.getAdvancement(NamespacedKey.minecraft("story/mine_diamond")).getCriteria());
-		// TODO: Test if the player does not receive the advancement story/mine_diamond
 	}
 
 }

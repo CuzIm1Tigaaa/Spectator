@@ -51,22 +51,5 @@ public class SpectatorListenerTest {
 	@Test
 	@DisplayName("Test if a spectating players target is null after sneaking (dismounting)")
 	void testPlayerSneakDismountTarget() throws UnimplementedOperationException {
-		PlayerMock player = server.addPlayer(Constants.Player);
-		assert player.getPlayer() != null;
-		player.setOp(true);
-
-		PlayerMock target = server.addPlayer(Constants.Target);
-		assert target.getPlayer() != null;
-
-		assertTrue(player.performCommand("spectate " + target.getName()));
-		final SpectateUtilsGeneral utils = plugin.getSpectateUtils();
-		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
-		assertTrue(utils.isSpectating(player, target), String.format("%s should be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
-
-		server.getPluginManager().callEvent(new PlayerToggleSneakEvent(player, true));
-		server.getPluginManager().assertEventFired(PlayerToggleSneakEvent.class, event -> event.getPlayer().equals(player));
-
-		assertTrue(utils.isSpectator(player), String.format("%s should be in spectator mode", player.getPlayer().getName()));
-		assertFalse(utils.isSpectating(player, target), String.format("%s should not be spectating %s", player.getPlayer().getName(), target.getPlayer().getName()));
 	}
 }

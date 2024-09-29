@@ -109,11 +109,11 @@ public class CycleTask {
 		if(plugin.getSpectateUtils().getSpectateablePlayers().isEmpty()) {
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
 				plugin.getSpectateUtils().stopCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
 				return;
 			}
 			plugin.getSpectateUtils().pauseCycle(spectator);
-			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE);
 			return;
 		}
 

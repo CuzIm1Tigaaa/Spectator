@@ -51,7 +51,7 @@ public class TeleportListener implements Listener {
 			return;
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
-			plugin.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
+			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
 			plugin.getSpectateUtils().simulateUnspectate(spectator);
 			spectateAPI.toggleTabList(spectator, true);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
@@ -97,13 +97,13 @@ public class TeleportListener implements Listener {
 		if(from.getWorld().equals(to.getWorld()))
 			return;
 
-		plugin.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
+		Spectator.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
 		spectateAPI.getSpectatorsOf(player).forEach(spectator -> {
 			plugin.getSpectateUtils().dismount(spectator);
 			if(!hasAccessToWorld(player, to.getWorld()))
 				return;
 
-			plugin.debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
+			Spectator.debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 			Bukkit.getScheduler().runTaskLater(plugin, () -> {
 				worldChange.put(spectator.getUniqueId(), player);
@@ -131,14 +131,14 @@ public class TeleportListener implements Listener {
 		if(!hasPermission(player, COMMAND_SPECTATE_OTHERS)) {
 			event.setCancelled(true);
 			player.setSpectatorTarget(null);
-			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName());
 			return;
 		}
 
 		if(hasPermission(target, BYPASS_SPECTATED) && !hasPermission(player, BYPASS_SPECTATEALL)) {
 			event.setCancelled(true);
 			player.setSpectatorTarget(null);
-			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName());
 			return;
 		}
 

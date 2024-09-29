@@ -59,8 +59,8 @@ public class SpectatorListener implements Listener {
 		for(Player spectator : spectateUtils.getPausedSpectators()) {
 			spectateUtils.restartCycle(spectator);
 			CycleTask task = spectateUtils.getCycleTask(spectator);
-			spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
-					"INTERVAL", task.getInterval(), "ORDER", task.getCycle().isAlphabetical() ? "Alphabetic" : "Random"));
+			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_RESTART,
+					"INTERVAL", task.getInterval(), "ORDER", task.getCycle().isAlphabetical() ? "Alphabetic" : "Random");
 		}
 	}
 
@@ -130,10 +130,10 @@ public class SpectatorListener implements Listener {
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
 				spectateUtils.stopCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
 			}else {
 				spectateUtils.pauseCycle(spectator);
-				spectator.sendMessage(Messages.getMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE));
+				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE);
 			}
 		}
 	}
@@ -153,7 +153,7 @@ public class SpectatorListener implements Listener {
 			return;
 
 		if(spectateUtils.isCycling(player)) {
-			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_DISMOUNT));
+			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_DISMOUNT);
 			event.setCancelled(true);
 			return;
 		}
@@ -171,7 +171,7 @@ public class SpectatorListener implements Listener {
 			return;
 
 		if(!gameModeChangeAllowed.contains(player.getUniqueId()) && !spectateUtils.isCycling(player))
-			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE));
+			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_GAMEMODE_CHANGE);
 		event.setCancelled(true);
 		gameModeChangeAllowed.remove(player.getUniqueId());
 	}

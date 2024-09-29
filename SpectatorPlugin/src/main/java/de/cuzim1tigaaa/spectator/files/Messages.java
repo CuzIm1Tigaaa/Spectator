@@ -31,6 +31,12 @@ public class Messages {
     }
 
     public static void sendMessage(CommandSender sender, String path, Object... replace) {
+        if(PAPI_INSTALLED && sender instanceof Player player)
+            player.sendMessage(getMessage(player, path, replace));
+        sender.sendMessage(getMessage(sender, path, replace));
+    }
+
+    public static String getMessage(CommandSender sender, String path, Object... replace) {
         String msg = MESSAGE_FILE_CONFIG.getString(path);
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
         for(int i = 0; i < replace.length; i++) {
@@ -42,12 +48,8 @@ public class Messages {
             if(MESSAGE_FILE_CONFIG != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
         }
         if(PAPI_INSTALLED && sender instanceof Player player)
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg)));
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',msg));
-    }
-
-    public static String getMessage(CommandSender sender, String path, Object... replace) {
-        return path;
+            return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg));
+        return ChatColor.translateAlternateColorCodes('&',msg);
     }
 
     public void loadLanguageFile() {

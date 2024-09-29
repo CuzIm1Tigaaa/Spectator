@@ -28,24 +28,24 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!(sender instanceof Player player)) {
-            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_SENDER));
+            Messages.sendMessage(sender, Paths.MESSAGE_DEFAULT_SENDER);
             return true;
         }
 
         if(!hasPermission(sender, COMMANDS_SPECTATE_CYCLE)) {
-            player.sendMessage(Messages.getMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION));
+            Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION);
             return true;
         }
 
         if(args.length < 1) {
-            player.sendMessage(Messages.getMessage(player, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));
+            Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]");
             return true;
         }
 
         switch(args[0].toLowerCase()) {
             case "start" -> {
                 if(args.length < 2) {
-                    player.sendMessage(Messages.getMessage(player, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle start <interval> [alphabetical|random]"));
+                    Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle start <interval> [alphabetical|random]");
                     return true;
                 }
 
@@ -55,19 +55,19 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                 try {
                     seconds = Integer.parseInt(args[1]);
                 }catch(NumberFormatException ignored) {
-                    player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_NUMBERFORMAT));
+                    Messages.sendMessage(player, Paths.MESSAGES_GENERAL_NUMBERFORMAT);
                 }
 
                 int min = Config.getInt(Paths.CONFIG_CYCLE_MIN_INTERVAL);
                 int max = Config.getInt(Paths.CONFIG_CYCLE_MAX_INTERVAL);
 
                 if(min > 0 && seconds < min) {
-                    player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_SMALL, "MINIMUM", min));
+                    Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_SMALL, "MINIMUM", min);
                     return true;
                 }
 
                 if(max > 0 && seconds > max) {
-                    player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_BIG, "MAXIMUM", max));
+                    Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_BIG, "MAXIMUM", max);
                     return true;
                 }
 
@@ -84,11 +84,11 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
 
                 if(args.length == 1) {
                     if(!spectateUtils.isCycling(player)) {
-                        player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING));
+                        Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_NOT_CYCLING);
                         return true;
                     }
                     spectateUtils.stopCycle(player);
-                    player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+                    Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
                     return true;
                 }
 
@@ -96,22 +96,22 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                     Player target = Bukkit.getPlayer(args[1]);
 
                     if(target == null || !target.isOnline()) {
-                        player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[1]));
+                        Messages.sendMessage(player, Paths.MESSAGES_GENERAL_OFFLINEPLAYER, "TARGET", args[1]);
                         return true;
                     }
 
                     if(!spectateUtils.isCycling(target)) {
-                        player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING, "TARGET", target.getName()));
+                        Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_TARGET_NOT_CYCLING, "TARGET", target.getName());
                         return true;
                     }
 
                     spectateUtils.stopCycle(target);
-                    target.sendMessage(Messages.getMessage(target, Paths.MESSAGES_COMMANDS_CYCLE_STOP));
+                    Messages.sendMessage(target, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
                     return true;
                 }
             }
         }
-        player.sendMessage(Messages.getMessage(player, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]"));
+        Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]");
         return true;
     }
 

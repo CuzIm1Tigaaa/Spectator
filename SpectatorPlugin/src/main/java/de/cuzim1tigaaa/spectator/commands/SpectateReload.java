@@ -19,12 +19,12 @@ public class SpectateReload implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!Permissions.hasPermission(sender, Permissions.COMMANDS_SPECTATE_RELOAD)) {
-            sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_PERMISSION));
+            Messages.sendMessage(sender, Paths.MESSAGE_DEFAULT_PERMISSION);
             return true;
         }
 
         this.plugin.reload();
-        sender.sendMessage(Messages.getMessage(sender, Paths.MESSAGE_DEFAULT_RELOAD));
+        Messages.sendMessage(sender, Paths.MESSAGE_DEFAULT_RELOAD);
         return true;
     }
 

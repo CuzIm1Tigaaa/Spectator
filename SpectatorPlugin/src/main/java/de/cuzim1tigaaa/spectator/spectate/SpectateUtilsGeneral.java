@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.plugin.IllegalPluginAccessException;
 
 import java.util.*;
 
@@ -60,8 +61,10 @@ public class SpectateUtilsGeneral {
 
 		spectateAPI.toggleTabList(spectator, true);
 
-		info.hideArmorstands();
-		info.saveAttributes();
+		if(!info.getAttributes().containsKey(spectator.getWorld()))
+			info.saveAttributes();
+
+		spectateAPI.hideArmorstands(spectator);
 		spectator.setGameMode(GameMode.SPECTATOR);
 
 		if(target != null) {
@@ -82,39 +85,37 @@ public class SpectateUtilsGeneral {
 			return;
 
 		spectateAPI.dismount(spectator);
-		info.restoreArmorstands();
+		spectateAPI.restoreArmorstands();
 
 		Location location = spectateStartLocation.getOrDefault(spectator.getUniqueId(), spectator.getLocation());
 		if(!oldLocation || !Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION)) {
 			Spectator.debug(String.format("Saved Location: %s", location));
 			Spectator.debug("Using current location of player");
+			location = spectator.getLocation();
 		}
+		final Location finalLocation = location;
 
 		if(!Objects.equals(spectator.getWorld(), location.getWorld()))
 			info.restoreAttributes(true);
 
-		Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(location, PlayerTeleportEvent.TeleportCause.PLUGIN));
+		Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
 		spectateAPI.toggleTabList(spectator, false);
 		spectateAPI.getSpectateInfo().remove(info);
 		plugin.getInventory().resetInventory(spectator);
 		info.restoreAttributes(true);
 	}
 
-
-	private void spectate(Player spectator, Player target, SpectateInformation info) {
-	}
-
 	public void simulateUnspectate(Player spectator) {
 
 	}
 
-	public void unspectate(Player spectator) {
-
-	}
-
 	public void restore() {
-		spectateAPI.getSpectators().forEach(p ->
-				unspectate(p, false));
+		try {
+			spectateAPI.getSpectators().forEach(p ->
+					unspectate(p, false));
+		}catch(IllegalPluginAccessException e) {
+			plugin.getLogger().warning("This exception might get thrown, when the server is shutting down");
+		}
 	}
 
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {

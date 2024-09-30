@@ -95,6 +95,7 @@ public class SpectateAPI {
         if(!isSpectator(spectator))
             return;
         getSpectateInfo(spectator).setTarget(target);
+        spectator.setSpectatorTarget(target);
     }
 
     public void dismount(Player spectator) {

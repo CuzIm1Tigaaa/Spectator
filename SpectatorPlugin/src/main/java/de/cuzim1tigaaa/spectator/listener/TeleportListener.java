@@ -21,7 +21,8 @@ public class TeleportListener implements Listener {
 	private final Spectator plugin;
 	private final SpectateAPI spectateAPI;
 
-	@Getter private static final Map<UUID, Player> worldChange = new HashMap<>();
+	@Getter
+	private static final Map<UUID, Player> worldChange = new HashMap<>();
 
 	public TeleportListener(Spectator plugin) {
 		this.plugin = plugin;
@@ -52,7 +53,6 @@ public class TeleportListener implements Listener {
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
 			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
-			spectateAPI.getSpectateGeneral().simulateUnspectate(spectator);
 			spectateAPI.toggleTabList(spectator, true);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 

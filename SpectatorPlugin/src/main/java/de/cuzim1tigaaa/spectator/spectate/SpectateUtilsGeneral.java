@@ -44,7 +44,21 @@ public class SpectateUtilsGeneral {
 					if(info.getTarget() == null)
 						return;
 
-					plugin.getInventory().getTargetInventory(spectator, info.getTarget());
+					Player target = info.getTarget();
+
+					plugin.getInventory().getTargetInventory(spectator, target);
+
+					if(spectator.getSpectatorTarget() == null)
+						spectateAPI.setRelation(spectator, target);
+
+					if(!spectator.getWorld().equals(target.getWorld())
+							|| spectator.getLocation().distanceSquared(target.getLocation()) > 10) {
+						spectateAPI.dismount(spectator);
+						Bukkit.getScheduler().runTask(plugin, () -> {
+							spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
+							spectateAPI.setRelation(spectator, target);
+						});
+					}
 				}), 0, 15);
 	}
 
@@ -84,6 +98,9 @@ public class SpectateUtilsGeneral {
 		if(info == null)
 			return;
 
+		if(info.getState() == SpectateState.CYCLING)
+			spectateAPI.getSpectateCycle().stopCycle(spectator);
+
 		spectateAPI.dismount(spectator);
 		spectateAPI.restoreArmorstands();
 
@@ -98,24 +115,21 @@ public class SpectateUtilsGeneral {
 		if(!Objects.equals(spectator.getWorld(), location.getWorld()))
 			info.restoreAttributes(true);
 
-		Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
+		try {
+			Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
+		}catch(IllegalPluginAccessException e) {
+			spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		}
+
 		spectateAPI.toggleTabList(spectator, false);
 		spectateAPI.getSpectateInfo().remove(info);
 		plugin.getInventory().resetInventory(spectator);
 		info.restoreAttributes(true);
 	}
 
-	public void simulateUnspectate(Player spectator) {
-
-	}
-
 	public void restore() {
-		try {
-			spectateAPI.getSpectators().forEach(p ->
-					unspectate(p, false));
-		}catch(IllegalPluginAccessException e) {
-			plugin.getLogger().warning("This exception might get thrown, when the server is shutting down");
-		}
+		spectateAPI.getSpectators().forEach(p ->
+				unspectate(p, false));
 	}
 
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {
@@ -136,5 +150,4 @@ public class SpectateUtilsGeneral {
 			case "SUBTITLE" -> target.sendTitle("", message, 5, 50, 5);
 		}
 	}
-
 }

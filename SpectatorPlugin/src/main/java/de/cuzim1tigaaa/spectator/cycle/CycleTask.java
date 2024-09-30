@@ -17,15 +17,20 @@ import java.util.*;
 @Getter
 public class CycleTask {
 
-	@Getter private static final Map<UUID, SpectateState> stateChange = new HashMap<>();
+	@Getter
+	private static final Map<UUID, SpectateState> stateChange = new HashMap<>();
 	private static final Displays displays = new Displays(Spectator.getPlugin());
 
 	private final int interval;
 
-	@Setter private int taskId;
-	@Setter private Cycle cycle;
-	@Setter private BossBar bossBar;
-	@Setter private Integer showTargetTask;
+	@Setter
+	private int taskId;
+	@Setter
+	private Cycle cycle;
+	@Setter
+	private BossBar bossBar;
+	@Setter
+	private Integer showTargetTask;
 
 	public CycleTask(int interval, Cycle cycle) {
 		this.interval = interval;
@@ -38,9 +43,8 @@ public class CycleTask {
 		if(taskId != -1)
 			return;
 
-		selectNextPlayer(plugin);
+		setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin), 0L, interval * 20L).getTaskId());
 		displays.showCycleDisplay(cycle.getOwner());
-		setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin), interval * 20L, interval * 20L).getTaskId());
 	}
 
 	public void selectNextPlayer(Spectator plugin) {
@@ -60,6 +64,7 @@ public class CycleTask {
 
 		Player next = cycle.getNextTarget(plugin);
 		Player last = cycle.getLastPlayer();
+
 		if(next == null || next.isDead() || !next.isOnline())
 			return;
 

@@ -27,7 +27,8 @@ public final class Paths {
     public static final String CONFIG_CYCLE_SHOW_TARGET =                   "Settings.Cycle.ShowCurrentTarget";
     public static final String CONFIG_CYCLE_MIN_INTERVAL =                  "Settings.Cycle.MinimumIntervalTime";
     public static final String CONFIG_CYCLE_MAX_INTERVAL =                  "Settings.Cycle.MaximumIntervalTime";
-
+    public static final String CONFIG_CYCLE_BOSSBAR_COLOR =                 "Settings.Cycle.BossBarColor";
+    public static final String CONFIG_CYCLE_BOSSBAR_FACTOR =                "Settings.Cycle.BossBarFactor";
 
     public static final String MESSAGE_DEFAULT_SENDER =                     "Messages.Default.Sender";
     public static final String MESSAGE_DEFAULT_PERMISSION =                 "Messages.Default.Permission";

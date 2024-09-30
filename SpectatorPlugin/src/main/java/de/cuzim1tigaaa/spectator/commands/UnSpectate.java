@@ -40,7 +40,7 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             for(Player spectator : spectateAPI.getSpectators()) {
                 if(spectator.hasPermission(BYPASS_UNSPECTATED))
                     continue;
-                plugin.getSpectateUtils().unspectate(spectator, true);
+                spectateAPI.getSpectateGeneral().unspectate(spectator, true);
                 if(spectator.equals(sender)) continue;
                 Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);
             }
@@ -56,7 +56,7 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
             for(Player spectator : spectateAPI.getSpectators()) {
                 if(spectator.hasPermission(BYPASS_UNSPECTATED))
                     continue;
-                plugin.getSpectateUtils().unspectate(spectator, oldLocation);
+                spectateAPI.getSpectateGeneral().unspectate(spectator, oldLocation);
                 if(spectator.equals(sender)) continue;
                 Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);
             }

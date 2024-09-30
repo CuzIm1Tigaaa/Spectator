@@ -52,7 +52,7 @@ public class TeleportListener implements Listener {
 
 		if(hasAccessToWorld(spectator, to.getWorld())) {
 			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
-			plugin.getSpectateUtils().simulateUnspectate(spectator);
+			spectateAPI.getSpectateGeneral().simulateUnspectate(spectator);
 			spectateAPI.toggleTabList(spectator, true);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 
@@ -60,7 +60,7 @@ public class TeleportListener implements Listener {
 				Player target = null;
 				if(worldChange.containsKey(spectator.getUniqueId()))
 					target = worldChange.remove(spectator.getUniqueId());
-				plugin.getSpectateUtils().spectate(spectator, target);
+				spectateAPI.getSpectateGeneral().spectate(spectator, target);
 			}, 5L);
 		}
 	}

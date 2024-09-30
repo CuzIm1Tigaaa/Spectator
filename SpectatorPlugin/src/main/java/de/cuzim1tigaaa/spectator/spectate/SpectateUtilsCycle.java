@@ -11,10 +11,10 @@ public class SpectateUtilsCycle {
     private final SpectateAPI spectateAPI;
     private final SpectateUtilsGeneral spectateUtils;
 
-    public SpectateUtilsCycle(Spectator plugin) {
+    public SpectateUtilsCycle(Spectator plugin, SpectateAPI spectateAPI) {
         this.plugin = plugin;
-        this.spectateAPI = plugin.getSpectateAPI();
-        this.spectateUtils = plugin.getSpectateUtils();
+        this.spectateAPI = spectateAPI;
+        this.spectateUtils = spectateAPI.getSpectateGeneral();
     }
 
     public void startCycle(Player spectator, CycleTask cycle) {
@@ -35,6 +35,7 @@ public class SpectateUtilsCycle {
 
         SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
         info.setState(SpectateState.SPECTATING);
+        info.getCycleTask().stopTask();
         info.setCycleTask(null);
         spectateAPI.dismount(spectator);
     }

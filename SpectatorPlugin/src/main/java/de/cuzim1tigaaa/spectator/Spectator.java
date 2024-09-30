@@ -25,7 +25,6 @@ public class Spectator extends JavaPlugin {
     private static Spectator plugin;
 
     private SpectateAPI spectateAPI;
-    private SpectateUtilsGeneral spectateUtils;
     private UpdateChecker updateChecker;
 
     private MultiverseCore multiverseCore;
@@ -37,7 +36,6 @@ public class Spectator extends JavaPlugin {
         this.info();
 
         this.spectateAPI = new SpectateAPI(this);
-        this.spectateUtils = new SpectateUtilsGeneral(spectateAPI);
         this.updateChecker = new UpdateChecker(this);
 
         register();
@@ -47,8 +45,7 @@ public class Spectator extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.spectateUtils.restore();
-
+        this.spectateAPI.getSpectateGeneral().restore();
         plugin = null;
     }
 

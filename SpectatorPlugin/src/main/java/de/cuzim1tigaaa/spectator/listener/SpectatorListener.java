@@ -8,7 +8,6 @@ import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -30,7 +29,7 @@ public class SpectatorListener implements Listener {
 	public SpectatorListener(Spectator plugin) {
 		this.plugin = plugin;
 		this.spectateAPI = plugin.getSpectateAPI();
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateUtils = spectateAPI.getSpectateGeneral();
 
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
 		pluginManager.registerEvents(new ContainerListener(plugin), plugin);
@@ -96,13 +95,7 @@ public class SpectatorListener implements Listener {
 		if(from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ())
 			return;
 
-		player.getNearbyEntities(3, 3, 3).forEach(entity -> {
-			if(entity instanceof ArmorStand) {
-				player.hideEntity(plugin, entity);
-				spectateAPI.getSpectateInfo(player).
-						getHiddenArmorStands().add((ArmorStand) entity);
-			}
-		});
+		spectateAPI.hideArmorstands(player);
 	}
 
 

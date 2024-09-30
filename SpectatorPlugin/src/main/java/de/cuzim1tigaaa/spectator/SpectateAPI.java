@@ -10,11 +10,11 @@ import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -26,12 +26,16 @@ public class SpectateAPI {
     private final SpectateUtilsGeneral spectateGeneral;
     private final SpectateUtilsCycle spectateCycle;
 
+    private final Map<UUID, List<ArmorStand>> hiddenArmorStands;
+
     public SpectateAPI(Spectator plugin) {
         this.plugin = plugin;
         this.spectateInfo = new HashSet<>();
 
         this.spectateGeneral = new SpectateUtilsGeneral(this);
-        this.spectateCycle = new SpectateUtilsCycle(plugin);
+        this.spectateCycle = new SpectateUtilsCycle(plugin, this);
+
+        this.hiddenArmorStands = new HashMap<>();
     }
 
     public Set<Player> getSpectators() {
@@ -106,7 +110,16 @@ public class SpectateAPI {
         if(info == null)
             return;
 
-        info.hideArmorstands();
+        spectator.getNearbyEntities(3, 3, 3).forEach(entity -> {
+            if (entity instanceof ArmorStand armorStand) {
+                spectator.hideEntity(Spectator.getPlugin(), armorStand);
+                hiddenArmorStands.computeIfAbsent(spectator.getUniqueId(), k -> new ArrayList<>()).add(armorStand);
+            }
+        });
+    }
+
+    public void restoreArmorstands() {
+
     }
 
     public void showArmorstands(Player spectator) {
@@ -114,7 +127,9 @@ public class SpectateAPI {
         if(info == null)
             return;
 
-        info.restoreArmorstands();
+        hiddenArmorStands.get(spectator.getUniqueId()).forEach(armorStand ->
+                spectator.showEntity(Spectator.getPlugin(), armorStand));
+        hiddenArmorStands.remove(spectator.getUniqueId());
     }
 
 

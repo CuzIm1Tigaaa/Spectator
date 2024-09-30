@@ -121,17 +121,19 @@ public class SpectateUtilsGeneral {
 	public void notifyTarget(Player target, Player spectator, boolean spectate) {
 		if(target == null)
 			return;
+		if(Config.getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET).equalsIgnoreCase("NONE"))
+			return;
 		if(spectator.hasPermission(Permissions.BYPASS_NOTIFY))
 			return;
 
 		String message = Messages.getMessage(target, spectate ? Paths.MESSAGES_GENERAL_NOTIFY_SPECTATE :
 				Paths.MESSAGES_GENERAL_NOTIFY_UNSPECTATE, "TARGET", spectator.getName());
 
-		switch(Config.getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET).toLowerCase()) {
-			case "chat" -> target.spigot().sendMessage(ChatMessageType.CHAT, new TextComponent(message));
-			case "actionbar" -> target.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
-			case "title" -> target.sendTitle(message, "", 5, 50, 5);
-			case "subtitle" -> target.sendTitle("", message, 5, 50, 5);
+		switch(Config.getString(Paths.CONFIG_NOTIFY_CURRENT_TARGET).toUpperCase()) {
+			case "CHAT" -> target.spigot().sendMessage(ChatMessageType.CHAT, new TextComponent(message));
+			case "ACTIONBAR" -> target.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+			case "TITLE" -> target.sendTitle(message, "", 5, 50, 5);
+			case "SUBTITLE" -> target.sendTitle("", message, 5, 50, 5);
 		}
 	}
 

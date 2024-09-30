@@ -62,6 +62,7 @@ public class Cycle {
 	private Player visit(Player player) {
 		this.lastPlayer = player;
 		this.alreadyVisited.add(player);
+		this.toVisit.remove(player);
 		return player;
 	}
 

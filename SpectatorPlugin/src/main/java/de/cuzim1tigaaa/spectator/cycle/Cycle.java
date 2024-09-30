@@ -53,10 +53,10 @@ public class Cycle {
 			}while(toVisit.size() > 1 && target.equals(lastPlayer));
 		}
 
+		Player next = visit(target);
 		Spectator.debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
 				toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
-
-		return visit(target);
+		return next;
 	}
 
 	private Player visit(Player player) {

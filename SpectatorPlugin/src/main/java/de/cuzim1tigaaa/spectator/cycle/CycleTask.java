@@ -4,15 +4,13 @@ import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.listener.TeleportListener;
+import de.cuzim1tigaaa.spectator.spectate.Displays;
 import de.cuzim1tigaaa.spectator.spectate.SpectateState;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.boss.*;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -20,6 +18,7 @@ import java.util.*;
 public class CycleTask {
 
 	@Getter private static final Map<UUID, SpectateState> stateChange = new HashMap<>();
+	private static final Displays displays = new Displays(Spectator.getPlugin());
 
 	private final int interval;
 
@@ -39,70 +38,9 @@ public class CycleTask {
 		if(taskId != -1)
 			return;
 
-		final SpectateAPI spectateAPI = plugin.getSpectateAPI();
-		Player spectator = cycle.getOwner();
-		if(spectateAPI.getSpectateablePlayers().isEmpty()) {
-			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
-				spectateAPI.getSpectateCycle().stopCycle(spectator);
-				Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_STOP);
-				return;
-			}
-			spectateAPI.getSpectateCycle().pauseCycle(spectator);
-			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_CYCLE_PAUSE);
-			return;
-		}
-
-		if(!Config.getString(Paths.CONFIG_CYCLE_SHOW_TARGET).equalsIgnoreCase("BOSSBAR")) {
-//			plugin.getDisplays().showCycleDisplay(cycle.getOwner());
-			setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin), 0, interval * 20L).getTaskId());
-			return;
-		}
-
-		BossBar bar = getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : getBossBar();
-		bar.setVisible(true);
-		setBossBar(bar);
-
 		selectNextPlayer(plugin);
-		Player target = getCycle().getLastPlayer();
-		if(target == null) {
-			bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
-			bar.setColor(BarColor.RED);
-		}else {
-			bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
-			bar.setColor(BarColor.BLUE);
-		}
-		bar.addPlayer(cycle.getOwner());
-
-		setTaskId(new BukkitRunnable() {
-			final int inter = (interval - 1);
-			double counter = inter;
-
-			@Override
-			public void run() {
-				if(counter == 0) {
-					selectNextPlayer(plugin);
-
-					Player target = getCycle().getLastPlayer();
-					if(target == null) {
-						bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
-						bar.setColor(BarColor.RED);
-					}else {
-						bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
-						bar.setColor(BarColor.BLUE);
-					}
-					bar.removeAll();
-					bar.addPlayer(cycle.getOwner());
-
-					counter = inter;
-					bar.setProgress(counter / inter);
-					return;
-				}
-				if(cycle.getOwner().getGameMode() == GameMode.SPECTATOR)
-					cycle.getOwner().setSpectatorTarget(cycle.getLastPlayer());
-				counter--;
-				bar.setProgress(counter / inter);
-			}
-		}.runTaskTimer(plugin, 20L, 20L).getTaskId());
+		displays.showCycleDisplay(cycle.getOwner());
+		setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin), interval * 20L, interval * 20L).getTaskId());
 	}
 
 	public void selectNextPlayer(Spectator plugin) {
@@ -131,10 +69,6 @@ public class CycleTask {
 		if(next.getWorld() != spectator.getWorld()) {
 			plugin.getSpectateAPI().dismount(spectator);
 			TeleportListener.getWorldChange().put(spectator.getUniqueId(), next);
-
-			PlayerTeleportEvent event = new PlayerTeleportEvent(spectator, spectator.getLocation(), next.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-			Bukkit.getPluginManager().callEvent(event);
-
 			getStateChange().put(spectator.getUniqueId(), SpectateState.CYCLING);
 			return;
 		}

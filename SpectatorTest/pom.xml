@@ -37,6 +37,13 @@
             <scope>test</scope>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>io.papermc.paper</groupId>-->
+<!--            <artifactId>paper-api</artifactId>-->
+<!--            <version>1.21.1-R0.1-SNAPSHOT</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>de.cuzim1tigaaa.spectator</groupId>
             <artifactId>SpectatorPlugin</artifactId>
@@ -52,8 +59,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
         </plugins>

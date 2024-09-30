@@ -51,19 +51,17 @@ public class Displays {
 			if(task.getShowTargetTask() != null)
 				Bukkit.getScheduler().cancelTask(task.getShowTargetTask());
 
-			final int duration = (task.getInterval() - 1) * 20;
-
 			task.setShowTargetTask(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 				Player player = cycle.getLastPlayer();
 				String title = player != null ? Messages.getMessage(player, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", player.getName())
 						: Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET);
 
 				if(mode.equals("SUBTITLE")) {
-					spectator.sendTitle("", title, 10, duration, 10);
+					spectator.sendTitle("", title, 0, 20, 0);
 					return;
 				}
-				spectator.sendTitle(title, "", 10, duration, 10);
-			}, 0L, duration).getTaskId());
+				spectator.sendTitle(title, "", 0, 20, 0);
+			}, 0L, 10L).getTaskId());
 			return;
 		}
 
@@ -71,6 +69,7 @@ public class Displays {
 			if(task.getShowTargetTask() != null)
 				Bukkit.getScheduler().cancelTask(task.getShowTargetTask());
 
+			BarColor barColor = Config.getBarColor();
 			BossBar bar = task.getBossBar() == null ? Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID) : task.getBossBar();
 			bar.setVisible(true);
 			bar.addPlayer(spectator);
@@ -82,44 +81,44 @@ public class Displays {
 				bar.setColor(BarColor.RED);
 			}else {
 				bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
-				bar.setColor(BarColor.BLUE);
+				bar.setColor(barColor);
 			}
 
+			int seconds = Config.getInt(Paths.CONFIG_CYCLE_BOSSBAR_FACTOR) <= 0 ?
+					1 : Config.getInt(Paths.CONFIG_CYCLE_BOSSBAR_FACTOR);
+
 			task.setShowTargetTask(new BukkitRunnable() {
-				final int inter = (task.getInterval() - 1);
-				double counter = inter;
+				final int interval = task.getInterval() * seconds - 1;
+				double counter = interval;
 
 				@Override
 				public void run() {
-					final Cycle cycle = task.getCycle();
-					Player target = cycle.getLastPlayer();
+					final Player target = cycle.getLastPlayer();
+					if(target == null) {
+						bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
+						bar.setColor(BarColor.RED);
+					}else {
+						bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
+						bar.setColor(barColor);
+					}
+
 					if(counter == 0) {
-						if(target == null) {
-							bar.setTitle(Messages.getMessage(spectator, Paths.MESSAGES_CYCLING_SEARCHING_TARGET));
-							bar.setColor(BarColor.RED);
-						}else {
-							bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
-							bar.setColor(BarColor.BLUE);
-						}
 						bar.removeAll();
 						bar.addPlayer(cycle.getOwner());
 
-						counter = inter;
-						bar.setProgress(counter / inter);
+						counter = interval;
+						bar.setProgress(counter / interval);
 						return;
 					}
 
-					if(bar.getColor() == BarColor.RED && target != null) {
-						bar.setTitle(Messages.getMessage(target, Paths.MESSAGES_CYCLING_CURRENT_TARGET, "TARGET", target.getName()));
-						bar.setColor(BarColor.BLUE);
-					}
-
 					if(cycle.getOwner().getGameMode() == GameMode.SPECTATOR)
-						cycle.getOwner().setSpectatorTarget(cycle.getLastPlayer());
+						spectateAPI.setRelation(cycle.getOwner(), target);
 					counter--;
-					bar.setProgress(counter / inter);
+					bar.setProgress(counter / interval);
 				}
-			}.runTaskTimer(plugin, 20L, 20L).getTaskId());
+			}.runTaskTimer(plugin, 20L / seconds, 20L / seconds).getTaskId());
+			return;
 		}
+		Spectator.debug("No valid display mode found: " + mode);
 	}
 }

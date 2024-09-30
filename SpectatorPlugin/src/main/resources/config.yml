@@ -5,16 +5,16 @@
 # This is the current version of the config, DO NOT CHANGE!
 # If the version changes, the plugin will automatically
 # backup your current config and create a new one
-ConfigVersion: 12
+ConfigVersion: 13
 
 Settings:
 
   # This prints different debug messages in the server console
   # Can be useful for reporting problems
-  Debugging: false
+  Debugging: true
 
   # If the plugin gets updated, players with the following permission
-  # will receive a message when they join.
+  # will receive a message when they join
   # Permission: spectator.notify.update
   NotifyOnUpdate: true
 
@@ -28,10 +28,53 @@ Settings:
   # Permission 2: spectator.bypass.tablist
   HidePlayersInTab: true
 
+  Cycle:
+
+    # Cycling players cannot be kicked by any other player.
+    KickCyclingPlayers: false
+
+    # Allows starting cycling even with no players online
+    # Cycle will then work, when players are online!
+    # Might be useful when using the plugin as a "camera"
+    StartWhenNoPlayers: true
+
+    # The cycle gets paused if there are no longer any players online and will automatically restart
+    # Otherwise the cycle will simply be stopped
+    PauseWhenNoPlayers: false
+
+    # Shows a message to cycling players with the name of the current target
+    # Possible values are (without quotation):
+    # "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
+    ShowCurrentTarget: BOSSBAR
+
+    # Sets the minimum time, that the cycle mode interval has to be
+    # If set to 0, no minimum is set
+    MinimumIntervalTime: 0
+
+    # Sets the maximum time, that the cycle mode interval can be
+    # If set to 0, no maximum is set
+    MaximumIntervalTime: 0
+
+    # Sets the color of the bossbar, that shows the current target
+    # Possible values are (without quotation):
+    # "BLUE", "GREEN", "PINK", "PURPLE", "RED", "WHITE", "YELLOW"
+    BossBarColor: BLUE
+
+    # Sets the factor how fast the bossbar segments are going down
+    # 1 is the default value, meaning the bar gets reduced by 1 segment every second
+    # The higher the value, the faster the bar segments are going down
+    # If the value is below zero or not an integer (e.g. 1.5), the default value is used
+    BossBarFactor: 1
+
   # Shows a message to target players that they are being spectated
   # Possible values are (without quotation):
   # "CHAT", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
   NotifyCurrentTarget: NONE
+
+  # Hides all invisible armor stands for spectators
+  # Can be toggled with the following command
+  # /spectate -armorstand
+  HideArmorStands: true
 
   Save:
 
@@ -52,7 +95,7 @@ Settings:
 
   Mirror:
 
-    # Get all effects your spectator target currently has
+    # Get all effects a spectator target currently has
     # Requires following permission: spectator.utils.mirroreffects
     TargetEffects: true
 
@@ -72,30 +115,3 @@ Settings:
     # Only when the target opens a physically enderchest!
     # Permission: spectator.utils.openenderchest
     OpenEnderChest: false
-
-  Cycle:
-
-    # Cycling players cannot be kicked by any other player.
-    KickCyclingPlayer: false
-
-    # Allows starting cycling even with no players online
-    # Cycle will start, when a player joins the server
-    # Might be useful when using the plugin as a "camera"
-    StartWhenNoPlayers: true
-
-    # The cycle gets paused if there are no longer any players online and will automatically restart
-    # Otherwise the cycle will simply be stopped
-    PauseWhenNoPlayers: false
-
-    # Shows a message to cycling players with the name of the current target
-    # Possible values are (without quotation):
-    # "BOSSBAR", "ACTIONBAR", "TITLE", "SUBTITLE", "NONE"
-    ShowCurrentTarget: BOSSBAR
-
-    # Sets the minimum time, that the cycle mode interval has to be
-    # If set to 0, no minimum is set
-    MinimumIntervalTime: 0
-
-    # Sets the maximum time, that the cycle mode interval can be
-    # If set to 0, no maximum is set
-    MaximumIntervalTime: 0

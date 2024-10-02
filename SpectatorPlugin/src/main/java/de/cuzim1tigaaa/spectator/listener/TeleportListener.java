@@ -38,6 +38,11 @@ public class TeleportListener implements Listener {
 	public void spectatorSwitchingWorld(PlayerTeleportEvent event) {
 		Player spectator = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
+		if(from.getWorld() == null || to == null || to.getWorld() == null)
+			return;
+
+		if(from.getWorld().equals(to.getWorld()))
+			return;
 
 		if(!spectateAPI.isSpectator(spectator) || spectateAPI.getTargetOf(spectator) != null)
 			return;
@@ -45,23 +50,15 @@ public class TeleportListener implements Listener {
 		if(event.isCancelled())
 			return;
 
-		if(from.getWorld() == null || to == null || to.getWorld() == null)
-			return;
-
-		if(from.getWorld().equals(to.getWorld()))
-			return;
-
 		if(hasAccessToWorld(spectator, to.getWorld())) {
 			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
 			spectateAPI.toggleTabList(spectator, true);
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
 
-			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-				Player target = null;
-				if(worldChange.containsKey(spectator.getUniqueId()))
-					target = worldChange.remove(spectator.getUniqueId());
-				spectateAPI.getSpectateGeneral().spectate(spectator, target);
-			}, 5L);
+			Player target = worldChange.remove(spectator.getUniqueId());
+			if(target != null)
+				Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.getSpectateGeneral().spectate(spectator, target), 5L);
 		}
 	}
 
@@ -85,16 +82,16 @@ public class TeleportListener implements Listener {
 		Player player = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
 
-		if(spectateAPI.isSpectator(player) || spectateAPI.isNotSpectated(player))
-			return;
-
-		if(event.isCancelled())
-			return;
-
 		if(from.getWorld() == null || to == null || to.getWorld() == null)
 			return;
 
 		if(from.getWorld().equals(to.getWorld()))
+			return;
+
+		if(spectateAPI.isSpectator(player) || spectateAPI.isNotSpectated(player))
+			return;
+
+		if(event.isCancelled())
 			return;
 
 		Spectator.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
@@ -105,10 +102,7 @@ public class TeleportListener implements Listener {
 
 			Spectator.debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
 			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-				worldChange.put(spectator.getUniqueId(), player);
-				spectator.teleport(player, PlayerTeleportEvent.TeleportCause.PLUGIN);
-			}, 5L);
+			worldChange.put(spectator.getUniqueId(), player);
 		});
 	}
 

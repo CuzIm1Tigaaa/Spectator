@@ -54,11 +54,10 @@ public class SpectateUtilsGeneral {
 					if(!spectator.getWorld().equals(target.getWorld())
 							|| spectator.getLocation().distanceSquared(target.getLocation()) > 10) {
 						spectateAPI.dismount(spectator);
-						Bukkit.getScheduler().runTask(plugin, () -> {
-							spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
-							spectateAPI.setRelation(spectator, target);
-						});
+						Bukkit.getScheduler().runTask(plugin, () ->
+								spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
 					}
+					spectateAPI.setRelation(spectator, target);
 				}), 0, 15);
 	}
 
@@ -82,10 +81,8 @@ public class SpectateUtilsGeneral {
 		spectator.setGameMode(GameMode.SPECTATOR);
 
 		if(target != null) {
-			Bukkit.getScheduler().runTask(plugin, () -> {
-				spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN);
-				spectator.setSpectatorTarget(target);
-			});
+			Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.setRelation(spectator, target), 5L);
 		}
 
 		plugin.getInventory().getTargetInventory(spectator, target);

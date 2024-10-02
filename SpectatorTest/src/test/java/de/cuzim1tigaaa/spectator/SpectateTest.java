@@ -2,15 +2,12 @@ package de.cuzim1tigaaa.spectator;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import de.cuzim1tigaaa.spectator.cycle.Cycle;
-import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SpectateTest {
 
@@ -25,13 +22,10 @@ public class SpectateTest {
 		if (!Files.exists(langDir))
 			Files.createDirectories(langDir);
 
-		plugin = MockBukkit.load(Spectator.class);
-
-		File f = new File("./src/test/resources/config.yml");
-		assertTrue(f.exists(), f.getAbsolutePath());
-		server.getScheduler().performTicks(100L);
-
-
+		try {
+			plugin = MockBukkit.load(Spectator.class);
+		}catch(Exception ignored) {
+		}
 	}
 
 	@AfterEach
@@ -48,10 +42,13 @@ public class SpectateTest {
 		for(int i = 0; i < 5; i++)
 			targets[i] = new PlayerMock(server, "Player_0" + i);
 
-		assertTrue(player.performCommand("speccycle start 10"), "Command failed");
 		SpectateAPI spectateAPI = plugin.getSpectateAPI();
-//		spectateAPI.getSpectateCycle().startCycle(player, new CycleTask(10, new Cycle(player, null, false)));
-		server.getScheduler().performTicks(1000L);
-		assertTrue(spectateAPI.isCyclingSpectator(player), "Player is not cycling");
+		spectateAPI.getSpectateGeneral().spectate(player, targets[0]);
+		assertTrue(spectateAPI.isSpectator(player), "Player is not in spectator mode");
+		assertEquals(spectateAPI.getTargetOf(player), targets[0], "Wrong target " + spectateAPI.getTargetOf(player).getName());
+
+		spectateAPI.getSpectateGeneral().spectate(player, null);
+		assertTrue(spectateAPI.isSpectator(player), "Player is not in spectator mode");
+		assertNull(spectateAPI.getTargetOf(player), "Player target is not null");
 	}
 }

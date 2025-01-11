@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 public class Config {
 
+	private static Config INSTANCE;
 	private final Spectator plugin;
 	private final int configVersion;
 
@@ -27,7 +28,12 @@ public class Config {
 	public Config(Spectator plugin) {
 		this.plugin = plugin;
 		this.configVersion = 13;
+	}
 
+	public static Config getConfig() {
+		if(INSTANCE == null)
+			INSTANCE = new Config(Spectator.getPlugin());
+		return INSTANCE;
 	}
 
 	public void loadConfig() {

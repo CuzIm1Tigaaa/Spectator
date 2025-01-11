@@ -2,7 +2,7 @@ package de.cuzim1tigaaa.spectator.files;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,10 +17,14 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Messages {
 
+    private static Messages INSTANCE;
     private final Spectator plugin;
+    private static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
     private static boolean PAPI_INSTALLED;
     private static FileConfiguration MESSAGE_FILE_CONFIG;
@@ -30,15 +34,31 @@ public class Messages {
         PAPI_INSTALLED = plugin.isPapiInstalled();
     }
 
+    public static Messages getMessages() {
+        if(INSTANCE == null)
+            INSTANCE = new Messages(Spectator.getPlugin());
+        return INSTANCE;
+    }
+
     public static void sendMessage(CommandSender sender, String path, Object... replace) {
-        if(PAPI_INSTALLED && sender instanceof Player player)
-            player.sendMessage(getMessage(player, path, replace));
-        sender.sendMessage(getMessage(sender, path, replace));
+        String message;
+        if(PAPI_INSTALLED && sender instanceof Player player) {
+            message = getMessage(player, path, replace);
+            if(message == null) return;
+            player.sendMessage(message);
+        }
+
+        message = getMessage(sender, path, replace);
+        if(message == null) return;
+        sender.sendMessage(message);
     }
 
     public static String getMessage(CommandSender sender, String path, Object... replace) {
         String msg = MESSAGE_FILE_CONFIG.getString(path);
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
+        if(msg.isEmpty())
+            return null;
+
         for(int i = 0; i < replace.length; i++) {
             String target = replace[i] == null ? null : (String) replace[i];
             if(target == null)
@@ -47,16 +67,28 @@ public class Messages {
             String replacement = replace[i] == null ? null : replace[i].toString();
             if(MESSAGE_FILE_CONFIG != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
         }
+
+        String message = msg;
         if(PAPI_INSTALLED && sender instanceof Player player)
-            return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg));
-        return ChatColor.translateAlternateColorCodes('&',msg);
+            message = PlaceholderAPI.setPlaceholders(player, msg);
+
+        Matcher matcher = hexPattern.matcher(message);
+        while(matcher.find()) {
+            String hex = message.substring(matcher.start(), matcher.end());
+            message = message.replace(hex, ChatColor.of(hex) + "");
+            matcher = hexPattern.matcher(message);
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     public void loadLanguageFile() {
         createLangFiles(plugin);
         File messageFile = new File(plugin.getDataFolder() + "/lang", plugin.getConfig().getString(Paths.CONFIG_LANGUAGE) + ".yml");
         try {
+            Spectator.debug("Loading language file: " + messageFile.getName());
             if(!messageFile.exists()) {
+                Spectator.debug("Language file does not exist. Loading default messages.");
                 loadDefaultMessages(plugin);
                 return;
             }

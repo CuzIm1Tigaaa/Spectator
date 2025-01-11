@@ -121,8 +121,10 @@ public class SpectatorListener implements Listener {
 			if(!spectateAPI.isCyclingSpectator(spectator))
 				continue;
 
-			if(player.hasPermission(BYPASS_SPECTATED) || spectateAPI.getSpectateablePlayers().size() - 1 > 0)
+			if(player.hasPermission(BYPASS_SPECTATED) || spectateAPI.getSpectateablePlayers().size() - 1 > 0) {
+				spectateAPI.getCycleTask(spectator).selectNextPlayer(plugin);
 				continue;
+			}
 
 			if(!Config.getBoolean(Paths.CONFIG_CYCLE_PAUSE_NO_PLAYERS)) {
 				spectateAPI.getSpectateCycle().stopCycle(spectator);

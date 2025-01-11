@@ -95,23 +95,25 @@ public class Spectate implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
-		if(hasPermission(player, UTILS_HIDE_ARMORSTAND)) {
-			if(args[0].equalsIgnoreCase("-armorstand") && Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS)) {
-				if(!spectateAPI.isSpectator(player)) {
-					Messages.sendMessage(player, Paths.MESSAGES_GENERAL_NOTSPECTATOR);
-					return true;
-				}
-				SpectateInformation info = spectateAPI.getSpectateInfo(player);
-				info.setHideArmorStands(!info.isHideArmorStands());
-				if(info.isHideArmorStands()) {
-					spectateAPI.hideArmorstands(player);
-					Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF);
-				}else {
-					spectateAPI.showArmorstands(player);
-					Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON);
-				}
+		if(hasPermission(player, UTILS_HIDE_ARMORSTAND) && args[0].equalsIgnoreCase("-armorstand")) {
+			if(!Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS))
+				return true;
+
+			if(!spectateAPI.isSpectator(player)) {
+				Messages.sendMessage(player, Paths.MESSAGES_GENERAL_NOTSPECTATOR);
 				return true;
 			}
+			SpectateInformation info = spectateAPI.getSpectateInfo(player);
+			info.setHideArmorStands(!info.isHideArmorStands());
+
+			if(info.isHideArmorStands()) {
+				spectateAPI.hideArmorstands(player);
+				Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_OFF);
+				return true;
+			}
+			spectateAPI.showArmorstands(player);
+			Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_ARMORSTANDS_ON);
+			return true;
 		}
 
 		Player target = Bukkit.getPlayer(args[0]);
@@ -155,8 +157,9 @@ public class Spectate implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
 		if(args.length == 1) {
-			if(args[0].startsWith("-"))
+			if(args[0].startsWith("-") && sender.hasPermission(UTILS_HIDE_ARMORSTAND))
 				return List.of("-armorstand");
+
 			if(!(sender instanceof Player player) || hasPermission(player, COMMAND_SPECTATE_OTHERS))
 				return plugin.getOnlinePlayerNames();
 		}

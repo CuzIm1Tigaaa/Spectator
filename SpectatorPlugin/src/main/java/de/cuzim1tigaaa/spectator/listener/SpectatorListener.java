@@ -98,6 +98,25 @@ public class SpectatorListener implements Listener {
 		spectateAPI.hideArmorstands(player);
 	}
 
+	private final Set<UUID> cooldown = new HashSet<>();
+
+	@EventHandler
+	public void targetMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
+		if(spectateAPI.isNotSpectated(player))
+			return;
+
+		Set<Player> spectators = spectateAPI.getSpectatorsOf(player);
+		spectators.stream().filter(spectateAPI::isCyclingSpectator).forEach(spec -> {
+			if(cooldown.contains(spec.getUniqueId()))
+				return;
+
+			spectateAPI.setRelation(spec, player);
+			cooldown.add(spec.getUniqueId());
+			Bukkit.getScheduler().runTaskLater(plugin, () -> cooldown.remove(spec.getUniqueId()), 30L);
+		});
+	}
+
 
 	/**
 	 * unspectate, when quitting while spectating

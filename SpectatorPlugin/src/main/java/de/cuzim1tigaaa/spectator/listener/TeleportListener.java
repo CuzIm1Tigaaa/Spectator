@@ -50,27 +50,20 @@ public class TeleportListener implements Listener {
 		if(event.isCancelled())
 			return;
 
-		if(hasAccessToWorld(spectator, to.getWorld())) {
-			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
-			spectateAPI.toggleTabList(spectator, true);
-			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
+		if(spectateAPI.isCyclingSpectator(spectator))
+			return;
 
-			Player target = worldChange.remove(spectator.getUniqueId());
-			if(target != null)
-				Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.getSpectateGeneral().spectate(spectator, target), 5L);
+		if(spectateAPI.hasPlayerAccessToWorld(spectator, to.getWorld())) {
+			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
+			event.setCancelled(true);
+
+			spectateAPI.getSpectateGeneral().unspectate(spectator, true);
+			spectateAPI.toggleTabList(spectator, true);
+
+			Bukkit.getScheduler().runTaskLater(plugin, () ->
+					spectateAPI.getSpectateGeneral().spectate(spectator, null), 20L);
 		}
 	}
-
-	/**
-	 * When a player quits the server, the player will be removed from the worldChange map
-	 */
-	@EventHandler
-	public void playerQuitWorldChange(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		worldChange.remove(player.getUniqueId());
-	}
-
 
 	/**
 	 * When a player teleports through a portal, the spectator does not seem to be teleported with the player
@@ -96,14 +89,20 @@ public class TeleportListener implements Listener {
 
 		Spectator.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
 		spectateAPI.getSpectatorsOf(player).forEach(spectator -> {
-			spectateAPI.dismount(spectator);
-			if(!hasAccessToWorld(player, to.getWorld()))
-				return;
-
 			Spectator.debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
-			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
-			worldChange.put(spectator.getUniqueId(), player);
+			spectateAPI.dismount(spectator);
+			worldChange.put(spectator.getUniqueId(), spectator);
+			spectator.teleport(player);
 		});
+	}
+
+	/**
+	 * When a player quits the server, the player will be removed from the worldChange map
+	 */
+	@EventHandler
+	public void playerQuitWorldChange(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		worldChange.remove(player.getUniqueId());
 	}
 
 	/**
@@ -138,13 +137,5 @@ public class TeleportListener implements Listener {
 
 		spectateAPI.setRelation(player, target);
 		plugin.getInventory().getTargetInventory(player, target);
-	}
-
-	private boolean hasAccessToWorld(Player player, World world) {
-		if(player.getWorld().equals(world))
-			return true;
-		if(plugin.getMultiverseCore() == null)
-			return true;
-		return player.hasPermission("multiverse.access." + plugin.getMultiverseCore().getMVWorldManager().getMVWorld(world).getPermissibleName());
 	}
 }

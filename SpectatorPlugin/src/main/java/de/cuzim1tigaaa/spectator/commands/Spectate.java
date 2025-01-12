@@ -46,7 +46,6 @@ public class Spectate implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-				spectateAPI.getSpectateGeneral().getSpectateStartLocation().put(target.getUniqueId(), target.getLocation());
 				spectateAPI.getSpectateGeneral().spectate(target, null);
 				Messages.sendMessage(target, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN);
 				Messages.sendMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", target.getName());
@@ -71,7 +70,6 @@ public class Spectate implements CommandExecutor, TabCompleter {
 				Messages.sendMessage(sender, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName());
 				return true;
 			}
-			spectateAPI.getSpectateGeneral().getSpectateStartLocation().put(spectator.getUniqueId(), spectator.getLocation());
 			spectateAPI.getSpectateGeneral().spectate(spectator, target);
 			Messages.sendMessage(spectator, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName());
 			Messages.sendMessage(sender, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OTHER, "TARGET", spectator.getName());
@@ -89,7 +87,6 @@ public class Spectate implements CommandExecutor, TabCompleter {
 				Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);
 				return true;
 			}
-			spectateAPI.getSpectateGeneral().getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
 			spectateAPI.getSpectateGeneral().spectate(player, null);
 			Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN);
 			return true;
@@ -148,7 +145,6 @@ public class Spectate implements CommandExecutor, TabCompleter {
 				}
 			}
 		}
-		spectateAPI.getSpectateGeneral().getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
 		spectateAPI.getSpectateGeneral().spectate(player, target);
 		Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER, "TARGET", target.getName());
 		return true;

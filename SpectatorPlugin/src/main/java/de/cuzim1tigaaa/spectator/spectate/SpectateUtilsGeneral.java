@@ -37,7 +37,8 @@ public class SpectateUtilsGeneral {
 				spectateAPI.getSpectators().forEach(spectator -> {
 					SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
 					if(info == null) {
-						unspectate(spectator, false);
+						spectator.setGameMode(GameMode.SURVIVAL);
+						spectateAPI.getSpectators().remove(spectator);
 						return;
 					}
 
@@ -67,10 +68,13 @@ public class SpectateUtilsGeneral {
 
 		SpectateInformation info;
 		if(spectateAPI.isSpectator(spectator)) {
+			spectateAPI.dismount(spectator);
 			info = spectateAPI.getSpectateInfo(spectator);
 			info.setTarget(target);
-		}else
+		}else {
 			info = new SpectateInformation(spectator, target);
+			getSpectateStartLocation().put(spectator.getUniqueId(), spectator.getLocation());
+		}
 
 		spectateAPI.toggleTabList(spectator, true);
 
@@ -78,11 +82,21 @@ public class SpectateUtilsGeneral {
 			info.saveAttributes();
 
 		spectateAPI.hideArmorstands(spectator);
+		boolean sameWorld = target == null || spectator.getWorld().equals(target.getWorld());
+
+		if(target != null)
+			Bukkit.getScheduler().runTask(plugin, () ->
+					spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
+
 		spectator.setGameMode(GameMode.SPECTATOR);
 
-		if(target != null) {
-			Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.setRelation(spectator, target), 5L);
+		if(sameWorld)
+				spectateAPI.setRelation(spectator, target);
+
+		else {
+			Bukkit.getScheduler().runTask(plugin, () ->
+					spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.setRelation(spectator, target), 10L);
 		}
 
 		plugin.getInventory().getTargetInventory(spectator, target);
@@ -99,7 +113,7 @@ public class SpectateUtilsGeneral {
 			spectateAPI.getSpectateCycle().stopCycle(spectator);
 
 		spectateAPI.dismount(spectator);
-		spectateAPI.restoreArmorstands();
+		spectateAPI.showArmorstands(spectator);
 
 		Location location = spectateStartLocation.getOrDefault(spectator.getUniqueId(), spectator.getLocation());
 		if(!oldLocation || !Config.getBoolean(Paths.CONFIG_SAVE_PLAYERS_LOCATION)) {
@@ -115,6 +129,7 @@ public class SpectateUtilsGeneral {
 		try {
 			Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
 		}catch(IllegalPluginAccessException e) {
+			// if unspectate is triggered by server shutting down
 			spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 		}
 

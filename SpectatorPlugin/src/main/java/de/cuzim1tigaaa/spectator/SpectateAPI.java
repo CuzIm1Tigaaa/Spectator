@@ -1,15 +1,14 @@
 package de.cuzim1tigaaa.spectator;
 
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
-import de.cuzim1tigaaa.spectator.files.Permissions;
+import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import de.cuzim1tigaaa.spectator.spectate.SpectateInformation;
 import de.cuzim1tigaaa.spectator.spectate.SpectateState;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsCycle;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -107,6 +106,9 @@ public class SpectateAPI {
     }
 
     public void hideArmorstands(Player spectator) {
+        if(!Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS))
+            return;
+
         SpectateInformation info = getSpectateInfo(spectator);
         if(info == null)
             return;
@@ -124,6 +126,9 @@ public class SpectateAPI {
     }
 
     public void showArmorstands(Player spectator) {
+        if(hiddenArmorStands.isEmpty())
+            return;
+
         SpectateInformation info = getSpectateInfo(spectator);
         if(info == null)
             return;
@@ -181,5 +186,16 @@ public class SpectateAPI {
             target.showPlayer(this.plugin, spectator);
             spectator.removeMetadata("vanished", this.plugin);
         }
+    }
+
+    public boolean hasPlayerAccessToWorld(Player player, World world) {
+        if(player.getWorld().equals(world))
+            return true;
+
+        if(plugin.getMultiverseCore() == null)
+            return true;
+
+        return player.hasPermission("multiverse.access." + plugin.getMultiverseCore()
+                .getMVWorldManager().getMVWorld(world).getPermissibleName());
     }
 }

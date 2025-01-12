@@ -48,10 +48,18 @@ public class SpectateInfo implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     sender.sendMessage("Your attributes:");
-	                final String info = String.format("%-20s: %s", "GameMode", attributes.getGameMode().name()) + "\n" +
-			                String.format("%-20s: %s", "Flying", attributes.isFlying()) + "\n" +
-			                String.format("%-20s: %s", "Remaining Air", attributes.getRemainingAir()) + "\n" +
-			                String.format("%-20s: %s", "Fire Ticks", attributes.getFireTicks()) + "\n";
+
+                    String info = String.format("""
+                            - %-20s: %s
+                            - %-20s: %s
+                            - %-20s: %s
+                            - %-20s: %s
+                            """, "GameMode", attributes.getGameMode().name(),
+                            "Flying", attributes.isFlying(),
+                            "Remaining Air", attributes.getRemainingAir(),
+                            "Fire Ticks", attributes.getFireTicks());
+
+                    player.sendMessage(info);
 
                     PlayerInventory inventory = plugin.getInventory().getPlayerInventories()
                             .stream().filter(i -> i.getPlayer().equals(player)).findFirst().orElse(null);
@@ -68,7 +76,6 @@ public class SpectateInfo implements CommandExecutor, TabCompleter {
                         index++;
                     }
                     player.openInventory(inv);
-                    player.sendMessage(info);
                 }
                 case "location" -> {
                     if(!(sender instanceof Player player))

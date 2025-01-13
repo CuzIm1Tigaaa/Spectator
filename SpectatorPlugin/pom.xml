@@ -6,11 +6,11 @@
     <parent>
         <groupId>de.cuzim1tigaaa.spectator</groupId>
         <artifactId>Spectator</artifactId>
-        <version>4.1</version>
+        <version>4.2</version>
     </parent>
 
     <artifactId>SpectatorPlugin</artifactId>
-    <version>4.1</version>
+    <version>4.2</version>
 
     <repositories>
         <repository>

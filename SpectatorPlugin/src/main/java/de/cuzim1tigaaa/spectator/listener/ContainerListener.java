@@ -1,9 +1,10 @@
 package de.cuzim1tigaaa.spectator.listener;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.*;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,14 +15,16 @@ import java.util.*;
 
 public class ContainerListener implements Listener {
 
-	private final SpectateUtils spectateUtils;
+	private final SpectateAPI spectateAPI;
 
-	private final Set<InventoryType> container = Sets.immutableEnumSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
-			InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
-			InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
+	private final ImmutableSet<InventoryType> containers;
 
 	public ContainerListener(Spectator plugin) {
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateAPI = plugin.getSpectateAPI();
+
+		Set<InventoryType> containerSet = Sets.newHashSet(InventoryType.BARREL, InventoryType.BLAST_FURNACE,
+				InventoryType.BREWING, InventoryType.CHEST, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.FURNACE,
+				InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
 
 		String version = plugin.getServer().getBukkitVersion();
 		int mayor = Integer.parseInt(version.split("\\.")[1]);
@@ -29,9 +32,12 @@ public class ContainerListener implements Listener {
 			int minor = 0;
 			if(version.split("\\.").length > 2)
 				minor = Integer.parseInt(version.split("\\.")[2].split("-")[0]);
-			if(minor >= 3)
-				container.add(InventoryType.CRAFTER);
+			if(mayor > 20 || minor >= 3)
+                //noinspection UnstableApiUsage
+                containerSet.add(InventoryType.CRAFTER);
 		}
+
+		this.containers = ImmutableSet.copyOf(containerSet);
 	}
 
 	/**
@@ -40,7 +46,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
-		if(!spectateUtils.isSpectator(player)) return;
+		if(!spectateAPI.isSpectator(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -50,7 +56,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onInventoryDrag(InventoryDragEvent event) {
 		Player player = (Player) event.getWhoClicked();
-		if(!spectateUtils.isSpectator(player)) return;
+		if(!spectateAPI.isSpectator(player)) return;
 		event.setCancelled(true);
 	}
 
@@ -60,9 +66,9 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onChestOpen(InventoryOpenEvent event) {
 		Player player = (Player) event.getPlayer();
-		if(spectateUtils.isNotSpectated(player)) return;
+		if(spectateAPI.isNotSpectated(player)) return;
 
-		Set<Player> spectators = new HashSet<>(spectateUtils.getSpectators());
+		Set<Player> spectators = new HashSet<>(spectateAPI.getSpectators());
 		spectators.removeIf(p -> !Objects.equals(p.getSpectatorTarget(), player));
 
 		Inventory inventory = null, openedInventory = event.getInventory();
@@ -71,7 +77,7 @@ public class ContainerListener implements Listener {
 			spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_ENDERCHEST));
 			if(Config.getBoolean(Paths.CONFIG_INVENTORY_ENDER_CHEST)) inventory = player.getEnderChest();
 		}
-		if(this.container.contains(openedInventory.getType())) {
+		if(this.containers.contains(openedInventory.getType())) {
 			spectators.removeIf(p -> !p.hasPermission(Permissions.UTILS_OPEN_CONTAINER));
 			if(Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))
 				inventory = openedInventory;
@@ -88,7 +94,7 @@ public class ContainerListener implements Listener {
 	@EventHandler
 	public void onChestClose(InventoryCloseEvent event) {
 		Player player = (Player) event.getPlayer();
-		if(spectateUtils.isNotSpectated(player)) return;
+		if(spectateAPI.isNotSpectated(player)) return;
 
 		Inventory openedInventory = event.getInventory();
 
@@ -97,13 +103,13 @@ public class ContainerListener implements Listener {
 				return;
 		}
 
-		if(!this.container.contains(openedInventory.getType()))
+		if(!this.containers.contains(openedInventory.getType()))
 			return;
 
 		if(!Config.getBoolean(Paths.CONFIG_INVENTORY_CONTAINERS))
 			return;
 
-		Set<Player> spectators = new HashSet<>(spectateUtils.getSpectators());
+		Set<Player> spectators = new HashSet<>(spectateAPI.getSpectators());
 		spectators.removeIf(p -> !Objects.equals(p.getSpectatorTarget(), player));
 
 		for(Player spec : spectators)

@@ -2,7 +2,7 @@ package de.cuzim1tigaaa.spectator.files;
 
 import de.cuzim1tigaaa.spectator.Spectator;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,43 +17,89 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public final class Messages {
+public class Messages {
 
-    private static FileConfiguration message;
+    private static Messages INSTANCE;
+    private final Spectator plugin;
+    private static final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
+
+    private static boolean PAPI_INSTALLED;
+    private static FileConfiguration MESSAGE_FILE_CONFIG;
+
+    public Messages(Spectator plugin) {
+        this.plugin = plugin;
+        PAPI_INSTALLED = plugin.isPapiInstalled();
+    }
+
+    public static Messages getMessages() {
+        if(INSTANCE == null)
+            INSTANCE = new Messages(Spectator.getPlugin());
+        return INSTANCE;
+    }
+
+    public static void sendMessage(CommandSender sender, String path, Object... replace) {
+        String message;
+        if(PAPI_INSTALLED && sender instanceof Player player) {
+            message = getMessage(player, path, replace);
+            if(message == null) return;
+            player.sendMessage(message);
+        }
+
+        message = getMessage(sender, path, replace);
+        if(message == null) return;
+        sender.sendMessage(message);
+    }
 
     public static String getMessage(CommandSender sender, String path, Object... replace) {
-        String msg = message.getString(path);
+        String msg = MESSAGE_FILE_CONFIG.getString(path);
         if(msg == null) msg = ChatColor.RED + "Error: Path " + ChatColor.GRAY + "'" + path + "' " + ChatColor.RED + "does not exist!";
+        if(msg.isEmpty())
+            return null;
+
         for(int i = 0; i < replace.length; i++) {
             String target = replace[i] == null ? null : (String) replace[i];
             if(target == null)
                 continue;
             i++;
             String replacement = replace[i] == null ? null : replace[i].toString();
-            if(message != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
+            if(MESSAGE_FILE_CONFIG != null) msg = replacement == null ? msg : msg.replace("%" + target + "%", replacement);
         }
-        if(Spectator.isPapiInstalled() && sender instanceof Player player)
-            return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, msg));
-        return ChatColor.translateAlternateColorCodes('&', msg) ;
+
+        String message = msg;
+        if(PAPI_INSTALLED && sender instanceof Player player)
+            message = PlaceholderAPI.setPlaceholders(player, msg);
+
+        Matcher matcher = hexPattern.matcher(message);
+        while(matcher.find()) {
+            String hex = message.substring(matcher.start(), matcher.end());
+            message = message.replace(hex, ChatColor.of(hex) + "");
+            matcher = hexPattern.matcher(message);
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static void loadLanguageFile(Spectator plugin) {
+    public void loadLanguageFile() {
         createLangFiles(plugin);
-        File messageFile = new File(plugin.getDataFolder() + "/lang", Config.getString(Paths.CONFIG_LANGUAGE) + ".yml");
+        File messageFile = new File(plugin.getDataFolder() + "/lang", plugin.getConfig().getString(Paths.CONFIG_LANGUAGE) + ".yml");
         try {
+            Spectator.debug("Loading language file: " + messageFile.getName());
             if(!messageFile.exists()) {
+                Spectator.debug("Language file does not exist. Loading default messages.");
                 loadDefaultMessages(plugin);
                 return;
             }
-            message = YamlConfiguration.loadConfiguration(messageFile);
-            message.save(messageFile);
+            MESSAGE_FILE_CONFIG = YamlConfiguration.loadConfiguration(messageFile);
+            MESSAGE_FILE_CONFIG.save(messageFile);
         }catch(IOException exception) {
             plugin.getLogger().log(Level.SEVERE, "An error occurred while loading language files", exception);
         }
     }
 
-    private static void createLangFiles(Spectator plugin) {
+    private void createLangFiles(Spectator plugin) {
         URL dirURL = Spectator.class.getClassLoader().getResource("lang");
         if(dirURL == null) return;
 
@@ -79,14 +125,14 @@ public final class Messages {
 
     }
 
-    private static void loadDefaultMessages(Spectator plugin) {
+    private void loadDefaultMessages(Spectator plugin) {
         File messageFile = new File(plugin.getDataFolder() + "/lang", "en_US.yml");
         try {
             if(!messageFile.exists()) {
-                message = new YamlConfiguration();
-                message.save(messageFile);
+                MESSAGE_FILE_CONFIG = new YamlConfiguration();
+                MESSAGE_FILE_CONFIG.save(messageFile);
             }
-            message = YamlConfiguration.loadConfiguration(messageFile);
+            MESSAGE_FILE_CONFIG = YamlConfiguration.loadConfiguration(messageFile);
             set(Paths.MESSAGE_DEFAULT_SENDER,                       "&cYou have to be a Player to perform this command!");
             set(Paths.MESSAGE_DEFAULT_PERMISSION,                   "&cYou do not have Permission to execute this command!");
             set(Paths.MESSAGE_DEFAULT_SYNTAX,                       "&cThere's a syntax error: %USAGE%");
@@ -138,13 +184,13 @@ public final class Messages {
             set(Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OTHER,       "&e%TARGET% &7is no longer in Spectator-Mode.");
             set(Paths.MESSAGES_COMMANDS_SPECTATE_PLAYER,            "&7You are now spectating &c%TARGET%&7.");
             set(Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE,        "&cYou do not have permission to spectate &e%TARGET% &cin this world!");
-            message.save(messageFile);
+            MESSAGE_FILE_CONFIG.save(messageFile);
         }catch (IOException exception) {
             plugin.getLogger().log(Level.SEVERE, "An error occurred while loading default messages", exception);
         }
     }
 
-    private static void set(String path, String value) {
-        message.set(path, message.get(path, value));
+    private void set(String path, String value) {
+        MESSAGE_FILE_CONFIG.set(path, MESSAGE_FILE_CONFIG.get(path, value));
     }
 }

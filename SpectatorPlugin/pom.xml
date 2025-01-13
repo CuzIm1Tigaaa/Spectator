@@ -6,11 +6,11 @@
     <parent>
         <groupId>de.cuzim1tigaaa.spectator</groupId>
         <artifactId>Spectator</artifactId>
-        <version>3.2</version>
+        <version>4.2</version>
     </parent>
 
     <artifactId>SpectatorPlugin</artifactId>
-    <version>3.2</version>
+    <version>4.2</version>
 
     <repositories>
         <repository>
@@ -21,6 +21,11 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
     </repositories>
 
@@ -50,7 +55,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

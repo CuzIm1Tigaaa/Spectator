@@ -6,7 +6,7 @@
 
     <groupId>de.cuzim1tigaaa.spectator</groupId>
     <artifactId>Spectator</artifactId>
-    <version>3.2</version>
+    <version>4.2</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -16,7 +16,7 @@
 
     <properties>
         <api.version>1.20.4-R0.1-SNAPSHOT</api.version>
-        <java.version>18</java.version>
+        <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

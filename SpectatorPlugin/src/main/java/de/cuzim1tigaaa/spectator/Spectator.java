@@ -6,8 +6,6 @@ import de.cuzim1tigaaa.spectator.extensions.*;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.listener.SpectatorListener;
 import de.cuzim1tigaaa.spectator.player.Inventory;
-import de.cuzim1tigaaa.spectator.spectate.Displays;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,91 +16,92 @@ import java.util.List;
 @Getter
 public class Spectator extends JavaPlugin {
 
-    @Getter
-    private static Spectator plugin;
+	@Getter
+	private static Spectator plugin;
 
-    private SpectateUtils spectateUtils;
-    private UpdateChecker updateChecker;
-    private Displays displays;
+	private SpectateAPI spectateAPI;
+	private UpdateChecker updateChecker;
 
-    private MultiverseCore multiverseCore;
-    @Getter private static boolean papiInstalled;
+	private MultiverseCore multiverseCore;
+	private boolean papiInstalled;
+	private Inventory inventory;
 
-    @Override
-    public void onEnable() {
-        this.info();
-        this.spectateUtils = new SpectateUtils(this);
-        register();
+	@Override
+	public void onEnable() {
+		plugin = this;
 
-        plugin = this;
-    }
+		this.info();
 
-    @Override
-    public void onDisable() {
-        Inventory.restoreAll();
-        this.spectateUtils.restore();
+		this.spectateAPI = new SpectateAPI(this);
+		this.updateChecker = new UpdateChecker(this);
 
-        plugin = null;
-    }
+		register();
+	}
 
-    public void reload() {
-        this.getLogger().info("Loading config settings…");
-        Config.loadConfig(this);
-        this.getLogger().info("Loading plugin messages…");
-        Messages.loadLanguageFile(this);
+	@Override
+	public void onDisable() {
+		this.spectateAPI.getSpectateGeneral().restore();
+		plugin = null;
+	}
 
-        this.updateChecker = new UpdateChecker(this);
-    }
+	private void register() {
+		this.reload();
+		new Metrics(this);
 
+		this.inventory = new Inventory(this);
+		this.getLogger().info("Register Events & Commands…");
 
-    private void register() {
-        this.reload();
-        new Metrics(this);
+		if((multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
+			this.getLogger().info("Multiverse-Core is installed on this server!");
 
-        this.getLogger().info("Register Events & Commands…");
+		papiInstalled = false;
+		if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+			this.getLogger().info("PlaceholderAPI is installed on this server!");
+			this.getLogger().info("Registering plugins placeholders…");
+			new Placeholders(this).register();
+			papiInstalled = true;
+		}
 
-        if((multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
-            this.getLogger().info("Multiverse-Core is installed on this server!");
+		new SpectatorListener(this);
 
-        papiInstalled = false;
-        if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            this.getLogger().info("PlaceholderAPI is installed on this server!");
-            this.getLogger().info("Registering plugins placeholders…");
-            new Placeholders(this).register();
-            papiInstalled = true;
-        }
+		new Spectate(this);
+		new SpectateCycle(this);
+		new SpectateHere(this);
+		//new SpectateInfo(this);
+		new SpectateReload(this);
+		new SpectateList(this);
+		new UnSpectate(this);
+	}
 
-        new SpectatorListener(this);
+	public void reload() {
+		this.getLogger().info("Loading config settings…");
+		Config.getConfig().loadConfig();
 
-        new Spectate(this);
-        new SpectateCycle(this);
-        new SpectateHere(this);
-        new SpectateInfo(this);
-        new SpectateReload(this);
-        new SpectateList(this);
-        new UnSpectate(this);
-    }
+		this.getLogger().info("Loading plugin messages…");
+		Messages.getMessages().loadLanguageFile();
+	}
 
-    private void info() {
-        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        this.getLogger().info("Plugin: " + getDescription().getName() + ", " +
-                "v" + getDescription().getVersion() + " by " + getDescription().getAuthors().get(0));
-        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-        this.getLogger().info("This Plugin is a modified Version");
-        this.getLogger().info("of kosakriszi's spectator Plugin!");
-        this.getLogger().info("spigotmc.org/resources/spectator.16745/");
-        this.getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
-    }
+	private void info() {
+		getServer().getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		getServer().getLogger().info(String.format("Plugin %s, v%s by %s",
+				this.getDescription().getName(),
+				this.getDescription().getVersion(),
+				this.getDescription().getAuthors().getFirst()));
+		getServer().getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+		getServer().getLogger().info("This Plugin is a modified Version");
+		getServer().getLogger().info("of kosakriszi's spectator Plugin!");
+		getServer().getLogger().info("spigotmc.org/resources/spectator.16745/");
+		getServer().getLogger().info("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+	}
 
-    public List<String> getOnlinePlayerNames() {
-        List<String> names = new ArrayList<>();
-        Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
-        return names;
-    }
+	public List<String> getOnlinePlayerNames() {
+		List<String> names = new ArrayList<>();
+		Bukkit.getOnlinePlayers().forEach(player -> names.add(player.getName()));
+		return names;
+	}
 
-    public static void Debug(String message) {
-        if(!Config.getBoolean(Paths.CONFIG_DEBUG))
-            return;
-        getPlugin().getLogger().info(message);
-    }
+	public static void debug(String message) {
+		if(Config.getBoolean(Paths.CONFIG_DEBUG))
+    		getPlugin().getLogger().info(message);
+	}
 }

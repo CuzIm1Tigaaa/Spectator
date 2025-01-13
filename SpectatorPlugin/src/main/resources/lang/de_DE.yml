@@ -46,8 +46,8 @@ Messages:
       IntervalTooBig: '&cDas Intervall darf nicht größer als &e%MAXIMUM% &cSekunden sein!'
     Spectate:
       ArmorStands:
-        Hide: '&7Rüstungsständer sind nun wieder sichtbar.'
-        Show: '&7Du hast Rüstungsständer unsichtbar gemacht.'
+        Hide: '&7Du hast Rüstungsständer unsichtbar gemacht.'
+        Show: '&7Rüstungsständer sind nun wieder sichtbar.'
       Join:
         Self: '&7Du bist nun im Zuschauermodus.'
         Other: '&e%TARGET% &7ist nun im Zuschauermodus.'

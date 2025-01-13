@@ -1,9 +1,10 @@
 package de.cuzim1tigaaa.spectator.commands;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
+import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 
@@ -14,33 +15,35 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 
 public class SpectateHere implements CommandExecutor, TabCompleter {
 
-	private final SpectateUtils spectateUtils;
+    private final SpectateAPI spectateAPI;
+	private final SpectateUtilsGeneral spectateUtils;
 
     public SpectateHere(Spectator plugin) {
         Objects.requireNonNull(plugin.getCommand("spectatehere")).setExecutor(this);
-	    this.spectateUtils = plugin.getSpectateUtils();
+        this.spectateAPI = plugin.getSpectateAPI();
+	    this.spectateUtils = spectateAPI.getSpectateGeneral();
     }
 
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] args) {
         if(!(sender instanceof Player player)) {
-            sender.sendMessage(Messages.getMessage(null, Paths.MESSAGE_DEFAULT_SENDER));
+            Messages.sendMessage(sender, Paths.MESSAGE_DEFAULT_SENDER);
             return true;
         }
 
         if(!hasPermission(player, COMMAND_SPECTATE_HERE)) {
-            player.sendMessage(Messages.getMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION));
+            Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION);
             return true;
         }
 
-        if(spectateUtils.isSpectator(player)) {
+        if(spectateAPI.isSpectator(player)) {
             spectateUtils.unspectate(player, false);
-            player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN));
+            Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);
             return true;
         }
         spectateUtils.getSpectateStartLocation().put(player.getUniqueId(), player.getLocation());
         spectateUtils.spectate(player, null);
-        player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN));
+        Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_JOIN_OWN);
         return true;
     }
 

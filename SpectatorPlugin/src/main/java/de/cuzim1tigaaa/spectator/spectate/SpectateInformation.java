@@ -5,7 +5,6 @@ import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -21,7 +20,6 @@ public class SpectateInformation {
 	@Setter private CycleTask cycleTask;
 	@Setter private boolean hideArmorStands;
 	private final Map<World, PlayerAttributes> attributes;
-	private final List<ArmorStand> hiddenArmorStands = new ArrayList<>();
 
 	public SpectateInformation(Player spectator, Player target) {
 		this.spectator = spectator;
@@ -32,29 +30,12 @@ public class SpectateInformation {
 	}
 
 	public void saveAttributes() {
-		Spectator.Debug(String.format("Saving attributes of %s in world %s", spectator.getName(), spectator.getWorld().getName()));
 		this.attributes.put(spectator.getWorld(), new PlayerAttributes(spectator));
 	}
 
 	public void restoreAttributes(boolean gameModeChange) {
-		Spectator.Debug(String.format("Restoring attributes of %s in world %s", spectator.getName(), spectator.getWorld().getName()));
 		PlayerAttributes.restorePlayerAttributes(spectator,
 				this.attributes.remove(spectator.getWorld()), gameModeChange);
-	}
-
-
-	public void hideArmorstands() {
-		this.getSpectator().getNearbyEntities(3, 3, 3).forEach(entity -> {
-			if (entity instanceof ArmorStand armorStand) {
-				spectator.hideEntity(Spectator.getPlugin(), armorStand);
-				hiddenArmorStands.add(armorStand);
-			}
-		});
-	}
-
-	public void restoreArmorstands() {
-		hiddenArmorStands.forEach(armorStand -> armorStand.addPassenger(spectator));
-		hiddenArmorStands.clear();
 	}
 
 	@Override

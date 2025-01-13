@@ -1,10 +1,9 @@
 package de.cuzim1tigaaa.spectator.listener;
 
+import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.files.Messages;
 import de.cuzim1tigaaa.spectator.files.Paths;
-import de.cuzim1tigaaa.spectator.player.Inventory;
-import de.cuzim1tigaaa.spectator.spectate.SpectateUtils;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -20,13 +19,14 @@ import static de.cuzim1tigaaa.spectator.files.Permissions.*;
 public class TeleportListener implements Listener {
 
 	private final Spectator plugin;
-	private final SpectateUtils spectateUtils;
+	private final SpectateAPI spectateAPI;
 
-	@Getter private static final Map<UUID, Player> worldChange = new HashMap<>();
+	@Getter
+	private static final Map<UUID, Player> worldChange = new HashMap<>();
 
 	public TeleportListener(Spectator plugin) {
 		this.plugin = plugin;
-		this.spectateUtils = plugin.getSpectateUtils();
+		this.spectateAPI = plugin.getSpectateAPI();
 	}
 
 	/**
@@ -38,43 +38,32 @@ public class TeleportListener implements Listener {
 	public void spectatorSwitchingWorld(PlayerTeleportEvent event) {
 		Player spectator = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
-
-		if(!spectateUtils.isSpectator(spectator) || spectateUtils.getTargetOf(spectator) != null)
-			return;
-
-		if(event.isCancelled())
-			return;
-
 		if(from.getWorld() == null || to == null || to.getWorld() == null)
 			return;
 
 		if(from.getWorld().equals(to.getWorld()))
 			return;
 
-		if(hasAccessToWorld(spectator, to.getWorld())) {
-			Spectator.Debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
-			spectateUtils.simulateUnspectate(spectator);
-			spectateUtils.toggleTabList(spectator, true);
-			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
+		if(!spectateAPI.isSpectator(spectator) || spectateAPI.getTargetOf(spectator) != null)
+			return;
 
-			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-				Player target = null;
-				if(worldChange.containsKey(spectator.getUniqueId()))
-					target = worldChange.remove(spectator.getUniqueId());
-				spectateUtils.spectate(spectator, target);
-			}, 5L);
+		if(event.isCancelled())
+			return;
+
+		if(spectateAPI.isCyclingSpectator(spectator))
+			return;
+
+		if(spectateAPI.hasPlayerAccessToWorld(spectator, to.getWorld())) {
+			Spectator.debug(String.format("Spectator %-16s switched world! From [%s] to [%s]", spectator.getName(), from.getWorld().getName(), to.getWorld().getName()));
+			event.setCancelled(true);
+
+			spectateAPI.getSpectateGeneral().unspectate(spectator, true);
+			spectateAPI.toggleTabList(spectator, true);
+
+			Bukkit.getScheduler().runTaskLater(plugin, () ->
+					spectateAPI.getSpectateGeneral().spectate(spectator, null), 20L);
 		}
 	}
-
-	/**
-	 * When a player quits the server, the player will be removed from the worldChange map
-	 */
-	@EventHandler
-	public void playerQuitWorldChange(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		worldChange.remove(player.getUniqueId());
-	}
-
 
 	/**
 	 * When a player teleports through a portal, the spectator does not seem to be teleported with the player
@@ -86,31 +75,34 @@ public class TeleportListener implements Listener {
 		Player player = event.getPlayer();
 		Location from = event.getFrom(), to = event.getTo();
 
-		if(spectateUtils.isSpectator(player) || spectateUtils.isNotSpectated(player))
-			return;
-
-		if(event.isCancelled())
-			return;
-
 		if(from.getWorld() == null || to == null || to.getWorld() == null)
 			return;
 
 		if(from.getWorld().equals(to.getWorld()))
 			return;
 
-		Spectator.Debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
-		spectateUtils.getSpectatorsOf(player).forEach(spectator -> {
-			spectateUtils.dismount(spectator);
-			if(!hasAccessToWorld(player, to.getWorld()))
-				return;
+		if(spectateAPI.isSpectator(player) || spectateAPI.isNotSpectated(player))
+			return;
 
-			Spectator.Debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
-			SpectatorListener.gameModeChangeAllowed.add(spectator.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-				worldChange.put(spectator.getUniqueId(), player);
-				spectator.teleport(player, PlayerTeleportEvent.TeleportCause.PLUGIN);
-			}, 5L);
+		if(event.isCancelled())
+			return;
+
+		Spectator.debug(String.format("Player %-16s switched world! From [%s] to [%s]", player.getName(), from.getWorld().getName(), to.getWorld().getName()));
+		spectateAPI.getSpectatorsOf(player).forEach(spectator -> {
+			Spectator.debug(String.format("Spectator %-16s was spectating player %-16s", spectator.getName(), player.getName()));
+			spectateAPI.dismount(spectator);
+			worldChange.put(spectator.getUniqueId(), spectator);
+			spectator.teleport(player);
 		});
+	}
+
+	/**
+	 * When a player quits the server, the player will be removed from the worldChange map
+	 */
+	@EventHandler
+	public void playerQuitWorldChange(PlayerQuitEvent event) {
+		Player player = event.getPlayer();
+		worldChange.remove(player.getUniqueId());
 	}
 
 	/**
@@ -123,7 +115,7 @@ public class TeleportListener implements Listener {
 		if(event.getCause() != PlayerTeleportEvent.TeleportCause.SPECTATE) return;
 
 		Player player = event.getPlayer();
-		if(!spectateUtils.isSpectator(player))
+		if(!spectateAPI.isSpectator(player))
 			return;
 
 		if(player.getSpectatorTarget() == null || !(player.getSpectatorTarget() instanceof Player target))
@@ -132,26 +124,18 @@ public class TeleportListener implements Listener {
 		if(!hasPermission(player, COMMAND_SPECTATE_OTHERS)) {
 			event.setCancelled(true);
 			player.setSpectatorTarget(null);
-			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName());
 			return;
 		}
 
 		if(hasPermission(target, BYPASS_SPECTATED) && !hasPermission(player, BYPASS_SPECTATEALL)) {
 			event.setCancelled(true);
 			player.setSpectatorTarget(null);
-			player.sendMessage(Messages.getMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName()));
+			Messages.sendMessage(player, Paths.MESSAGES_GENERAL_BYPASS_TELEPORT, "TARGET", target.getName());
 			return;
 		}
 
-		spectateUtils.setRelation(player, target);
-		Inventory.getInventory(player, target);
-	}
-
-	private boolean hasAccessToWorld(Player player, World world) {
-		if(player.getWorld().equals(world))
-			return true;
-		if(plugin.getMultiverseCore() == null)
-			return true;
-		return player.hasPermission("multiverse.access." + plugin.getMultiverseCore().getMVWorldManager().getMVWorld(world).getPermissibleName());
+		spectateAPI.setRelation(player, target);
+		plugin.getInventory().getTargetInventory(player, target);
 	}
 }

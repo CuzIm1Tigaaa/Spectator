@@ -46,8 +46,8 @@ Messages:
       IntervalTooBig: '&cEl intervalo no puede ser mayor a &e%MAXIMUM% &csegundos.'
     Spectate:
       ArmorStands:
-        Hide: '&7Los soportes de armadura son visibles de nuevo.'
-        Show: '&7Has ocultado todos los soportes de armadura.'
+        Hide: '&7Has ocultado todos los soportes de armadura.'
+        Show: '&7Los soportes de armadura son visibles de nuevo.'
       Join:
         Self: '&7Ahora estás en modo espectador.'
         Other: '&e%TARGET% &7ahora está en modo espectador.'

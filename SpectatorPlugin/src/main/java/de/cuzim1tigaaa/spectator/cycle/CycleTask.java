@@ -72,10 +72,8 @@ public class CycleTask {
 			spectateAPI.getSpectateGeneral().notifyTarget(last, spectator, false);
 
 		if(next.getWorld() != spectator.getWorld()) {
-			plugin.getSpectateAPI().dismount(spectator);
 			TeleportListener.getWorldChange().put(spectator.getUniqueId(), next);
 			getStateChange().put(spectator.getUniqueId(), SpectateState.CYCLING);
-			return;
 		}
 		spectateAPI.getSpectateGeneral().spectate(spectator, next);
 	}

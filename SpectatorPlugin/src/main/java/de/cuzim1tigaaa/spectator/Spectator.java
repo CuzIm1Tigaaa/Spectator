@@ -67,7 +67,7 @@ public class Spectator extends JavaPlugin {
 		new Spectate(this);
 		new SpectateCycle(this);
 		new SpectateHere(this);
-		new SpectateInfo(this);
+		//new SpectateInfo(this);
 		new SpectateReload(this);
 		new SpectateList(this);
 		new UnSpectate(this);

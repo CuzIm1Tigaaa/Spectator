@@ -47,8 +47,8 @@ Messages:
       IntervalTooBig: '&cThe interval cannot be bigger than &e%MAXIMUM% &cseconds!'
     Spectate:
       ArmorStands:
-        Hide: '&7ArmorStands are now visible again.'
-        Show: '&7You have hidden all ArmorStands.'
+        Hide: '&7You have hidden all ArmorStands.'
+        Show: '&7ArmorStands are now visible again.'
       Join:
         Self: '&7You are now in Spectator-Mode.'
         Other: '&e%TARGET% &7is now in Spectator-Mode.'

@@ -7,7 +7,6 @@ import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateUtilsGeneral;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -32,6 +31,7 @@ public class SpectatorListener implements Listener {
 		this.spectateUtils = spectateAPI.getSpectateGeneral();
 
 		PluginManager pluginManager = plugin.getServer().getPluginManager();
+		pluginManager.registerEvents(new ArmorstandListener(plugin), plugin);
 		pluginManager.registerEvents(new ContainerListener(plugin), plugin);
 		pluginManager.registerEvents(new TeleportListener(plugin), plugin);
 		pluginManager.registerEvents(new PaperListener(plugin), plugin);
@@ -76,47 +76,7 @@ public class SpectatorListener implements Listener {
 				""", this.plugin.getUpdateChecker().getVersion().replace("v", ""))));
 	}
 
-
-	@EventHandler
-	public void playerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		if(!Config.getBoolean(Paths.CONFIG_HIDE_ARMOR_STANDS) || !hasPermission(player, UTILS_HIDE_ARMORSTAND))
-			return;
-
-		if(!spectateAPI.isSpectator(player) && !spectateAPI.isCyclingSpectator(player))
-			return;
-
-		Location from = event.getFrom(),
-				to = event.getTo();
-
-		if(to == null)
-			return;
-
-		if(from.getBlockX() == to.getBlockX() && from.getBlockZ() == to.getBlockZ())
-			return;
-
-		spectateAPI.hideArmorstands(player);
-	}
-
 	private final Set<UUID> cooldown = new HashSet<>();
-
-	@EventHandler
-	public void targetMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		if(spectateAPI.isNotSpectated(player))
-			return;
-
-		Set<Player> spectators = spectateAPI.getSpectatorsOf(player);
-		spectators.stream().filter(spectateAPI::isCyclingSpectator).forEach(spec -> {
-			if(cooldown.contains(spec.getUniqueId()))
-				return;
-
-			spectateAPI.setRelation(spec, player);
-			cooldown.add(spec.getUniqueId());
-			Bukkit.getScheduler().runTaskLater(plugin, () -> cooldown.remove(spec.getUniqueId()), 30L);
-		});
-	}
-
 
 	/**
 	 * unspectate, when quitting while spectating

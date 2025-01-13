@@ -90,13 +90,15 @@ public class SpectateUtilsGeneral {
 
 		spectator.setGameMode(GameMode.SPECTATOR);
 
-		if(sameWorld)
-				spectateAPI.setRelation(spectator, target);
-
-		else {
+		if(sameWorld) {
+			Spectator.debug("Spectator is in same world as target");
+			spectateAPI.setRelation(spectator, target);
+		}else {
+			Spectator.debug("Spectator is in different world than target");
 			Bukkit.getScheduler().runTask(plugin, () ->
 					spectator.teleport(target, PlayerTeleportEvent.TeleportCause.PLUGIN));
-			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.setRelation(spectator, target), 10L);
+			spectateAPI.dismount(spectator);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> spectateAPI.setRelation(spectator, target), 15L);
 		}
 
 		plugin.getInventory().getTargetInventory(spectator, target);

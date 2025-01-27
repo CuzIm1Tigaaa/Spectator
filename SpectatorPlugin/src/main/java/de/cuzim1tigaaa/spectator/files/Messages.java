@@ -167,7 +167,10 @@ public class Messages {
             set(Paths.MESSAGES_COMMANDS_UNSPECTATE_PLAYER,          "&e%TARGET% &7has been resend!");
 
             set(Paths.MESSAGES_COMMANDS_CYCLE_START,                "&7Speccycle &astarted &7with interval &c%INTERVAL% &7in %ORDER% order.");
+            set(Paths.MESSAGES_COMMANDS_CYCLE_START_OTHER,          "&7Speccycle &astarted &7with interval &c%INTERVAL% &7in %ORDER% order for player &e%TARGET%&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_STOP,                 "&7Speccycle &cstopped&7.");
+            set(Paths.MESSAGES_COMMANDS_CYCLE_STOP_OTHER,           "&7Speccycle &cstopped &7for player &e%TARGET%&7.");
+            set(Paths.MESSAGES_COMMANDS_CYCLE_NEXT,                 "&7Forcing Speccycle to visit &e%TARGET%&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_PAUSE,                "&7Speccycle &epaused&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_RESTART,              "&7Speccycle &brestarted &7with interval &c%INTERVAL%&7.");
             set(Paths.MESSAGES_COMMANDS_CYCLE_CYCLING,              "&cYou are already in Speccycle-Mode!");

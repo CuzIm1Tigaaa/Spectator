@@ -36,7 +36,10 @@ Messages:
       ResendPlayer: '&e%TARGET% &7has been resend!'
     Cycle:
       Start: '&7Speccycle wurde mit dem Intervall &c%INTERVAL% &agestartet&7. Reihenfolge: %ORDER%'
-      Stop: '&7Speccycle wurde &cgestoppt&7.'
+      StartOther: '&7Speccycle wurde mit dem Intervall &c%INTERVAL% &agestartet&7. Reihenfolge: %ORDER% für Spieler &e%TARGET%&7.'
+      Stop: '&7Speccycle wurde &cgestoppt &7für Spieler &e%TARGET%&7.'
+      StopOther: '&7Speccycle wurde für den Spieler &e%TARGET% &cangehalten&7.'
+      Next: '&7Speccycle besucht nun &e%TARGET%&7.'
       Pause: '&7Speccycle wurde &epausiert&7.'
       Restart: '&7Speccycle wurde mit dem Intervall &c%INTERVAL% &bneugestartet&7. Reihenfolge: %ORDER%'
       Cycling: '&cDu bist bereits im Speccycle-Modus!'

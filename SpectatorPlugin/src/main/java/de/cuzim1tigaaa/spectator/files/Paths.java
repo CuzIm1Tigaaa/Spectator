@@ -64,7 +64,10 @@ public final class Paths {
     public static final String MESSAGES_COMMANDS_UNSPECTATE_PLAYER =        "Messages.Commands.UnSpectate.ResendPlayer";
 
     public static final String MESSAGES_COMMANDS_CYCLE_START =              "Messages.Commands.Cycle.Start";
+    public static final String MESSAGES_COMMANDS_CYCLE_START_OTHER =        "Messages.Commands.Cycle.StartOther";
     public static final String MESSAGES_COMMANDS_CYCLE_STOP =               "Messages.Commands.Cycle.Stop";
+    public static final String MESSAGES_COMMANDS_CYCLE_STOP_OTHER =         "Messages.Commands.Cycle.StopOther";
+    public static final String MESSAGES_COMMANDS_CYCLE_NEXT =               "Messages.Commands.Cycle.Next";
     public static final String MESSAGES_COMMANDS_CYCLE_PAUSE =              "Messages.Commands.Cycle.Pause";
     public static final String MESSAGES_COMMANDS_CYCLE_RESTART =            "Messages.Commands.Cycle.Restart";
     public static final String MESSAGES_COMMANDS_CYCLE_CYCLING =            "Messages.Commands.Cycle.Cycling";

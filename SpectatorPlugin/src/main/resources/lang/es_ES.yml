@@ -35,8 +35,11 @@ Messages:
       ResendAll: '&7Todos los espectadores han sido reiniciados.'
       ResendPlayer: '&e%TARGET% &7ha sido reiniciado.'
     Cycle:
-      Start: '&7Spectatecycle ha comenzado con un intervalo de &c%INTERVAL%&a. Orden: %ORDER%'
-      Stop: '&7Spectatecycle ha sido &cDetenido&7.'
+      Start: '&7Spectatecycle ha &acomenzado &7con un intervalo de &c%INTERVAL% &7para el jugador &e%TARGET%&7. Orden: %ORDER%'
+      StartOther: '&7Speccycle &astarted &7with interval &c%INTERVAL% &7in %ORDER% order for player &e%TARGET%&7.'
+      Stop: '&7Spectatecycle se ha &cdetenido&7.'
+      StopOther: '&7Speccycle se ha &cdetenido &7para el jugador &e%TARGET%&7.'
+      Next: '&7Speccycle ahora visita a &e%TARGET%&7.'
       Pause: '&7Spectatecycle ha sido &epausado&7.'
       Restart: '&7Spectatecycle ha sido reiniciado con un intervalo de &c%INTERVAL%&b. Orden: %ORDER%'
       Cycling: '&cYa estás en modo Spectatecycle.'

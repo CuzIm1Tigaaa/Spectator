@@ -44,9 +44,11 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             case "start" -> handleStartCycle(sender, args);
             case "stop" -> handleStopCycle(sender, args);
             case "next" -> handleNextCycle(sender, args);
+            default -> {
+                Messages.sendMessage(sender, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]");
+                return true;
+            }
         }
-
-        Messages.sendMessage(sender, Paths.MESSAGE_DEFAULT_SYNTAX, "USAGE", "/spectatecycle [start|stop]");
         return true;
     }
 

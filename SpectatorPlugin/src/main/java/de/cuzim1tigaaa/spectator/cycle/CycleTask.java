@@ -48,6 +48,10 @@ public class CycleTask {
 	}
 
 	public void selectNextPlayer(Spectator plugin) {
+		this.selectNextPlayer(plugin, null);
+	}
+
+	public void selectNextPlayer(Spectator plugin, Player forcedTarget) {
 		final SpectateAPI spectateAPI = plugin.getSpectateAPI();
 		Player spectator = cycle.getOwner();
 
@@ -62,7 +66,7 @@ public class CycleTask {
 			return;
 		}
 
-		Player next = cycle.getNextTarget(plugin);
+		Player next = cycle.getNextTarget(plugin, forcedTarget);
 		Player last = cycle.getLastPlayer();
 
 		if(next == null || next.isDead() || !next.isOnline())

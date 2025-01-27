@@ -60,6 +60,15 @@ public class SpectateUtilsCycle {
         spectateAPI.dismount(spectator);
     }
 
+    public void forceNextTarget(Player spectator, Player target) {
+        if(!spectateAPI.isCyclingSpectator(spectator))
+            return;
+
+        SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
+        if(spectateAPI.getCycleTask(spectator) != null)
+            info.getCycleTask().selectNextPlayer(this.plugin, target);
+    }
+
     public void teleportNextPlayer(Player spectator) {
         if(!spectateAPI.isCyclingSpectator(spectator))
             return;

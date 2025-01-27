@@ -12,6 +12,7 @@ public final class Permissions {
     public static final String COMMAND_SPECTATE_HERE =          "spectator.commands.spectatehere";
     public static final String COMMANDS_SPECTATE_LIST =         "spectator.commands.spectatelist";
     public static final String COMMANDS_SPECTATE_CYCLE =        "spectator.commands.spectatecycle.default";
+    public static final String COMMANDS_CYCLE_FORCE_NEXT =      "spectator.commands.spectatecycle.forceNext";
     public static final String COMMANDS_CYCLE_STOP_OTHERS =     "spectator.commands.spectatecycle.stopOthers";
 
     public static final String BYPASS_TABLIST =                 "spectator.bypass.tablist";

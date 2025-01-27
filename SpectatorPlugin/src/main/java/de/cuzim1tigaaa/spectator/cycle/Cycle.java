@@ -32,7 +32,7 @@ public class Cycle {
 		this.toVisit = Collections.emptyList();
 	}
 
-	public Player getNextTarget(Spectator plugin) {
+	public Player getNextTarget(Spectator plugin, Player forcedTarget) {
 		if(toVisit.isEmpty())
 			alreadyVisited.clear();
 
@@ -42,21 +42,33 @@ public class Cycle {
 			return null;
 
 		Player target;
-		if(alphabetical) {
-			target = toVisit.stream()
-					.sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()))
-					.filter(p -> !p.equals(lastPlayer))
-					.findFirst().orElse(toVisit.get(0));
-		}else {
-			do {
-				target = toVisit.get(random.nextInt(toVisit.size()));
-			}while(toVisit.size() > 1 && target.equals(lastPlayer));
+		if(forcedTarget != null && forcedTarget.isOnline() && toVisit.contains(forcedTarget)) {
+			target = visit(forcedTarget);
+			Spectator.debug(String.format("Next Target BY FORCE: %-16s\t\ttoVisit: %s", target.getName(),
+					toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
+			return target;
 		}
 
-		Player next = visit(target);
+		target = visit(alphabetical ? getNextAlphabetical() : getNextRandom());
 		Spectator.debug(String.format("Next Target: %-16s\t\ttoVisit: %s", target.getName(),
 				toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));
-		return next;
+		return target;
+	}
+
+	private Player getNextAlphabetical() {
+		return toVisit.stream()
+				.sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()))
+				.filter(p -> !p.equals(lastPlayer))
+				.findFirst().orElse(toVisit.getFirst());
+	}
+
+	private Player getNextRandom() {
+		Player target;
+		do {
+			target = toVisit.get(random.nextInt(toVisit.size()));
+		}while(toVisit.size() > 1 && target.equals(lastPlayer));
+
+		return target;
 	}
 
 	private Player visit(Player player) {

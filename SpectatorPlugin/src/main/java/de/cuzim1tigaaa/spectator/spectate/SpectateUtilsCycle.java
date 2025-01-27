@@ -66,7 +66,7 @@ public class SpectateUtilsCycle {
 
         SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
         if(spectateAPI.getCycleTask(spectator) != null)
-            info.getCycleTask().selectNextPlayer(this.plugin, target);
+            info.getCycleTask().startForcePlayer(this.plugin, target);
     }
 
     public void teleportNextPlayer(Player spectator) {

@@ -47,6 +47,14 @@ public class CycleTask {
 		displays.showCycleDisplay(cycle.getOwner());
 	}
 
+	public void startForcePlayer(Spectator plugin, Player forcedTarget) {
+		if(taskId != -1)
+			stopTask();
+
+		setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin, forcedTarget), 0L, interval * 20L).getTaskId());
+		displays.showCycleDisplay(cycle.getOwner());
+	}
+
 	public void selectNextPlayer(Spectator plugin) {
 		this.selectNextPlayer(plugin, null);
 	}

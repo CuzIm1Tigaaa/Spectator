@@ -198,4 +198,12 @@ public class SpectateAPI {
         return player.hasPermission("multiverse.access." + plugin.getMultiverseCore()
                 .getMVWorldManager().getMVWorld(world).getPermissibleName());
     }
+
+    public Integer getInt(String arg) {
+        try {
+            return Integer.parseInt(arg);
+        }catch(NumberFormatException ignored) {
+            return null;
+        }
+    }
 }

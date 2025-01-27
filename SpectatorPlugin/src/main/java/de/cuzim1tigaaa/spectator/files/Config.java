@@ -37,7 +37,7 @@ public class Config {
 	}
 
 	public void loadConfig() {
-		int serverVersion = Integer.parseInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2));
+		int serverVersion = plugin.getSpectateAPI().getInt(plugin.getServer().getBukkitVersion().split("\\.")[1].substring(0, 2));
 
 		if(serverVersion < 18) {
 			saveDefaultConfig(plugin);

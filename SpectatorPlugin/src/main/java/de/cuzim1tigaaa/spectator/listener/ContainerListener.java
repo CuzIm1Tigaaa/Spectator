@@ -27,11 +27,11 @@ public class ContainerListener implements Listener {
 				InventoryType.HOPPER, InventoryType.SMOKER, InventoryType.SHULKER_BOX, InventoryType.LECTERN);
 
 		String version = plugin.getServer().getBukkitVersion();
-		int mayor = Integer.parseInt(version.split("\\.")[1]);
+		int mayor = spectateAPI.getInt(version.split("\\.")[1]);
 		if(mayor >= 20) {
 			int minor = 0;
 			if(version.split("\\.").length > 2)
-				minor = Integer.parseInt(version.split("\\.")[2].split("-")[0]);
+				minor = spectateAPI.getInt(version.split("\\.")[2].split("-")[0]);
 			if(mayor > 20 || minor >= 3)
                 //noinspection UnstableApiUsage
                 containerSet.add(InventoryType.CRAFTER);

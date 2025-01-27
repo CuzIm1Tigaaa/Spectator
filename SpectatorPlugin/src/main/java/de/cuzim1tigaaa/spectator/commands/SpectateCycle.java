@@ -176,7 +176,29 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
             return;
         }
 
-        spectateCycle.forceNextTarget(player, target);
+        Integer seconds = spectateAPI.getCycleTask(player).getInterval();
+        if(args.length >= 3) {
+            seconds = spectateAPI.getInt(args[2]);
+            if(seconds == null || seconds <= 0) {
+                Messages.sendMessage(player, Paths.MESSAGES_GENERAL_NUMBERFORMAT);
+                return;
+            }
+        }
+
+        int min = Config.getInt(Paths.CONFIG_CYCLE_MIN_INTERVAL);
+        int max = Config.getInt(Paths.CONFIG_CYCLE_MAX_INTERVAL);
+
+        if(min > 0 && seconds < min) {
+            Messages.sendMessage(sender, Paths.MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_SMALL, "MINIMUM", min);
+            return;
+        }
+
+        if(max > 0 && seconds > max) {
+            Messages.sendMessage(sender, Paths.MESSAGES_COMMANDS_CYCLE_INTERVAL_TOO_BIG, "MAXIMUM", max);
+            return;
+        }
+
+        spectateCycle.forceNextTarget(player, target, seconds);
         Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_CYCLE_NEXT, "TARGET", target.getName());
     }
 
@@ -191,7 +213,11 @@ public class SpectateCycle implements CommandExecutor, TabCompleter {
                     yield plugin.getOnlinePlayerNames();
                 yield Collections.emptyList();
             }
-            case 3 -> List.of("alphabetical", "random");
+            case 3 -> {
+                if(args[0].equalsIgnoreCase("start"))
+                    yield List.of("alphabetical", "random");
+                else yield Collections.emptyList();
+            }
             case 4 -> {
                 if(args[0].equalsIgnoreCase("start") && hasPermission(sender, COMMAND_SPECTATE_CHANGE_OTHERS))
                     yield plugin.getOnlinePlayerNames();

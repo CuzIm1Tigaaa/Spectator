@@ -60,13 +60,13 @@ public class SpectateUtilsCycle {
         spectateAPI.dismount(spectator);
     }
 
-    public void forceNextTarget(Player spectator, Player target) {
+    public void forceNextTarget(Player spectator, Player target, int interval) {
         if(!spectateAPI.isCyclingSpectator(spectator))
             return;
 
         SpectateInformation info = spectateAPI.getSpectateInfo(spectator);
         if(spectateAPI.getCycleTask(spectator) != null)
-            info.getCycleTask().startForcePlayer(this.plugin, target);
+            info.getCycleTask().startForcePlayer(this.plugin, target, interval);
     }
 
     public void teleportNextPlayer(Player spectator) {

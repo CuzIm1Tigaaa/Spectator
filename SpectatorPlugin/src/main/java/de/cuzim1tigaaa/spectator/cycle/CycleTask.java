@@ -21,16 +21,12 @@ public class CycleTask {
 	private static final Map<UUID, SpectateState> stateChange = new HashMap<>();
 	private static final Displays displays = new Displays(Spectator.getPlugin());
 
-	private final int interval;
+	private int interval;
 
-	@Setter
-	private int taskId;
-	@Setter
-	private Cycle cycle;
-	@Setter
-	private BossBar bossBar;
-	@Setter
-	private Integer showTargetTask;
+	@Setter private int taskId;
+	@Setter private Cycle cycle;
+	@Setter private BossBar bossBar;
+	@Setter private Integer showTargetTask;
 
 	public CycleTask(int interval, Cycle cycle) {
 		this.interval = interval;
@@ -47,11 +43,30 @@ public class CycleTask {
 		displays.showCycleDisplay(cycle.getOwner());
 	}
 
-	public void startForcePlayer(Spectator plugin, Player forcedTarget) {
+	public void startForcePlayer(Spectator plugin, Player forcedTarget, int interval) {
 		if(taskId != -1)
 			stopTask();
 
-		setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin, forcedTarget), 0L, interval * 20L).getTaskId());
+		if(interval == this.interval) {
+			setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> selectNextPlayer(plugin, forcedTarget), 0L, this.interval * 20L).getTaskId());
+			displays.showCycleDisplay(cycle.getOwner());
+			return;
+		}
+
+		int oldInterval = this.interval;
+		this.interval = interval;
+
+		setTaskId(Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+			if(this.interval == oldInterval) {
+				Spectator.debug("Interval has been reset to the old value.");
+				stopTask();
+				startTask(plugin);
+			}
+
+			selectNextPlayer(plugin, forcedTarget);
+			this.interval = oldInterval;
+		}, 0L, this.interval * 20L).getTaskId());
+
 		displays.showCycleDisplay(cycle.getOwner());
 	}
 

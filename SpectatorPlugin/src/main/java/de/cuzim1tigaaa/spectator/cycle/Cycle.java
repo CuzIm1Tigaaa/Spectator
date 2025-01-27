@@ -42,7 +42,7 @@ public class Cycle {
 			return null;
 
 		Player target;
-		if(forcedTarget != null && forcedTarget.isOnline() && toVisit.contains(forcedTarget)) {
+		if(forcedTarget != null && forcedTarget.isOnline()) {
 			target = visit(forcedTarget);
 			Spectator.debug(String.format("Next Target BY FORCE: %-16s\t\ttoVisit: %s", target.getName(),
 					toVisit.stream().map(Player::getName).collect(Collectors.joining(", "))));

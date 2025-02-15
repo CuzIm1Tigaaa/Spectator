@@ -45,6 +45,14 @@ public class Spectator extends JavaPlugin {
 	}
 
 	private void register() {
+		papiInstalled = false;
+		if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+			this.getLogger().info("PlaceholderAPI is installed on this server!");
+			this.getLogger().info("Registering plugins placeholders…");
+			new Placeholders(this).register();
+			papiInstalled = true;
+		}
+
 		this.reload();
 		new Metrics(this);
 
@@ -53,14 +61,6 @@ public class Spectator extends JavaPlugin {
 
 		if((multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
 			this.getLogger().info("Multiverse-Core is installed on this server!");
-
-		papiInstalled = false;
-		if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-			this.getLogger().info("PlaceholderAPI is installed on this server!");
-			this.getLogger().info("Registering plugins placeholders…");
-			new Placeholders(this).register();
-			papiInstalled = true;
-		}
 
 		new SpectatorListener(this);
 

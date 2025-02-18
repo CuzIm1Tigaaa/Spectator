@@ -22,6 +22,7 @@ public class SpectateUtilsGeneral {
 
 	private final Map<UUID, Location> spectateStartLocation = new HashMap<>();
 	private final Map<UUID, CycleTask> spectateCycle;
+	private final Map<UUID, Location> teleportIfReLogin = new HashMap<>();
 
 	public SpectateUtilsGeneral(SpectateAPI spectateAPI) {
 		this.plugin = spectateAPI.getPlugin();
@@ -129,7 +130,14 @@ public class SpectateUtilsGeneral {
 			info.restoreAttributes(true);
 
 		try {
-			Bukkit.getScheduler().runTask(plugin, () -> spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
+			Bukkit.getScheduler().runTask(plugin, () -> {
+				if(spectator.isOnline()) {
+					spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+					return;
+				}
+				Spectator.debug("Could not teleport player, saving location for relogin");
+				this.teleportIfReLogin.put(spectator.getUniqueId(), finalLocation);
+			});
 		}catch(IllegalPluginAccessException e) {
 			// if unspectate is triggered by server shutting down
 			spectator.teleport(finalLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);

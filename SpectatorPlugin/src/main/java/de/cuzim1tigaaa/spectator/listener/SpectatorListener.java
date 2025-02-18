@@ -52,6 +52,11 @@ public class SpectatorListener implements Listener {
 				this.sendUpdateNotification(player);
 		}
 
+		if(spectateUtils.getTeleportIfReLogin().containsKey(player.getUniqueId()))
+			Bukkit.getScheduler().runTaskLater(plugin, () -> player.teleport(
+					spectateUtils.getTeleportIfReLogin().remove(player.getUniqueId()),
+					PlayerTeleportEvent.TeleportCause.PLUGIN), 20L);
+
 		if(Config.getBoolean(Paths.CONFIG_HIDE_PLAYERS_TAB) && !hasPermission(player, BYPASS_TABLIST))
 			spectateAPI.getSpectators().forEach(spectator -> player.hidePlayer(plugin, spectator));
 
@@ -88,6 +93,7 @@ public class SpectatorListener implements Listener {
 		Player player = event.getPlayer();
 
 		if(spectateAPI.isSpectator(player)) {
+			Spectator.debug("Player " + player.getName() + " was spectating, unspectating...");
 			spectateUtils.unspectate(player, true);
 			return;
 		}

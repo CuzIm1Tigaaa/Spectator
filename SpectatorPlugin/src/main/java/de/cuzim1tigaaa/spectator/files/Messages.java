@@ -46,6 +46,7 @@ public class Messages {
             message = getMessage(player, path, replace);
             if(message == null) return;
             player.sendMessage(message);
+            return;
         }
 
         message = getMessage(sender, path, replace);

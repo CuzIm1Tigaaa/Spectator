@@ -37,6 +37,11 @@ public class UnSpectate implements CommandExecutor, TabCompleter {
         }
 
         if(args.length == 0) {
+            if(sender instanceof Player player && !player.hasPermission(COMMAND_UNSPECTATE_ALL)) {
+                spectateAPI.getSpectateGeneral().unspectate(player, true);
+                return true;
+            }
+
             for(Player spectator : spectateAPI.getSpectators()) {
                 if(spectator.hasPermission(BYPASS_UNSPECTATED))
                     continue;

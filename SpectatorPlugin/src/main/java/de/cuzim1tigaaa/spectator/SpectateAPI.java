@@ -16,6 +16,9 @@ import org.bukkit.metadata.FixedMetadataValue;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.cuzim1tigaaa.spectator.files.Permissions.UTILS_DISMOUNT;
+import static de.cuzim1tigaaa.spectator.files.Permissions.hasPermission;
+
 @Getter
 public class SpectateAPI {
 
@@ -98,6 +101,11 @@ public class SpectateAPI {
     }
 
     public void dismount(Player spectator) {
+        if(!hasPermission(spectator, UTILS_DISMOUNT)) {
+            spectateGeneral.unspectate(spectator, true);
+            return;
+        }
+
         if(!isSpectator(spectator) || spectator.getGameMode() != GameMode.SPECTATOR)
             return;
         setRelation(spectator, null);

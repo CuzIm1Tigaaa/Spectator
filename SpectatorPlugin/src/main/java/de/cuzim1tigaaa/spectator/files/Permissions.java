@@ -6,6 +6,7 @@ public final class Permissions {
 
     public static final String COMMANDS_SPECTATE_RELOAD =       "spectator.commands.spectatereload";
     public static final String COMMAND_UNSPECTATE =             "spectator.commands.unspectate";
+    public static final String COMMAND_UNSPECTATE_ALL =         "spectator.commands.unspectateall";
     public static final String COMMAND_SPECTATE_GENERAL =       "spectator.commands.spectate";
     public static final String COMMAND_SPECTATE_CHANGE_OTHERS = "spectator.commands.spectatechangeothers";
     public static final String COMMAND_SPECTATE_OTHERS =        "spectator.commands.spectateothers";
@@ -20,6 +21,7 @@ public final class Permissions {
     public static final String BYPASS_SPECTATEALL =             "spectator.bypass.spectateall";
     public static final String BYPASS_NOTIFY =                  "spectator.bypass.notify";
 
+    public static final String UTILS_DISMOUNT =                 "spectator.utils.dismount";
     public static final String UTILS_OPEN_CONTAINER =           "spectator.utils.opencontainers";
     public static final String UTILS_OPEN_ENDERCHEST =          "spectator.utils.openenderchest";
     public static final String UTILS_MIRROR_INVENTORY =         "spectator.utils.mirrorinventory";

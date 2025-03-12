@@ -76,12 +76,12 @@ public class Spectate implements CommandExecutor, TabCompleter {
 			return true;
 		}
 
-		if(!hasPermission(player, COMMAND_SPECTATE_GENERAL)) {
-			Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION);
-			return true;
-		}
-
 		if(args.length == 0 || !hasPermission(player, COMMAND_SPECTATE_OTHERS)) {
+			if(!hasPermission(player, COMMAND_SPECTATE_GENERAL)) {
+				Messages.sendMessage(player, Paths.MESSAGE_DEFAULT_PERMISSION);
+				return true;
+			}
+
 			if(spectateAPI.isSpectator(player)) {
 				spectateAPI.getSpectateGeneral().unspectate(player, true);
 				Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_LEAVE_OWN);

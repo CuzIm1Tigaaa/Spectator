@@ -141,7 +141,8 @@ public class SpectatorListener implements Listener {
 			return;
 		}
 
-		spectateAPI.dismount(player);
+		if(hasPermission(player, UTILS_DISMOUNT))
+			spectateAPI.dismount(player);
 	}
 
 	/**

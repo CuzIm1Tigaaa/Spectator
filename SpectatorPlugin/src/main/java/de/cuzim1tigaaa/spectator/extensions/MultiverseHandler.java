@@ -30,15 +30,24 @@ public class MultiverseHandler {
 			return;
 		}
 
-		var provider = Bukkit.getServer().getServicesManager().getRegistration(MultiverseCoreApi.class);
-		if(provider == null) {
-			multiverseCoreOld = (MultiverseCore) pl;
+		if(pl.getDescription().getVersion().startsWith("5.")) {
+			var provider = Bukkit.getServer().getServicesManager().getRegistration(MultiverseCoreApi.class);
+			if(provider == null) {
+				plugin.getLogger().warning("Multiverse-Core API is not available. Please ensure you are using the correct version of Multiverse-Core.");
+				this.multiverseCoreOld = null;
+				this.multiverseCoreApi = null;
+				return;
+			}
+
+			this.multiverseCoreApi = provider.getProvider();
 			plugin.getLogger().info("Multiverse-Core is installed on this server!");
 			return;
 		}
 
-		this.multiverseCoreApi = provider.getProvider();
-		plugin.getLogger().info("Multiverse-Core is installed on this server!");
+		if(pl instanceof MultiverseCore mv) {
+			multiverseCoreOld = mv;
+			plugin.getLogger().info("Multiverse-Core is installed on this server!");
+		}
 	}
 
 	public boolean isMultiverseCoreInstalled() {

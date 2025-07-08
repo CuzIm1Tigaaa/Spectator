@@ -1,6 +1,7 @@
 package de.cuzim1tigaaa.spectator.cycle;
 
 import de.cuzim1tigaaa.spectator.Spectator;
+import de.cuzim1tigaaa.spectator.extensions.MultiverseHandler;
 import de.cuzim1tigaaa.spectator.files.Permissions;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -46,7 +47,7 @@ public class Cycle {
 			target = toVisit.stream()
 					.sorted((t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()))
 					.filter(p -> !p.equals(lastPlayer))
-					.findFirst().orElse(toVisit.get(0));
+					.findFirst().orElse(toVisit.getFirst());
 		}else {
 			do {
 				target = toVisit.get(random.nextInt(toVisit.size()));
@@ -69,10 +70,15 @@ public class Cycle {
 	private void updateLists(Spectator plugin) {
 		Set<Player> updatedToVisit = new HashSet<>(plugin.getSpectateAPI().getSpectateablePlayers());
 		updatedToVisit.remove(owner);
-		updatedToVisit.removeIf(p -> p == null || !p.isOnline() ||
-				(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL) && p.hasPermission(Permissions.BYPASS_SPECTATED)) ||
-				(plugin.getMultiverseCore() != null && plugin.getMultiverseCore().getMVConfig().getEnforceAccess() &&
-						!owner.hasPermission(plugin.getMultiverseCore().getMVWorldManager().getMVWorld(p.getWorld()).getAccessPermission())));
+		updatedToVisit.removeIf(p -> {
+			if(p == null || !p.isOnline())
+				return true;
+
+			if(!owner.hasPermission(Permissions.BYPASS_SPECTATEALL) && p.hasPermission(Permissions.BYPASS_SPECTATED))
+				return true;
+
+			return MultiverseHandler.getInstance().canPlayerJoinWorld(owner, p.getWorld());
+		});
 
 		alreadyVisited.removeIf(p -> !p.isOnline());
 		updatedToVisit.removeAll(alreadyVisited);

@@ -1,7 +1,7 @@
 package de.cuzim1tigaaa.spectator.player;
 
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.Spectator;
+import de.cuzim1tigaaa.spectator.extensions.MultiverseHandler;
 import de.cuzim1tigaaa.spectator.files.Config;
 import de.cuzim1tigaaa.spectator.files.Paths;
 import lombok.Getter;
@@ -29,9 +29,9 @@ public class PlayerAttributes {
     public static void restorePlayerAttributes(Player player, PlayerAttributes pAttributes, boolean gameModeChange) {
         Spectator plugin = Spectator.getPlugin();
         GameMode gameMode = GameMode.SURVIVAL;
-        MultiverseCore core;
-        if((core = plugin.getMultiverseCore()) != null)
-            gameMode = core.getMVWorldManager().getMVWorld(player.getWorld()).getGameMode();
+
+        if(MultiverseHandler.getInstance().isMultiverseCoreInstalled())
+            gameMode = MultiverseHandler.getInstance().getGameMode(player.getWorld());
 
         boolean isFlying = false;
         int remainingAir = player.getMaximumAir(), fireTicks = 0;

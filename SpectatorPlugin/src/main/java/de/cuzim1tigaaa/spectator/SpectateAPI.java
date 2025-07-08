@@ -1,6 +1,7 @@
 package de.cuzim1tigaaa.spectator;
 
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
+import de.cuzim1tigaaa.spectator.extensions.MultiverseHandler;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import de.cuzim1tigaaa.spectator.spectate.SpectateInformation;
@@ -192,10 +193,9 @@ public class SpectateAPI {
         if(player.getWorld().equals(world))
             return true;
 
-        if(plugin.getMultiverseCore() == null)
+        if(!MultiverseHandler.getInstance().isMultiverseCoreInstalled())
             return true;
 
-        return player.hasPermission("multiverse.access." + plugin.getMultiverseCore()
-                .getMVWorldManager().getMVWorld(world).getPermissibleName());
+        return player.hasPermission("multiverse.access." + world.getName());
     }
 }

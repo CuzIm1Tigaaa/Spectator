@@ -2,6 +2,7 @@ package de.cuzim1tigaaa.spectator.commands;
 
 import de.cuzim1tigaaa.spectator.SpectateAPI;
 import de.cuzim1tigaaa.spectator.Spectator;
+import de.cuzim1tigaaa.spectator.extensions.MultiverseHandler;
 import de.cuzim1tigaaa.spectator.files.*;
 import de.cuzim1tigaaa.spectator.spectate.SpectateInformation;
 import org.bukkit.Bukkit;
@@ -136,10 +137,9 @@ public class Spectate implements CommandExecutor, TabCompleter {
 			}
 		}
 
-		if(plugin.getMultiverseCore() != null) {
+		if(!MultiverseHandler.getInstance().isMultiverseCoreInstalled()) {
 			if(!player.getWorld().getUID().equals(target.getWorld().getUID())) {
-				String world = plugin.getMultiverseCore().getMVWorldManager().getMVWorld(target.getWorld()).getPermissibleName();
-				if(!player.hasPermission("multiverse.access." + world)) {
+				if(!MultiverseHandler.getInstance().canPlayerJoinWorld(player, target.getWorld())) {
 					Messages.sendMessage(player, Paths.MESSAGES_COMMANDS_SPECTATE_MULTIVERSE, "TARGET", target.getName());
 					return true;
 				}

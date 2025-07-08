@@ -1,12 +1,10 @@
 package de.cuzim1tigaaa.spectator.spectate;
 
-import de.cuzim1tigaaa.spectator.Spectator;
 import de.cuzim1tigaaa.spectator.cycle.CycleTask;
 import de.cuzim1tigaaa.spectator.player.PlayerAttributes;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.World;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
 import java.util.*;

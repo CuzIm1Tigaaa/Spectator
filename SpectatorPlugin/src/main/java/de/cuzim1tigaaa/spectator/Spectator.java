@@ -1,6 +1,5 @@
 package de.cuzim1tigaaa.spectator;
 
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import de.cuzim1tigaaa.spectator.commands.*;
 import de.cuzim1tigaaa.spectator.extensions.*;
 import de.cuzim1tigaaa.spectator.files.*;
@@ -22,7 +21,6 @@ public class Spectator extends JavaPlugin {
 	private SpectateAPI spectateAPI;
 	private UpdateChecker updateChecker;
 
-	private MultiverseCore multiverseCore;
 	private boolean papiInstalled;
 	private Inventory inventory;
 
@@ -59,10 +57,9 @@ public class Spectator extends JavaPlugin {
 		this.inventory = new Inventory(this);
 		this.getLogger().info("Register Events & Commands…");
 
-		if((multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core")) != null)
-			this.getLogger().info("Multiverse-Core is installed on this server!");
-
 		new SpectatorListener(this);
+
+		new MultiverseHandler(this);
 
 		new Spectate(this);
 		new SpectateCycle(this);

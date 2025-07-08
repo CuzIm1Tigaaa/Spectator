@@ -5,8 +5,7 @@ import lombok.Getter;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -39,7 +38,7 @@ public class UpdateChecker {
         String versionString = this.plugin.getDescription().getVersion();
 
         try {
-            URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=93051");
+            URL url = URI.create("https://api.spigotmc.org/legacy/update.php?resource=93051").toURL();
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 

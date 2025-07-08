@@ -1,7 +1,7 @@
 Messages:
   Default:
     Sender: '&cDu musst ein Spieler sein, um diesen Befehl ausführen zu können!'
-    PermissiShow: '&cDu darfst diesen Befehl nicht benutzen!'
+    Permission: '&cDu darfst diesen Befehl nicht benutzen!'
     Syntax: '&cFalsche Benutzung: %USAGE%'
     Reload: '&7Das Plugin wurde neu geladen.'
   General:
